@@ -4,7 +4,7 @@ import { model, Model, Schema, Types } from "mongoose";
 // Define enums for visibility level and status
 export enum GroupVisibilityLevel {
   PUBLIC = "public",
-  PRIVATE = "private",
+  FRIENDS = "friends",
 }
 
 export enum GroupStatus {

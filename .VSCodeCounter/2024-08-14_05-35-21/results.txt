@@ -1,0 +1,104 @@
+Date : 2024-08-14 05:35:21
+Directory : c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src
+Total : 61 files,  2233 codes, 450 comments, 493 blanks, all 3176 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| TypeScript |         60 |      2,227 |        449 |        492 |      3,168 |
+| HTTP       |          1 |          6 |          1 |          1 |          8 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                      | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                         |         61 |      2,233 |        450 |        493 |      3,176 |
+| . (Files)                                                                                                                 |          3 |         58 |         22 |         26 |        106 |
+| configs                                                                                                                   |          2 |         64 |          0 |         11 |         75 |
+| constant                                                                                                                  |          3 |         91 |        264 |         68 |        423 |
+| controllers                                                                                                               |          4 |        236 |          0 |         40 |        276 |
+| error                                                                                                                     |         10 |        225 |         42 |         66 |        333 |
+| helpers                                                                                                                   |          5 |        147 |         70 |         39 |        256 |
+| middlewares                                                                                                               |          5 |        177 |          2 |         22 |        201 |
+| repositories                                                                                                              |          4 |        290 |          8 |         39 |        337 |
+| routes                                                                                                                    |          8 |        195 |          4 |         55 |        254 |
+| routes (Files)                                                                                                            |          5 |        173 |          1 |         40 |        214 |
+| routes\types                                                                                                              |          3 |         22 |          3 |         15 |         40 |
+| routes\types (Files)                                                                                                      |          1 |          9 |          1 |          5 |         15 |
+| routes\types\express                                                                                                      |          2 |         13 |          2 |         10 |         25 |
+| schema                                                                                                                    |          5 |        238 |         21 |         33 |        292 |
+| services                                                                                                                  |          5 |        438 |         16 |         74 |        528 |
+| tests                                                                                                                     |          1 |          6 |          1 |          1 |          8 |
+| types                                                                                                                     |          5 |         68 |          0 |         18 |         86 |
+| validations                                                                                                               |          1 |          0 |          0 |          1 |          1 |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                  | language   | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\configs\database.config.ts                  | TypeScript |         29 |          0 |          6 |         35 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\configs\passport.config.ts                  | TypeScript |         35 |          0 |          5 |         40 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\constant\EnvVars.ts                         | TypeScript |         25 |          5 |          2 |         32 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\constant\HttpStatusCodes.ts                 | TypeScript |         64 |        259 |         64 |        387 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\constant\dir.ts                             | TypeScript |          2 |          0 |          2 |          4 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\controllers\auth.controller.ts              | TypeScript |         21 |          0 |          6 |         27 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\controllers\group.controller.ts             | TypeScript |         77 |          0 |          9 |         86 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\controllers\post.controller.ts              | TypeScript |          0 |          0 |          1 |          1 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\controllers\user.controller.ts              | TypeScript |        138 |          0 |         24 |        162 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\AlreadyExistError.ts                  | TypeScript |         12 |          3 |          5 |         20 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\ApiError.ts                           | TypeScript |          8 |          3 |          3 |         14 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\ApiErrorCodes.ts                      | TypeScript |        103 |          5 |         27 |        135 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\IsNotNumberError.ts                   | TypeScript |         12 |          3 |          3 |         18 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\LengthError.ts                        | TypeScript |         32 |          3 |          4 |         39 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\NotEmptyError.ts                      | TypeScript |         12 |         15 |          7 |         34 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\NotFoundError.ts                      | TypeScript |         12 |          3 |          4 |         19 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\NotInEnumError.ts                     | TypeScript |         13 |          0 |          4 |         17 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\NotNullError.ts                       | TypeScript |         12 |          3 |          4 |         19 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\error\RouteError.ts                         | TypeScript |          9 |          4 |          5 |         18 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\helpers\camelCaseifyWithDateConversion.ts   | TypeScript |         53 |         17 |         12 |         82 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\helpers\handlers.ts                         | TypeScript |         10 |          0 |          2 |         12 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\helpers\removeNullValue.ts                  | TypeScript |         16 |          9 |          6 |         31 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\helpers\sanitation.ts                       | TypeScript |          0 |          1 |          1 |          2 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\helpers\validation.ts                       | TypeScript |         68 |         43 |         18 |        129 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\index.ts                                    | TypeScript |          6 |          2 |          3 |         11 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\middlewares\auth.middleware.ts              | TypeScript |         48 |          1 |          9 |         58 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\middlewares\group.middleware.ts             | TypeScript |         52 |          0 |          4 |         56 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\middlewares\post.middleware.ts              | TypeScript |          0 |          0 |          1 |          1 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\middlewares\user.middleware.ts              | TypeScript |         67 |          1 |          6 |         74 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\middlewares\util.middleware.ts              | TypeScript |         10 |          0 |          2 |         12 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\pre-start.ts                                | TypeScript |          0 |          8 |          3 |         11 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\repositories\friendRequest.repository.ts    | TypeScript |         63 |          0 |          7 |         70 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\repositories\group.repository.ts            | TypeScript |         47 |          0 |          8 |         55 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\repositories\groupJoinRequest.repository.ts | TypeScript |         79 |          0 |          5 |         84 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\repositories\user.repository.ts             | TypeScript |        101 |          8 |         19 |        128 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\auth.routes.ts                       | TypeScript |         28 |          0 |          7 |         35 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\group.routes.ts                      | TypeScript |         52 |          0 |         10 |         62 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\index.routes.ts                      | TypeScript |         11 |          0 |          4 |         15 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\post.routes.ts                       | TypeScript |          3 |          0 |          3 |          6 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\types\express\index.d.ts             | TypeScript |          6 |          1 |          5 |         12 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\types\express\misc.ts                | TypeScript |          7 |          1 |          5 |         13 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\types\types.ts                       | TypeScript |          9 |          1 |          5 |         15 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\routes\user.routes.ts                       | TypeScript |         79 |          1 |         16 |         96 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\schema\friendRequest.schema.ts              | TypeScript |         36 |          4 |          6 |         46 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\schema\group.schema.ts                      | TypeScript |         48 |          5 |          7 |         60 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\schema\groupJoinRequest.schema.ts           | TypeScript |         36 |          3 |          5 |         44 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\schema\post.schema.ts                       | TypeScript |         53 |          3 |          7 |         63 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\schema\user.schema.ts                       | TypeScript |         65 |          6 |          8 |         79 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\server.ts                                   | TypeScript |         52 |         12 |         20 |         84 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\services\auth.service.ts                    | TypeScript |         55 |          0 |         10 |         65 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\services\friendRequest.service.ts           | TypeScript |         83 |          8 |         15 |        106 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\services\group.service.ts                   | TypeScript |         88 |          3 |         16 |        107 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\services\groupJoinRequest.service.ts        | TypeScript |         86 |          5 |         14 |        105 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\services\user.service.ts                    | TypeScript |        126 |          0 |         19 |        145 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\tests\ApiTest.http                          | HTTP       |          6 |          1 |          1 |          8 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\types\api.types.ts                          | TypeScript |         12 |          0 |          3 |         15 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\types\auth.types.ts                         | TypeScript |         11 |          0 |          2 |         13 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\types\group.types.ts                        | TypeScript |         21 |          0 |          6 |         27 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\types\post.types.ts                         | TypeScript |          0 |          0 |          1 |          1 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\types\user.types.ts                         | TypeScript |         24 |          0 |          6 |         30 |
+| c:\Serious Project\chc\chc-backend\identity-service\group-backend-project\src\validations\util.validation.ts              | TypeScript |          0 |          0 |          1 |          1 |
+| Total                                                                                                                     |            |      2,233 |        450 |        493 |      3,176 |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

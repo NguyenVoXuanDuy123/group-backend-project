@@ -85,6 +85,11 @@ userRouter.get(
   wrapRequestHandler(userController.getMyPendingReceivedGroupJoinRequests)
 );
 
+userRouter.delete(
+  "/me/groups/:groupId",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(userController.leaveGroup)
+);
 // **** Export default **** //
 
 export default userRouter;

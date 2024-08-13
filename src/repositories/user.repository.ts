@@ -1,3 +1,4 @@
+import GroupModel from "@src/schema/group.schema";
 import UserModel, { IUser } from "@src/schema/user.schema";
 import { FriendDetailType } from "@src/types/user.types";
 
@@ -98,6 +99,11 @@ class UserRepository {
       },
     ]);
     return groups;
+  }
+
+  public async leaveGroup(userId: string, groupId: string) {
+    await UserModel.findByIdAndUpdate(userId, { $pull: { groups: groupId } });
+    await GroupModel.findByIdAndUpdate(groupId, { $pull: { members: userId } });
   }
 
   //find a user by options and projection

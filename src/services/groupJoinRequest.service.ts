@@ -20,9 +20,11 @@ class GroupJoinRequestService {
     }
 
     const group = await groupRepository.getGroupById(groupId);
-
     if (!group) {
       throw new NotFoundError("group");
+    }
+    if (senderId === group.admin.toHexString()) {
+      throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }
 
     if (group.members.some((member) => member.toString() === senderId)) {

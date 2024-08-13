@@ -20,7 +20,7 @@ export const createGroupValidator = (
   validateNotNull({ name, description, visibilityLevel });
   if (
     visibilityLevel !== GroupVisibilityLevel.PUBLIC &&
-    visibilityLevel !== GroupVisibilityLevel.PRIVATE
+    visibilityLevel !== GroupVisibilityLevel.FRIENDS
   ) {
     throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
   }

@@ -8,6 +8,7 @@ import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
+import groupService from "@src/services/group.service";
 
 class UserService {
   public async getUser(_id: string) {
@@ -115,6 +116,28 @@ class UserService {
     return await groupJoinRequestService.getMyPendingReceivedGroupJoinRequests(
       userId
     );
+  }
+
+  public async leaveGroup(userId: string, groupId: string) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundError("user");
+    }
+
+    const group = await groupService.getGroupById(groupId);
+    if (!group) {
+      throw new NotFoundError("group");
+    }
+
+    if (!user.groups?.some((group) => group.toString() === groupId)) {
+      throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
+    }
+
+    if (group.admin.toHexString() === userId) {
+      throw new ApiError(ApiErrorCodes.CANNOT_REMOVE_GROUP_ADMIN);
+    }
+
+    await userRepository.leaveGroup(userId, groupId);
   }
 }
 

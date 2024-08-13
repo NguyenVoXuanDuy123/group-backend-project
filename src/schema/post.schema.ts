@@ -8,7 +8,8 @@ interface IEditHistory {
 
 export enum PostVisibilityLevel {
   PUBLIC = "public",
-  PRIVATE = "private",
+  FRIENDS = "friends",
+  GROUP = "group",
 }
 
 export interface IPost {

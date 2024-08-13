@@ -86,7 +86,7 @@ class ApiErrorCodes {
 
   public static readonly INVALID_GROUP_VISIBILITY_LEVEL = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Group visibility level must be either 'public' or 'private'."
+    "Group visibility level must be either 'public' or 'friends'."
   );
 
   public static readonly GROUP_REQUEST_ALREADY_SENT = new ApiErrorCodes(
@@ -117,6 +117,22 @@ class ApiErrorCodes {
   public static readonly USER_NOT_IN_GROUP = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "User is not a member of this group."
+  );
+
+  public static readonly GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST =
+    new ApiErrorCodes(
+      HttpStatusCodes.BAD_REQUEST,
+      "The group admin cannot send a group request."
+    );
+
+  public static readonly INVALID_POST_VISIBILITY_LEVEL = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Post visibility level must be either 'public' or 'friends'."
+  );
+
+  public static readonly VISIBILITY_LEVEL_MUST_BE_GROUP = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Visibility level must be 'group' when creating a post in a group."
   );
 
   private constructor(

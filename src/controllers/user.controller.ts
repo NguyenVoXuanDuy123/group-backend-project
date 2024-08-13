@@ -146,6 +146,16 @@ class UserController {
       ),
     });
   };
+
+  public leaveGroup = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+    const { groupId } = req.params;
+    await userService.leaveGroup(_id, groupId);
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Leave group successful",
+    });
+  };
 }
 
 export default new UserController();

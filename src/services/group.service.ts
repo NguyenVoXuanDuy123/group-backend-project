@@ -84,15 +84,17 @@ class GroupService {
       throw new NotFoundError("group");
     }
 
+    // check if the sender is the admin of the group
     if (senderId !== group.admin.toHexString()) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
+    // check if the member is the admin of the group
     if (memberId === group.admin.toHexString()) {
       throw new ApiError(ApiErrorCodes.CANNOT_REMOVE_GROUP_ADMIN);
     }
 
-    console.log(group.members, memberId);
+    // check if the member is in the group
     if (!group.members.some((id) => id.toString() === memberId)) {
       throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
     }

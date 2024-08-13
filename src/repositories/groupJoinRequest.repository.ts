@@ -1,3 +1,4 @@
+import GroupModel from "@src/schema/group.schema";
 import GroupJoinRequestModel, {
   GroupJoinRequestStatus,
 } from "@src/schema/groupJoinRequest.schema";
@@ -29,33 +30,50 @@ class GroupJoinRequestRepository {
     );
   }
 
-  async getMyPendingReceivedGroupJoinRequests(groupId: string) {
-    return await GroupJoinRequestModel.aggregate([
+  async getMyPendingReceivedGroupJoinRequests(userId: string) {
+    return await GroupModel.aggregate([
       {
         $match: {
-          group_id: new Types.ObjectId(groupId),
-          status: GroupJoinRequestStatus.PENDING,
+          admin: new Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "group_join_requests",
+          localField: "_id",
+          foreignField: "group_id",
+          as: "groupJoinRequests",
+        },
+      },
+      {
+        $unwind: "$groupJoinRequests",
+      },
+      {
+        $match: {
+          "groupJoinRequests.status": GroupJoinRequestStatus.PENDING,
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "user_id",
+          localField: "groupJoinRequests.user_id",
           foreignField: "_id",
-          as: "user",
+          as: "userDetails",
         },
       },
-      { $unwind: "$user" },
+      {
+        $unwind: "$userDetails",
+      },
       {
         $project: {
-          _id: 1,
-          status: 1,
-          user: {
-            _id: 1,
-            first_name: 1,
-            last_name: 1,
-            avatar: 1,
-            username: 1,
+          _id: "$groupJoinRequests._id",
+          status: "$groupJoinRequests.status",
+          userDetails: {
+            _id: "$userDetails._id",
+            first_name: "$userDetails.first_name",
+            last_name: "$userDetails.last_name",
+            avatar: "$userDetails.avatar",
+            username: "$userDetails.username",
           },
         },
       },
