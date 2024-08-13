@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 type CamelCaseObject = {
   [key: string]: unknown;
 };
@@ -38,14 +40,36 @@ export const camelCaseifyWithDateConversion = (
   const result: CamelCaseObject = {};
 
   for (const key in obj) {
+    // if the key is created_at or updated_at, convert the date to ISO string
     if (key === "created_at" || key === "updated_at") {
       result[key] = (obj[key] as Date).toISOString();
       continue;
     }
+
+    // if the key is _id, convert it to id
     if (key === "_id") {
       result["id"] = obj[key];
       continue;
     }
+
+    // if the key is an ObjectId just convert it to camelCase and add it to the result
+    if (obj[key] instanceof Types.ObjectId) {
+      result[snakeToCamel(key)] = obj[key];
+      console.log(result[key]);
+      continue;
+    }
+
+    // if the key is an array, convert it to camelCase and add it to the result
+    if (Array.isArray(obj[key])) {
+      result[snakeToCamel(key)] = obj[key].map((item) => {
+        if (item instanceof Types.ObjectId) return item;
+        if (typeof item !== "object") return item;
+        return camelCaseifyWithDateConversion(item);
+      });
+      continue;
+    }
+
+    // if the key is an object, convert it to camelCase and convert its children to camelCase by recursion
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const newKey = snakeToCamel(key);
       result[newKey] = camelCaseifyWithDateConversion(

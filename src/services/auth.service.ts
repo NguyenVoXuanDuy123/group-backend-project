@@ -6,13 +6,13 @@ import { Request } from "express";
 import bcrypt from "bcrypt";
 import { LoginRequestType, RegisterRequestType } from "@src/types/auth.types";
 import AlreadyExistError from "@src/error/AlreadyExistError";
-import { IUser } from "@src/models/user.schema";
+import { IUser } from "@src/schema/user.schema";
 
 class AuthService {
   private readonly saltRounds = 9;
   public async createUser(registerRequest: RegisterRequestType) {
     if (
-      await userRepository.checkUserExistsByusername(registerRequest.username)
+      await userRepository.checkUserExistsByUsername(registerRequest.username)
     ) {
       throw new AlreadyExistError("username");
     }
@@ -27,7 +27,7 @@ class AuthService {
   }
 
   public async login(loginRequest: LoginRequestType) {
-    const user = await userRepository.findByusername(loginRequest.username);
+    const user = await userRepository.findByUsername(loginRequest.username);
     if (!user) {
       throw new ApiError(ApiErrorCodes.INVALID_CREDENTIALS);
     }

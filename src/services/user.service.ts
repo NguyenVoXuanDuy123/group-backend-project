@@ -2,7 +2,7 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotFoundError from "@src/error/NotFoundError";
 import { removeNullValues } from "@src/helpers/removeNullValue";
-import { FriendRequestStatus } from "@src/models/friendRequest.schema";
+import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import userRepository from "@src/repositories/user.repository";
 import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
@@ -17,7 +17,7 @@ class UserService {
       updated_at: 0,
     });
     if (!user) {
-      throw new ApiError(ApiErrorCodes.USER_NOT_AUTHENTICATED);
+      throw new NotFoundError("user");
     }
     const { friends, groups, ...rest } = user;
     return {
@@ -27,14 +27,14 @@ class UserService {
     };
   }
 
-  public async updateUser(_id: string, data: UpdateMeRequestType) {
+  public async updateUser(_id: string, updateMeRequest: UpdateMeRequestType) {
     await userRepository.updateUserById(
       _id,
       removeNullValues({
-        first_name: data.firstName,
-        last_name: data.lastName,
-        avatar: data.avatar,
-        bio: data.bio,
+        first_name: updateMeRequest.firstName,
+        last_name: updateMeRequest.lastName,
+        avatar: updateMeRequest.avatar,
+        bio: updateMeRequest.bio,
       })
     );
     return await this.getUser(_id);
@@ -85,7 +85,19 @@ class UserService {
   }
 
   public async getFriends(userId: string) {
+    if (!(await userRepository.checkUserExistsById(userId))) {
+      throw new NotFoundError("user");
+    }
     return await userRepository.getFriends(userId);
+  }
+
+  public async getMyPendingReceivedFriendRequests(userId: string) {
+    if (!(await userRepository.checkUserExistsById(userId))) {
+      throw new NotFoundError("user");
+    }
+    return await friendRequestService.getMyPendingReceivedFriendRequests(
+      userId
+    );
   }
 }
 

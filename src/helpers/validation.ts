@@ -11,7 +11,7 @@ import IsNotNumberError from "@src/error/IsNotNumberError";
 //   return username;
 // };
 
-type InputLengthValidation = {
+type InputLengthValidator = {
   [key: string]: {
     value: string;
     minLength?: number;
@@ -24,7 +24,7 @@ type InputLengthValidation = {
  * @throws LengthError
  */
 
-export const validateLength = (input: InputLengthValidation): void => {
+export const validateLength = (input: InputLengthValidator): void => {
   for (const fieldName in input) {
     const { value, minLength, maxLength } = input[fieldName];
     if (minLength !== undefined && value.length < minLength) {
@@ -35,7 +35,7 @@ export const validateLength = (input: InputLengthValidation): void => {
   }
 };
 
-type InputNotNullValidation = {
+type InputNotNullValidator = {
   [key: string]: unknown;
 };
 
@@ -45,15 +45,19 @@ type InputNotNullValidation = {
  * @throws NotNullError
  */
 
-export const validateNotNull = (input: InputNotNullValidation): void => {
+export const validateNotNull = (input: InputNotNullValidator): void => {
+  const nullFields = [];
   for (const fieldName in input) {
     if (input[fieldName] === null || input[fieldName] === undefined) {
-      throw new NotNullError(fieldName);
+      nullFields.push(fieldName);
     }
+  }
+  if (nullFields.length > 0) {
+    throw new NotNullError(nullFields.join(", "));
   }
 };
 
-type InputNotEmptyValidation = {
+type InputNotEmptyValidator = {
   [key: string]: string;
 };
 
@@ -63,15 +67,19 @@ type InputNotEmptyValidation = {
  * @throws NotEmptyError
  */
 
-export const validateNotEmpty = (input: InputNotEmptyValidation): void => {
+export const validateNotEmpty = (input: InputNotEmptyValidator): void => {
+  const emptyFields = [];
   for (const fieldName in input) {
     if (input[fieldName].trim() === "") {
-      throw new NotEmptyError(fieldName);
+      emptyFields.push(fieldName);
     }
+  }
+  if (emptyFields.length > 0) {
+    throw new NotEmptyError(emptyFields.join(", "));
   }
 };
 
-type InputIsNumberValidation = {
+type InputIsNumberValidator = {
   [key: string]: unknown;
 };
 
@@ -81,7 +89,8 @@ type InputIsNumberValidation = {
  * @throws IsNotNumberError
  */
 
-export const validateIsNumber = (input: InputIsNumberValidation): void => {
+export const validateIsNumber = (input: InputIsNumberValidator): void => {
+  const notNumberFields = [];
   for (const fieldName in input) {
     if (isNaN(Number(input[fieldName]))) {
       throw new IsNotNumberError(fieldName);

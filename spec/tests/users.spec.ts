@@ -6,8 +6,8 @@ import insertUrlParams from "inserturlparams";
 import app from "@src/server";
 
 import UserRepo from "@src/repositories/UserRepo";
-import User, { IUser } from "@src/models/user.schema";
-import HttpStatusCodes from "@src/common/HttpStatusCodes";
+import User, { IUser } from "@src/schema/user.schema";
+import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import { USER_NOT_FOUND_ERR } from "@src/services/UserService";
 
 import Paths from "spec/support/Paths";

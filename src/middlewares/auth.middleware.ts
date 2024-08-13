@@ -12,7 +12,7 @@ import { LoginRequestType, RegisterRequestType } from "@src/types/auth.types";
 
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
-export const registerValidation: RequestHandler = (
+export const registerValidator: RequestHandler = (
   req: APIRequest<RegisterRequestType>,
   _: Response,
   next: NextFunction
@@ -46,7 +46,7 @@ export const registerValidation: RequestHandler = (
   next();
 };
 
-export const loginValidation: RequestHandler = (
+export const loginValidator: RequestHandler = (
   req: APIRequest<LoginRequestType>,
   _: Response,
   next: NextFunction

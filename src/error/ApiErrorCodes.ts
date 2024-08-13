@@ -1,4 +1,4 @@
-import HttpStatusCodes from "@src/common/HttpStatusCodes";
+import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 
 /**
  * Represents an API error code.
@@ -50,7 +50,7 @@ class ApiErrorCodes {
 
   public static readonly CANNOT_SEND_FRIEND_REQUEST_TO_SELF = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "You cannot send a friend request to yourself."
+    "cannot send a friend request to self."
   );
 
   public static readonly FRIEND_REQUEST_ALREADY_SENT = new ApiErrorCodes(
@@ -76,7 +76,7 @@ class ApiErrorCodes {
   public static readonly CANNOT_SEND_FRIEND_REQUEST_TO_SENDER =
     new ApiErrorCodes(
       HttpStatusCodes.BAD_REQUEST,
-      "You cannot send a friend request to the user who have already sent you a friend request."
+      "cannot send a friend request to the user who have already sent you a friend request."
     );
 
   public static readonly BOTH_USER_ALREADY_FRIENDS = new ApiErrorCodes(
@@ -84,6 +84,25 @@ class ApiErrorCodes {
     "Can not send the friend request because both users are already friends of each other."
   );
 
+  public static readonly INVALID_GROUP_VISIBILITY_LEVEL = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Group visibility level must be either 'public' or 'private'."
+  );
+
+  public static readonly GROUP_REQUEST_ALREADY_SENT = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "A group request has already been sent to this user."
+  );
+
+  public static readonly ALREADY_GROUP_MEMBER = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "This member are already a member of this group."
+  );
+
+  public static readonly CANNOT_CHANGE_GROUP_REQUEST_STATUS = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Once a group request is accepted, rejected, or cancelled, its status cannot be changed."
+  );
   private constructor(
     public readonly httpStatusCode: HttpStatusCodes,
     public readonly message: string

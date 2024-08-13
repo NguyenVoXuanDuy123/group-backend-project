@@ -1,4 +1,4 @@
-import UserModel, { IUser } from "@src/models/user.schema";
+import UserModel, { IUser } from "@src/schema/user.schema";
 import { FriendDetailType } from "@src/types/user.types";
 
 import { FilterQuery, ProjectionType, Types } from "mongoose";
@@ -15,12 +15,12 @@ class UserRepository {
   }
 
   //check if a user exists by their username
-  public async checkUserExistsByusername(username: string) {
-    return !!(await this.findByusername(username));
+  public async checkUserExistsByUsername(username: string) {
+    return !!(await this.findByUsername(username));
   }
 
   //find a user by their username
-  public async findByusername(username: string, projection = {}) {
+  public async findByUsername(username: string, projection = {}) {
     return await this.findUser({ username }, projection);
   }
 
@@ -49,7 +49,6 @@ class UserRepository {
     const friendDetails = await UserModel.aggregate<FriendDetailType>([
       { $match: { _id: new Types.ObjectId(_id) } },
       { $unwind: "$friends" },
-
       {
         $lookup: {
           from: "users",

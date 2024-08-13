@@ -1,4 +1,4 @@
-import HttpStatusCodes from "@src/common/HttpStatusCodes";
+import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import authService from "@src/services/auth.service";
 import { APIResponse } from "@src/types/api.types";
 import { RegisterRequestType } from "@src/types/auth.types";

@@ -1,7 +1,7 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotFoundError from "@src/error/NotFoundError";
-import { FriendRequestStatus } from "@src/models/friendRequest.schema";
+import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
 import userRepository from "@src/repositories/user.repository";
 import userService from "@src/services/user.service";
@@ -52,7 +52,7 @@ class FriendRequestService {
 
     //check if the user is the sender of the friend request and they are not trying to cancel the request
     if (
-      userId === friendRequest.senderId.toHexString() &&
+      userId === friendRequest.sender_id.toHexString() &&
       status !== FriendRequestStatus.CANCELLED
     ) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
@@ -60,7 +60,7 @@ class FriendRequestService {
 
     //check if the user is the receiver of the friend request and they are not trying to accept or reject the request
     if (
-      userId === friendRequest.receiverId.toHexString() &&
+      userId === friendRequest.receiver_id.toHexString() &&
       status !== FriendRequestStatus.ACCEPTED &&
       status !== FriendRequestStatus.REJECTED
     ) {
@@ -77,13 +77,20 @@ class FriendRequestService {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_FRIEND_REQUEST_STATUS);
     }
 
+    //If the status is accepted, add the sender to the receiver's friend list and vice versa
     if (status === FriendRequestStatus.ACCEPTED) {
-      const senderId = friendRequest.senderId.toHexString();
+      const senderId = friendRequest.sender_id.toHexString();
 
       userService.addFriend(userId, senderId);
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
+  }
+
+  public async getMyPendingReceivedFriendRequests(userId: string) {
+    return await friendRequestRepository.getMyPendingReceivedFriendRequests(
+      userId
+    );
   }
 }
 

@@ -1,14 +1,15 @@
 import FriendRequestModel, {
   FriendRequestStatus,
-} from "@src/models/friendRequest.schema";
+} from "@src/schema/friendRequest.schema";
+import { Types } from "mongoose";
 
 class FriendRequestRepository {
   public async getFriendRequestById(requestId: string) {
     return await FriendRequestModel.findById(requestId).lean();
   }
 
-  public async createFriendRequest(senderId: string, receiverId: string) {
-    await FriendRequestModel.create({ senderId, receiverId });
+  public async createFriendRequest(sender_id: string, receiver_id: string) {
+    await FriendRequestModel.create({ sender_id, receiver_id });
   }
 
   public async changeStatusFriendRequest(
@@ -18,12 +19,50 @@ class FriendRequestRepository {
     await FriendRequestModel.updateOne({ _id: requestId }, { status: status });
   }
 
-  public async checkFriendRequestExists(senderId: string, receiverId: string) {
+  public async checkFriendRequestExists(
+    sender_id: string,
+    receiver_id: string
+  ) {
     return !!(await FriendRequestModel.findOne({
-      senderId,
-      receiverId,
+      sender_id,
+      receiver_id,
       status: FriendRequestStatus.PENDING,
     }).lean());
+  }
+
+  public async getMyPendingReceivedFriendRequests(receiverId: string) {
+    return await FriendRequestModel.aggregate([
+      {
+        $match: {
+          receiver_id: new Types.ObjectId(receiverId),
+          status: FriendRequestStatus.PENDING,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender_id",
+          foreignField: "_id",
+          as: "senderDetails",
+        },
+      },
+      {
+        $unwind: "$senderDetails",
+      },
+      {
+        $project: {
+          _id: "$_id",
+          status: "$status",
+          senderDetails: {
+            _id: "$senderDetails._id",
+            first_name: "$senderDetails.first_name",
+            last_name: "$senderDetails.last_name",
+            avatar: "$senderDetails.avatar",
+            username: "$senderDetails.username",
+          },
+        },
+      },
+    ]);
   }
 }
 

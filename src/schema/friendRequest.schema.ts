@@ -2,8 +2,8 @@ import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Request interface
 interface IFriendRequest {
-  senderId: Types.ObjectId;
-  receiverId: Types.ObjectId;
+  sender_id: Types.ObjectId;
+  receiver_id: Types.ObjectId;
   status?: FriendRequestStatus;
   created_at?: Date;
   updated_at?: Date;
@@ -20,8 +20,8 @@ export enum FriendRequestStatus {
 // Define the Request Schema
 const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
   {
-    senderId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-    receiverId: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    sender_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    receiver_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     status: {
       type: String,
       enum: Object.values(FriendRequestStatus),

@@ -8,14 +8,22 @@ import {
 } from "@src/types/user.types";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
-import HttpStatusCodes from "@src/common/HttpStatusCodes";
-import { ParamsDictionary } from "express-serve-static-core";
+import HttpStatusCodes from "@src/constant/HttpStatusCodes";
+
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
     const user = await userService.getUser(_id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get me successful",
+      result: camelCaseifyWithDateConversion(user),
+    });
+  };
+
+  public getUser = async (req: APIRequest, res: APIResponse) => {
+    const user = await userService.getUser(req.params.userId);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get user successful",
       result: camelCaseifyWithDateConversion(user),
     });
   };
@@ -45,7 +53,7 @@ class UserController {
   };
 
   public changeFriendRequestStatus = async (
-    req: APIRequest<ChangeFriendRequestStatusType, ParamsDictionary>,
+    req: APIRequest<ChangeFriendRequestStatusType>,
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
@@ -60,10 +68,7 @@ class UserController {
     });
   };
 
-  public removeFriend = async (
-    req: APIRequest<Record<string, never>, ParamsDictionary>,
-    res: APIResponse
-  ) => {
+  public removeFriend = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
 
     await userService.removeFriend(_id, req.params.friendId);
@@ -73,13 +78,38 @@ class UserController {
     });
   };
 
-  public getFriends = async (req: Request, res: APIResponse) => {
+  public getMyFriends = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
     const friends = await userService.getFriends(_id);
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successful",
       result: friends.map((friend) => camelCaseifyWithDateConversion(friend)),
+    });
+  };
+
+  public getFriends = async (req: APIRequest, res: APIResponse) => {
+    const friends = await userService.getFriends(req.params.userId);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get friends successful",
+      result: friends.map((friend) => camelCaseifyWithDateConversion(friend)),
+    });
+  };
+
+  public getMyPendingReceivedFriendRequests = async (
+    req: Request,
+    res: APIResponse
+  ) => {
+    const { _id } = req.user as UserSessionType;
+    const friendRequests = await userService.getMyPendingReceivedFriendRequests(
+      _id
+    );
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get friend requests successful",
+      result: friendRequests.map((friendRequest) =>
+        camelCaseifyWithDateConversion(friendRequest)
+      ),
     });
   };
 }

@@ -11,28 +11,29 @@ import "express-async-errors";
 
 import BaseRouter from "@src/routes/index.routes";
 
-import HttpStatusCodes from "@src/common/HttpStatusCodes";
-import databaseService from "@src/services/database.service";
+import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import RouteError from "@src/error/RouteError";
 import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import EnvVars from "@src/common/EnvVars";
+import EnvVars from "@src/constant/EnvVars";
 import connectMongoDBSession from "connect-mongodb-session";
 import "./configs/passport.config"; // import to run passport config
+import { UPLOAD_DIR } from "@src/constant/dir";
+import databaseConfig from "@src/configs/database.config";
 // **** Variables **** //
 
 const app = express();
 
 // **** Setup **** //
 
-databaseService.connectDB();
+databaseConfig.connectDB();
 
 // Basic middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static(UPLOAD_DIR));
 // Show routes called in console during development
 
 app.use(morgan("dev"));

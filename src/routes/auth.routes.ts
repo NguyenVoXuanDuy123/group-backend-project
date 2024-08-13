@@ -1,23 +1,23 @@
 import { RequestHandler, Router } from "express";
-import { wrapRequestHandler } from "@src/util/handlers";
+import { wrapRequestHandler } from "@src/helpers/handlers";
 
 import passport from "passport";
 import {
-  loginValidation,
-  registerValidation,
+  loginValidator,
+  registerValidator,
 } from "@src/middlewares/auth.middleware";
 import authController from "@src/controllers/auth.controller";
 const authRouter = Router();
 
 authRouter.post(
   "/register",
-  wrapRequestHandler(registerValidation),
+  wrapRequestHandler(registerValidator),
   wrapRequestHandler(authController.register)
 );
 
 authRouter.post(
   "/login",
-  wrapRequestHandler(loginValidation),
+  wrapRequestHandler(loginValidator),
   passport.authenticate("local") as RequestHandler,
   wrapRequestHandler(authController.login)
 );

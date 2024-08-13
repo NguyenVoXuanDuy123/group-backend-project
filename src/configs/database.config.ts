@@ -1,9 +1,8 @@
 import { MongoClient, Db } from "mongodb";
-import EnvVars from "@src/common/EnvVars";
+import EnvVars from "@src/constant/EnvVars";
 import mongoose from "mongoose";
 
-//change this to config later
-class DatabaseService {
+class DatabaseConfig {
   private client: MongoClient;
   private db: Db;
 
@@ -32,4 +31,4 @@ class DatabaseService {
   }
 }
 
-export default new DatabaseService();
+export default new DatabaseConfig();

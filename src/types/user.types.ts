@@ -1,4 +1,4 @@
-import { FriendRequestStatus } from "@src/models/friendRequest.schema";
+import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 
 export type UserSessionType = {
   _id: string;

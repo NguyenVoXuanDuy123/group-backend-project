@@ -33,7 +33,7 @@ Directories
 | tests                                                                                             |          1 |          6 |          1 |          1 |          8 |
 | types                                                                                             |          3 |         46 |          0 |         12 |         58 |
 | util                                                                                              |          2 |         20 |          9 |          6 |         35 |
-| validations                                                                                       |          1 |          0 |          0 |          1 |          1 |
+| Validators                                                                                       |          1 |          0 |          0 |          1 |          1 |
 +---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
 
 Files
@@ -58,7 +58,7 @@ Files
 | c:\Serious Project\chc\chc-backend\identity-service\src\helpers\camelCaseifyWithDateConversion.ts | TypeScript |         39 |         12 |          7 |         58 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\helpers\removeNullValue.ts                | TypeScript |         16 |          9 |          6 |         31 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\helpers\sanitation.ts                     | TypeScript |          0 |          1 |          1 |          2 |
-| c:\Serious Project\chc\chc-backend\identity-service\src\helpers\validation.ts                     | TypeScript |         59 |         43 |         18 |        120 |
+| c:\Serious Project\chc\chc-backend\identity-service\src\helpers\Validator.ts                     | TypeScript |         59 |         43 |         18 |        120 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\index.ts                                  | TypeScript |          6 |          2 |          3 |         11 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\middlewares\auth.middleware.ts            | TypeScript |         48 |          1 |          9 |         58 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\middlewares\user.middleware.ts            | TypeScript |         56 |          1 |          5 |         62 |
@@ -90,6 +90,6 @@ Files
 | c:\Serious Project\chc\chc-backend\identity-service\src\types\user.types.ts                       | TypeScript |         24 |          0 |          6 |         30 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\util\handlers.ts                          | TypeScript |         10 |          0 |          2 |         12 |
 | c:\Serious Project\chc\chc-backend\identity-service\src\util\misc.ts                              | TypeScript |         10 |          9 |          4 |         23 |
-| c:\Serious Project\chc\chc-backend\identity-service\src\validations\util.validation.ts            | TypeScript |          0 |          0 |          1 |          1 |
+| c:\Serious Project\chc\chc-backend\identity-service\src\Validators\util.Validator.ts            | TypeScript |          0 |          0 |          1 |          1 |
 | Total                                                                                             |            |      1,510 |        434 |        382 |      2,326 |
 +---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

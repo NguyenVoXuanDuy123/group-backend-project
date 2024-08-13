@@ -2,7 +2,7 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
-import { FriendRequestStatus } from "@src/models/friendRequest.schema";
+import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import { APIRequest } from "@src/types/api.types";
 import {
   ChangeFriendRequestStatusType,
@@ -11,9 +11,8 @@ import {
   UserSessionType,
 } from "@src/types/user.types";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { ParamsDictionary } from "express-serve-static-core";
 
-export const getMeValidation: RequestHandler = (
+export const getMeValidator: RequestHandler = (
   req: Request,
   _: Response,
   next: NextFunction
@@ -21,7 +20,7 @@ export const getMeValidation: RequestHandler = (
   next();
 };
 
-export const sendFriendRequestValidation: RequestHandler = (
+export const sendFriendRequestValidator: RequestHandler = (
   req: APIRequest<SendFriendRequestType>,
   _: Response,
   next: NextFunction
@@ -32,8 +31,8 @@ export const sendFriendRequestValidation: RequestHandler = (
   next();
 };
 
-export const removeFriendRequestValidation: RequestHandler = (
-  req: APIRequest<Record<string, never>, ParamsDictionary>,
+export const removeFriendRequestValidator: RequestHandler = (
+  req: APIRequest<Record<string, never>>,
   _: Response,
   next: NextFunction
 ) => {
@@ -42,8 +41,8 @@ export const removeFriendRequestValidation: RequestHandler = (
   next();
 };
 
-export const changeFriendRequestStatusValidation: RequestHandler = (
-  req: APIRequest<ChangeFriendRequestStatusType, ParamsDictionary>,
+export const changeFriendRequestStatusValidator: RequestHandler = (
+  req: APIRequest<ChangeFriendRequestStatusType>,
   _: Response,
   next: NextFunction
 ) => {
