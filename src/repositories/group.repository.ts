@@ -1,4 +1,6 @@
 import GroupModel, { IGroup } from "@src/schema/group.schema";
+import UserModel from "@src/schema/user.schema";
+import { Types } from "mongoose";
 
 class GroupRepository {
   async createGroup(group: IGroup) {
@@ -13,9 +15,19 @@ class GroupRepository {
     return await GroupModel.findById(_id, { __v: 0 }).lean();
   }
 
+  async addMemberToGroup(groupId: string, userId: string) {
+    await GroupModel.findByIdAndUpdate(groupId, { $push: { members: userId } });
+    await UserModel.findByIdAndUpdate(userId, { $push: { groups: groupId } });
+  }
+
+  async removeMemberFromGroup(groupId: string, userId: string) {
+    await GroupModel.findByIdAndUpdate(groupId, { $pull: { members: userId } });
+    await UserModel.findByIdAndUpdate(userId, { $pull: { groups: groupId } });
+  }
+
   async getGroupMembers(_id: string) {
     return await GroupModel.aggregate([
-      { $match: { _id: _id } },
+      { $match: { _id: new Types.ObjectId(_id) } },
       { $unwind: "$members" },
       {
         $lookup: {

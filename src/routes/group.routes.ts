@@ -1,6 +1,13 @@
 import groupController from "@src/controllers/group.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
-import { createGroupValidator } from "@src/middlewares/group.middleware";
+import {
+  createGroupValidator,
+  sendGroupJoinRequestValidator,
+} from "@src/middlewares/group.middleware";
+import {
+  changeFriendRequestStatusValidator,
+  removeGroupMemberValidator,
+} from "@src/middlewares/user.middleware";
 import { AuthenticationValidator } from "@src/middlewares/util.middleware";
 import { Router } from "express";
 
@@ -10,25 +17,45 @@ groupRouter.post(
   "/",
   wrapRequestHandler(createGroupValidator),
   wrapRequestHandler(AuthenticationValidator),
-  groupController.createGroup
+  wrapRequestHandler(groupController.createGroup)
 );
 
 groupRouter.patch(
   "/:groupId",
   wrapRequestHandler(AuthenticationValidator),
-  groupController.updateGroup
+  wrapRequestHandler(groupController.updateGroup)
 );
 
 groupRouter.get(
   "/:groupId",
   wrapRequestHandler(AuthenticationValidator),
-  groupController.getGroupById
+  wrapRequestHandler(groupController.getGroupById)
+);
+
+groupRouter.get(
+  "/:groupId/members",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(groupController.getGroupMembers)
 );
 
 groupRouter.post(
   "/requests",
   wrapRequestHandler(AuthenticationValidator),
-  groupController.sendGroupRequest
+  wrapRequestHandler(sendGroupJoinRequestValidator),
+  wrapRequestHandler(groupController.sendGroupRequest)
+);
+
+groupRouter.patch(
+  "/requests/:requestId",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(changeFriendRequestStatusValidator),
+  wrapRequestHandler(groupController.changeGroupRequestStatus)
+);
+
+groupRouter.delete(
+  "/:groupId/members/:memberId",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(groupController.removeMemberFromGroup)
 );
 
 export default groupRouter;

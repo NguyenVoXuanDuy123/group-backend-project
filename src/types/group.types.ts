@@ -1,4 +1,5 @@
 import { GroupVisibilityLevel } from "@src/schema/group.schema";
+import { GroupJoinRequestStatus } from "@src/schema/groupJoinRequest.schema";
 
 export type CreateGroupRequestType = {
   name: string;
@@ -14,4 +15,12 @@ export type UpdateGroupRequestType = {
 
 export type GroupMemberRequestType = {
   groupId: string;
+};
+
+export type ChangeGroupJoinRequestStatusRequestType = {
+  status: GroupJoinRequestStatus;
+};
+
+export type RemoveGroupMemberRequestType = {
+  memberId: string;
 };

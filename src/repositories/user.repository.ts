@@ -74,6 +74,32 @@ class UserRepository {
     return friendDetails;
   }
 
+  public async getGroups(_id: string) {
+    const groups = await UserModel.aggregate([
+      { $match: { _id: new Types.ObjectId(_id) } },
+      { $unwind: "$groups" },
+      {
+        $lookup: {
+          from: "groups",
+          localField: "groups",
+          foreignField: "_id",
+          as: "groupDetails",
+        },
+      },
+      { $unwind: "$groupDetails" },
+      {
+        $project: {
+          _id: 0,
+          "groupDetails._id": 1,
+          "groupDetails.name": 1,
+          "groupDetails.description": 1,
+          "groupDetails.avatar": 1,
+        },
+      },
+    ]);
+    return groups;
+  }
+
   //find a user by options and projection
   private async findUser(
     query: FilterQuery<IUser>,

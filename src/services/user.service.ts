@@ -6,6 +6,8 @@ import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import userRepository from "@src/repositories/user.repository";
 import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
+import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
+import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 
 class UserService {
   public async getUser(_id: string) {
@@ -84,7 +86,7 @@ class UserService {
     await userRepository.removeFriend(userId, friendId);
   }
 
-  public async getFriends(userId: string) {
+  public async getFriendsByUserId(userId: string) {
     if (!(await userRepository.checkUserExistsById(userId))) {
       throw new NotFoundError("user");
     }
@@ -96,6 +98,21 @@ class UserService {
       throw new NotFoundError("user");
     }
     return await friendRequestService.getMyPendingReceivedFriendRequests(
+      userId
+    );
+  }
+  public async getGroupsByUserId(userId: string) {
+    if (!(await userRepository.checkUserExistsById(userId))) {
+      throw new NotFoundError("user");
+    }
+    return await userRepository.getGroups(userId);
+  }
+
+  public async getMyPendingReceivedGroupJoinRequests(userId: string) {
+    if (!(await userRepository.checkUserExistsById(userId))) {
+      throw new NotFoundError("user");
+    }
+    return await groupJoinRequestService.getMyPendingReceivedGroupJoinRequests(
       userId
     );
   }

@@ -91,7 +91,7 @@ class ApiErrorCodes {
 
   public static readonly GROUP_REQUEST_ALREADY_SENT = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "A group request has already been sent to this user."
+    "The user has already sent a group request to this group."
   );
 
   public static readonly ALREADY_GROUP_MEMBER = new ApiErrorCodes(
@@ -103,6 +103,22 @@ class ApiErrorCodes {
     HttpStatusCodes.BAD_REQUEST,
     "Once a group request is accepted, rejected, or cancelled, its status cannot be changed."
   );
+
+  public static readonly INVALID_GROUP_JOIN_REQUEST_STATUS = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Group join request status must be either 'accepted', 'rejected', or 'cancelled'."
+  );
+
+  public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Cannot remove the admin of the group."
+  );
+
+  public static readonly USER_NOT_IN_GROUP = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "User is not a member of this group."
+  );
+
   private constructor(
     public readonly httpStatusCode: HttpStatusCodes,
     public readonly message: string

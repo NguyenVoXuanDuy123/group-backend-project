@@ -4,10 +4,10 @@ export enum GroupJoinRequestStatus {
   PENDING = "pending",
   ACCEPTED = "accepted",
   REJECTED = "rejected",
+  CANCELED = "cancelled",
 }
 // Define the GroupJoinRequest interface
 interface IGroupJoinRequest {
-  id: Types.ObjectId;
   user_id: Types.ObjectId;
   group_id: Types.ObjectId;
   status: string;
@@ -18,7 +18,6 @@ interface IGroupJoinRequest {
 // Define the GroupJoinRequest Schema
 const GroupJoinRequestSchema: Schema<IGroupJoinRequest> = new Schema(
   {
-    id: { type: Schema.Types.ObjectId, auto: true },
     user_id: { type: Schema.Types.ObjectId, ref: "users" },
     group_id: { type: Schema.Types.ObjectId, ref: "groups" },
     status: {

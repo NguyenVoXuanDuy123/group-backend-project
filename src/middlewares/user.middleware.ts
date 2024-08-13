@@ -4,6 +4,7 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
 import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import { APIRequest } from "@src/types/api.types";
+import { RemoveGroupMemberRequestType } from "@src/types/group.types";
 import {
   ChangeFriendRequestStatusType,
   SendFriendRequestType,
@@ -38,6 +39,7 @@ export const removeFriendRequestValidator: RequestHandler = (
 ) => {
   const { friendId } = req.params;
   validateNotNull({ friendId });
+  validateNotEmpty({ friendId });
   next();
 };
 
@@ -56,5 +58,16 @@ export const changeFriendRequestStatusValidator: RequestHandler = (
   ) {
     throw new ApiError(ApiErrorCodes.INVALID_FRIEND_REQUEST_STATUS);
   }
+  next();
+};
+
+export const removeGroupMemberValidator: RequestHandler = (
+  req: APIRequest<RemoveGroupMemberRequestType>,
+  _: Response,
+  next: NextFunction
+) => {
+  const { memberId } = req.body;
+  validateNotNull({ memberId });
+  validateNotEmpty({ memberId });
   next();
 };

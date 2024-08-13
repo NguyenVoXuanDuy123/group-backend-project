@@ -5,6 +5,7 @@ import { AuthenticationValidator } from "@src/middlewares/util.middleware";
 import {
   changeFriendRequestStatusValidator,
   removeFriendRequestValidator,
+  sendFriendRequestValidator,
 } from "@src/middlewares/user.middleware";
 
 const userRouter = Router();
@@ -55,6 +56,7 @@ userRouter.delete(
 userRouter.post(
   "/me/friends/requests",
   wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(sendFriendRequestValidator),
   wrapRequestHandler(userController.sendFriendRequest)
 );
 
@@ -63,6 +65,24 @@ userRouter.patch(
   wrapRequestHandler(AuthenticationValidator),
   wrapRequestHandler(changeFriendRequestStatusValidator),
   wrapRequestHandler(userController.changeFriendRequestStatus)
+);
+
+userRouter.get(
+  "/me/groups",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(userController.getMyGroups)
+);
+
+userRouter.get(
+  "/:userId/groups",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(userController.getGroups)
+);
+
+userRouter.get(
+  "/me/groups/pending-received-requests",
+  wrapRequestHandler(AuthenticationValidator),
+  wrapRequestHandler(userController.getMyPendingReceivedGroupJoinRequests)
 );
 
 // **** Export default **** //

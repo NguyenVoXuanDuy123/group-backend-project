@@ -80,7 +80,7 @@ class UserController {
 
   public getMyFriends = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const friends = await userService.getFriends(_id);
+    const friends = await userService.getFriendsByUserId(_id);
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successful",
@@ -89,7 +89,7 @@ class UserController {
   };
 
   public getFriends = async (req: APIRequest, res: APIResponse) => {
-    const friends = await userService.getFriends(req.params.userId);
+    const friends = await userService.getFriendsByUserId(req.params.userId);
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successful",
       result: friends.map((friend) => camelCaseifyWithDateConversion(friend)),
@@ -109,6 +109,40 @@ class UserController {
       message: "Get friend requests successful",
       result: friendRequests.map((friendRequest) =>
         camelCaseifyWithDateConversion(friendRequest)
+      ),
+    });
+  };
+
+  public getMyGroups = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+    const groups = await userService.getGroupsByUserId(_id);
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get groups successful",
+      result: groups.map((group) => camelCaseifyWithDateConversion(group)),
+    });
+  };
+
+  public getGroups = async (req: APIRequest, res: APIResponse) => {
+    const groups = await userService.getGroupsByUserId(req.params.userId);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get groups successful",
+      result: groups.map((group) => camelCaseifyWithDateConversion(group)),
+    });
+  };
+
+  public getMyPendingReceivedGroupJoinRequests = async (
+    req: APIRequest,
+    res: APIResponse
+  ) => {
+    const { _id } = req.user as UserSessionType;
+    const groupJoinRequests =
+      await userService.getMyPendingReceivedGroupJoinRequests(_id);
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get group join requests successful",
+      result: groupJoinRequests.map((groupJoinRequest) =>
+        camelCaseifyWithDateConversion(groupJoinRequest)
       ),
     });
   };

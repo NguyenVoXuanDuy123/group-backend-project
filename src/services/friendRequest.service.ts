@@ -38,7 +38,7 @@ class FriendRequestService {
   }
 
   public async changeFriendRequestStatus(
-    userId: string,
+    senderId: string,
     requestId: string,
     status: FriendRequestStatus
   ) {
@@ -50,17 +50,25 @@ class FriendRequestService {
       throw new NotFoundError("friend request");
     }
 
-    //check if the user is the sender of the friend request and they are not trying to cancel the request
+    // check if someone outside the friend request is trying to change the status
     if (
-      userId === friendRequest.sender_id.toHexString() &&
+      senderId !== friendRequest.sender_id.toHexString() &&
+      senderId !== friendRequest.receiver_id.toHexString()
+    ) {
+      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+    }
+
+    if (
+      senderId === friendRequest.sender_id.toHexString() &&
       status !== FriendRequestStatus.CANCELLED
     ) {
+      //check if the user is the sender of the friend request and they are not trying to cancel the request
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
     //check if the user is the receiver of the friend request and they are not trying to accept or reject the request
     if (
-      userId === friendRequest.receiver_id.toHexString() &&
+      senderId === friendRequest.receiver_id.toHexString() &&
       status !== FriendRequestStatus.ACCEPTED &&
       status !== FriendRequestStatus.REJECTED
     ) {
@@ -81,7 +89,7 @@ class FriendRequestService {
     if (status === FriendRequestStatus.ACCEPTED) {
       const senderId = friendRequest.sender_id.toHexString();
 
-      userService.addFriend(userId, senderId);
+      userService.addFriend(senderId, senderId);
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
