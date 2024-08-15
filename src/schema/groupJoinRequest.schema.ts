@@ -1,11 +1,6 @@
+import { GroupJoinRequestStatus } from "@src/enums/group.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
-export enum GroupJoinRequestStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-  CANCELED = "cancelled",
-}
 // Define the GroupJoinRequest interface
 interface IGroupJoinRequest {
   user_id: Types.ObjectId;

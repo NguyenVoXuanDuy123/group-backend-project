@@ -22,11 +22,6 @@ class ApiErrorCodes {
     "Forbidden"
   );
 
-  public static readonly INVALID_username_FORMAT = new ApiErrorCodes(
-    HttpStatusCodes.UNPROCESSABLE_ENTITY,
-    "Invalid username format"
-  );
-
   public static readonly PASSWORD_CONFIRM_PASSWORD_MISMATCH = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "Password and confirm password do not match"
@@ -34,12 +29,17 @@ class ApiErrorCodes {
 
   public static readonly INVALID_CREDENTIALS = new ApiErrorCodes(
     HttpStatusCodes.UNAUTHORIZED,
-    "Your login credentials are incorrect. Please check your username and password and try again."
+    "Login credentials are incorrect. Please check your username and password and try again."
   );
 
   public static readonly USER_NOT_AUTHENTICATED = new ApiErrorCodes(
     HttpStatusCodes.UNAUTHORIZED,
     "User not authenticated"
+  );
+
+  public static readonly USER_BANNED = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "User is banned"
   );
 
   public static readonly CANNOT_CHANGE_FRIEND_REQUEST_STATUS =
@@ -50,7 +50,7 @@ class ApiErrorCodes {
 
   public static readonly CANNOT_SEND_FRIEND_REQUEST_TO_SELF = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "cannot send a friend request to self."
+    "Cannot send a friend request to self."
   );
 
   public static readonly FRIEND_REQUEST_ALREADY_SENT = new ApiErrorCodes(
@@ -65,7 +65,7 @@ class ApiErrorCodes {
 
   public static readonly INVALID_FRIEND_REQUEST_STATUS = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Friend status must be either 'accepted', 'rejected', or 'cancelled'."
+    "Friend status must be either 'accepted', 'rejected' if the user is the receiver of the request, or 'cancelled' if the user is the sender."
   );
 
   public static readonly BOTH_USERS_NOT_FRIENDS = new ApiErrorCodes(
@@ -76,7 +76,7 @@ class ApiErrorCodes {
   public static readonly CANNOT_SEND_FRIEND_REQUEST_TO_SENDER =
     new ApiErrorCodes(
       HttpStatusCodes.BAD_REQUEST,
-      "cannot send a friend request to the user who have already sent you a friend request."
+      "Cannot send a friend request to the user who have already sent you a friend request."
     );
 
   public static readonly BOTH_USER_ALREADY_FRIENDS = new ApiErrorCodes(
@@ -106,7 +106,7 @@ class ApiErrorCodes {
 
   public static readonly INVALID_GROUP_JOIN_REQUEST_STATUS = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Group join request status must be either 'accepted', 'rejected', or 'cancelled'."
+    "Group join request status must be either 'accepted', 'rejected' if the user is the admin of the group, or 'cancelled' if the user is the requester."
   );
 
   public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
@@ -127,13 +127,19 @@ class ApiErrorCodes {
 
   public static readonly INVALID_POST_VISIBILITY_LEVEL = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Post visibility level must be either 'public' or 'friends'."
+    "Post visibility level must be either 'public' or 'friends' for post in personal timeline. or 'group' for post in group."
   );
 
   public static readonly VISIBILITY_LEVEL_MUST_BE_GROUP = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "Visibility level must be 'group' when creating a post in a group."
   );
+
+  public static readonly GROUP_ID_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
+    new ApiErrorCodes(
+      HttpStatusCodes.BAD_REQUEST,
+      "Group ID is required when visibility level is 'group'."
+    );
 
   private constructor(
     public readonly httpStatusCode: HttpStatusCodes,

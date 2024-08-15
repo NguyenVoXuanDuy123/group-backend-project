@@ -24,7 +24,7 @@ const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
     receiver_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     status: {
       type: String,
-      enum: Object.values(FriendRequestStatus),
+      enum: FriendRequestStatus,
       default: FriendRequestStatus.PENDING,
     },
   },

@@ -13,7 +13,9 @@ import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const user = await userService.getUser(_id);
+    //getUser requires 2 parameters, userId and senderId
+    //userId and senderId are the same in this case
+    const user = await userService.getUser(_id, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get me successful",
       result: camelCaseifyWithDateConversion(user),
@@ -21,7 +23,8 @@ class UserController {
   };
 
   public getUser = async (req: APIRequest, res: APIResponse) => {
-    const user = await userService.getUser(req.params.userId);
+    const { _id } = req.user as UserSessionType;
+    const user = await userService.getUser(req.params.userId, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get user successful",
       result: camelCaseifyWithDateConversion(user),
@@ -33,7 +36,10 @@ class UserController {
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    const user = await userService.updateUser(_id, req.body);
+
+    //updateUser requires 3 parameters, userId, senderId, and updateMeRequest
+    //userId and senderId are the same in this case
+    const user = await userService.updateUser(_id, _id, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Update me successful",
       result: camelCaseifyWithDateConversion(user),
@@ -45,10 +51,14 @@ class UserController {
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    await userService.sendFriendRequest(_id, req.body.receiverId);
+    const friendRequest = await userService.sendFriendRequest(
+      _id,
+      req.body.receiverId
+    );
 
     res.status(HttpStatusCodes.OK).json({
       message: "Send friend request successful",
+      result: camelCaseifyWithDateConversion(friendRequest),
     });
   };
 
@@ -84,7 +94,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successful",
-      result: friends.map((friend) => camelCaseifyWithDateConversion(friend)),
+      result: friends.map(camelCaseifyWithDateConversion),
     });
   };
 
@@ -92,7 +102,7 @@ class UserController {
     const friends = await userService.getFriendsByUserId(req.params.userId);
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successful",
-      result: friends.map((friend) => camelCaseifyWithDateConversion(friend)),
+      result: friends.map(camelCaseifyWithDateConversion),
     });
   };
 
@@ -107,9 +117,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friend requests successful",
-      result: friendRequests.map((friendRequest) =>
-        camelCaseifyWithDateConversion(friendRequest)
-      ),
+      result: friendRequests.map(camelCaseifyWithDateConversion),
     });
   };
 
@@ -119,7 +127,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successful",
-      result: groups.map((group) => camelCaseifyWithDateConversion(group)),
+      result: groups.map(camelCaseifyWithDateConversion),
     });
   };
 
@@ -131,27 +139,10 @@ class UserController {
     });
   };
 
-  public getMyPendingReceivedGroupJoinRequests = async (
-    req: APIRequest,
-    res: APIResponse
-  ) => {
-    const { _id } = req.user as UserSessionType;
-    const groupJoinRequests =
-      await userService.getMyPendingReceivedGroupJoinRequests(_id);
-
-    res.status(HttpStatusCodes.OK).json({
-      message: "Get group join requests successful",
-      result: groupJoinRequests.map((groupJoinRequest) =>
-        camelCaseifyWithDateConversion(groupJoinRequest)
-      ),
-    });
-  };
-
   public leaveGroup = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
     const { groupId } = req.params;
     await userService.leaveGroup(_id, groupId);
-
     res.status(HttpStatusCodes.OK).json({
       message: "Leave group successful",
     });

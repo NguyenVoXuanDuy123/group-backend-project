@@ -1,17 +1,6 @@
 // src/models/Group.ts
+import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enum";
 import { model, Model, Schema, Types } from "mongoose";
-
-// Define enums for visibility level and status
-export enum GroupVisibilityLevel {
-  PUBLIC = "public",
-  FRIENDS = "friends",
-}
-
-export enum GroupStatus {
-  PENDING = "pending",
-  APPROVED = "approved",
-  REJECTED = "rejected",
-}
 
 // Define the Group interface extending Document
 export interface IGroup {
@@ -34,12 +23,12 @@ const GroupSchema: Schema<IGroup> = new Schema(
     members: [{ type: Schema.Types.ObjectId, ref: "users" }],
     visibilityLevel: {
       type: String,
-      enum: Object.values(GroupVisibilityLevel),
+      enum: GroupVisibilityLevel,
       required: true,
     },
     status: {
       type: String,
-      enum: Object.values(GroupStatus),
+      enum: GroupStatus,
       default: GroupStatus.PENDING,
     },
     created_at: { type: Date, default: Date.now },

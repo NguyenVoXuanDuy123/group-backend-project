@@ -9,7 +9,7 @@ class AuthController {
   public register = async (req: Request, res: APIResponse) => {
     await authService.createUser(req.body as RegisterRequestType);
     res.status(HttpStatusCodes.CREATED).json({
-      message: "User created",
+      message: "User created successfully",
     });
   };
 

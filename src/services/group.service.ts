@@ -1,23 +1,29 @@
+import {
+  GroupJoinRequestStatus,
+  UserGroupRelation,
+} from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotFoundError from "@src/error/NotFoundError";
+import { removeNullValues } from "@src/helpers/removeNullValue";
 import groupRepository from "@src/repositories/group.repository";
+import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
 import { IGroup } from "@src/schema/group.schema";
-import { GroupJoinRequestStatus } from "@src/schema/groupJoinRequest.schema";
+
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 import {
-  CreateGroupRequestType,
-  UpdateGroupRequestType,
+  CreateGroupJoinRequestType,
+  UpdateGroupJoinRequestType,
 } from "@src/types/group.types";
 import { Types } from "mongoose";
 
 class GroupService {
   async createGroup(
     userId: string,
-    createGroupRequest: CreateGroupRequestType
+    createGroupJoinRequest: CreateGroupJoinRequestType
   ) {
     const group: IGroup = {
-      ...createGroupRequest,
+      ...createGroupJoinRequest,
       admin: new Types.ObjectId(userId),
       members: [new Types.ObjectId(userId)],
     };
@@ -28,7 +34,7 @@ class GroupService {
   async updateGroup(
     userId: string,
     groupId: string,
-    updateGroupRequest: UpdateGroupRequestType
+    updateGroupJoinRequest: UpdateGroupJoinRequestType
   ) {
     const group = await groupRepository.getGroupById(groupId);
     if (!group) {
@@ -38,15 +44,45 @@ class GroupService {
     if (group.admin.toHexString() !== userId) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
-    return await groupRepository.updateGroupById(groupId, updateGroupRequest);
+    await groupRepository.updateGroupById(
+      groupId,
+      removeNullValues(updateGroupJoinRequest)
+    );
+    return await this.getGroupById(groupId, userId);
   }
 
-  async getGroupById(groupId: string) {
-    const group = await groupRepository.getGroupById(groupId);
+  async getGroupById(groupId: string, senderId: string) {
+    const group = await groupRepository.getGroupById(groupId, {
+      __v: 0,
+      updated_at: 0,
+    });
     if (!group) {
       throw new NotFoundError("group");
     }
-    return group;
+    const { admin, members, ...rest } = group;
+
+    let userGroupRelation = UserGroupRelation.NOT_MEMBER;
+    let groupJoinRequest = null;
+    if (admin.toHexString() === senderId) {
+      userGroupRelation = UserGroupRelation.ADMIN;
+    } else if (members.some((member) => member.toString() === senderId)) {
+      userGroupRelation = UserGroupRelation.MEMBER;
+    } else if (
+      (groupJoinRequest =
+        await groupJoinRequestRepository.getPendingGroupJoinRequestBySenderIdAndGroupId(
+          senderId,
+          groupId
+        ))
+    ) {
+      userGroupRelation = UserGroupRelation.INCOMING_REQUEST;
+    }
+
+    return {
+      ...rest,
+      admin: admin.toHexString(),
+      memberCount: members.length,
+      userGroupRelation,
+    };
   }
 
   async getGroupMembers(groupId: string) {
@@ -54,16 +90,29 @@ class GroupService {
     return groupMembers;
   }
 
-  async sendGroupRequest(userId: string, groupId: string) {
-    await groupJoinRequestService.createGroupRequest(userId, groupId);
+  async sendGroupJoinRequest(senderId: string, groupId: string) {
+    return await groupJoinRequestService.createGroupJoinRequest(
+      senderId,
+      groupId
+    );
+  }
+  async getPendingGroupJoinRequests(senderId: string, groupId: string) {
+    const group = await groupRepository.getGroupById(groupId);
+    if (!group) {
+      throw new NotFoundError("group");
+    }
+    if (group.admin.toHexString() !== senderId) {
+      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+    }
+    return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
   }
 
-  async changeGroupRequestStatus(
+  async changeGroupJoinRequestStatus(
     userId: string,
     requestId: string,
     status: GroupJoinRequestStatus
   ) {
-    await groupJoinRequestService.changeGroupRequestStatus(
+    await groupJoinRequestService.changeGroupJoinRequestStatus(
       userId,
       requestId,
       status

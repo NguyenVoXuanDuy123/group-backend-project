@@ -1,3 +1,4 @@
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { Schema, model, Types, Document } from "mongoose";
 
 // Define an interface representing a document in MongoDB.
@@ -6,16 +7,10 @@ interface IEditHistory {
   edited_at: Date;
 }
 
-export enum PostVisibilityLevel {
-  PUBLIC = "public",
-  FRIENDS = "friends",
-  GROUP = "group",
-}
-
 export interface IPost {
   author: Types.ObjectId;
   content: string;
-  images: string[];
+  images?: string[];
   visibility_level: PostVisibilityLevel;
   group: Types.ObjectId | null;
   edit_history?: IEditHistory[];
@@ -30,20 +25,24 @@ const postSchema = new Schema<IPost>(
       type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
-      unique: true,
     },
     content: { type: String, required: true },
-    images: [{ type: String }],
+    images: [{ type: String }, { default: [] }],
     visibility_level: {
       type: String,
+      enum: PostVisibilityLevel,
       required: true,
-      enum: Object.values(PostVisibilityLevel),
     },
     group: { type: Schema.Types.ObjectId, ref: "groups" },
     edit_history: [
       {
         content: { type: String, required: true },
-        editedAt: { type: Date, required: true, default: Date.now },
+        edited_at: { type: Date, required: true, default: Date.now },
+      },
+      {
+        timestamps: {
+          createdAt: "edited_at",
+        },
       },
     ],
     created_at: { type: Date, default: Date.now },

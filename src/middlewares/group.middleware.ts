@@ -1,18 +1,21 @@
+import {
+  GroupJoinRequestStatus,
+  GroupVisibilityLevel,
+} from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotNull } from "@src/helpers/validation";
-import { GroupVisibilityLevel } from "@src/schema/group.schema";
-import { GroupJoinRequestStatus } from "@src/schema/groupJoinRequest.schema";
+
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
-  CreateGroupRequestType,
+  CreateGroupJoinRequestType,
   GroupMemberRequestType,
 } from "@src/types/group.types";
 import { NextFunction } from "express";
 
 export const createGroupValidator = (
-  req: APIRequest<CreateGroupRequestType>,
+  req: APIRequest<CreateGroupJoinRequestType>,
   _: APIResponse,
   next: NextFunction
 ) => {
@@ -37,7 +40,7 @@ export const sendGroupJoinRequestValidator = (
   next();
 };
 
-export const changeGroupRequestStatusValidator = (
+export const changeGroupJoinRequestStatusValidator = (
   req: APIRequest<ChangeGroupJoinRequestStatusRequestType>,
   _: APIResponse,
   next: NextFunction

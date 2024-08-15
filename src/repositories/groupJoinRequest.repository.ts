@@ -1,23 +1,35 @@
+import { GroupJoinRequestStatus } from "@src/enums/group.enum";
 import GroupModel from "@src/schema/group.schema";
-import GroupJoinRequestModel, {
-  GroupJoinRequestStatus,
-} from "@src/schema/groupJoinRequest.schema";
+import GroupJoinRequestModel from "@src/schema/groupJoinRequest.schema";
 import { Types } from "mongoose";
 
 class GroupJoinRequestRepository {
-  async getGroupJoinRequestById(requestId: string) {
+  async getGroupJoinRequestById(requestId: string | Types.ObjectId) {
     return await GroupJoinRequestModel.findById(requestId).lean();
   }
   async createGroupJoinRequest(sender_id: string, group_id: string) {
     return await GroupJoinRequestModel.create({ user_id: sender_id, group_id });
   }
 
-  async checkGroupJoinRequestExists(sender_id: string, group_id: string) {
-    return !!(await GroupJoinRequestModel.findOne({
+  async checkPendingGroupJoinRequestExists(
+    sender_id: string,
+    group_id: string
+  ) {
+    return !!(await this.getPendingGroupJoinRequestBySenderIdAndGroupId(
+      sender_id,
+      group_id
+    ));
+  }
+
+  async getPendingGroupJoinRequestBySenderIdAndGroupId(
+    sender_id: string,
+    group_id: string
+  ) {
+    return await GroupJoinRequestModel.findOne({
       user_id: sender_id,
       group_id,
       status: GroupJoinRequestStatus.PENDING,
-    }).lean());
+    }).lean();
   }
 
   async changeStatusGroupJoinRequest(
@@ -30,50 +42,35 @@ class GroupJoinRequestRepository {
     );
   }
 
-  async getMyPendingReceivedGroupJoinRequests(userId: string) {
-    return await GroupModel.aggregate([
+  async getPendingGroupJoinRequests(groupId: string) {
+    return await GroupJoinRequestModel.aggregate([
       {
         $match: {
-          admin: new Types.ObjectId(userId),
-        },
-      },
-      {
-        $lookup: {
-          from: "group_join_requests",
-          localField: "_id",
-          foreignField: "group_id",
-          as: "groupJoinRequests",
-        },
-      },
-      {
-        $unwind: "$groupJoinRequests",
-      },
-      {
-        $match: {
-          "groupJoinRequests.status": GroupJoinRequestStatus.PENDING,
+          group_id: new Types.ObjectId(groupId),
+          status: GroupJoinRequestStatus.PENDING,
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "groupJoinRequests.user_id",
+          localField: "user_id",
           foreignField: "_id",
-          as: "userDetails",
+          as: "user",
         },
       },
       {
-        $unwind: "$userDetails",
+        $unwind: "$user",
       },
       {
         $project: {
-          _id: "$groupJoinRequests._id",
-          status: "$groupJoinRequests.status",
-          userDetails: {
-            _id: "$userDetails._id",
-            first_name: "$userDetails.first_name",
-            last_name: "$userDetails.last_name",
-            avatar: "$userDetails.avatar",
-            username: "$userDetails.username",
+          _id: 1,
+          status: 1,
+          user: {
+            _id: 1,
+            first_name: 1,
+            last_name: 1,
+            username: 1,
+            avatar: 1,
           },
         },
       },

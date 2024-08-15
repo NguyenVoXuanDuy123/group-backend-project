@@ -25,15 +25,12 @@ class UserRepository {
     return await this.findUser({ username }, projection);
   }
 
-  //create a new user
   public async createUser(user: IUser) {
-    await this.create(user);
+    await UserModel.create(user);
   }
 
-  //update a user by their id
-  public async updateUserById(_id: string, payload: Partial<IUser>) {
-    const user = await this.updateOne({ _id }, payload);
-    return user;
+  public async updateUserById(_id: string, user: Partial<IUser>) {
+    await UserModel.findByIdAndUpdate<IUser>(_id, { $set: user });
   }
 
   public async addFriend(userId: string, friendId: string) {
@@ -107,20 +104,11 @@ class UserRepository {
   }
 
   //find a user by options and projection
-  private async findUser(
+  private findUser(
     query: FilterQuery<IUser>,
     projection: ProjectionType<IUser>
   ) {
-    return await UserModel.findOne(query, projection).lean();
-  }
-
-  //create a new user
-  private async create(user: IUser) {
-    (await UserModel.create(user)).save();
-  }
-
-  private async updateOne(query: FilterQuery<IUser>, update: Partial<IUser>) {
-    return await UserModel.updateOne(query, update);
+    return UserModel.findOne(query, projection).lean();
   }
 }
 

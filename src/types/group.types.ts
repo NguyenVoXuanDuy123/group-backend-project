@@ -1,13 +1,15 @@
-import { GroupVisibilityLevel } from "@src/schema/group.schema";
-import { GroupJoinRequestStatus } from "@src/schema/groupJoinRequest.schema";
+import {
+  GroupJoinRequestStatus,
+  GroupVisibilityLevel,
+} from "@src/enums/group.enum";
 
-export type CreateGroupRequestType = {
+export type CreateGroupJoinRequestType = {
   name: string;
   description: string;
   visibilityLevel: GroupVisibilityLevel;
 };
 
-export type UpdateGroupRequestType = {
+export type UpdateGroupJoinRequestType = {
   name?: string;
   description?: string;
   visibilityLevel?: GroupVisibilityLevel;
@@ -24,3 +26,10 @@ export type ChangeGroupJoinRequestStatusRequestType = {
 export type RemoveGroupMemberRequestType = {
   memberId: string;
 };
+
+export enum UserRelationshipWithGroup {
+  ADMIN = "ADMIN",
+  MEMBER = "MEMBER",
+  NONE_MEMBER = "NONE_MEMBER",
+  REQUESTED = "REQUESTED",
+}

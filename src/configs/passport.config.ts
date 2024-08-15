@@ -26,11 +26,12 @@ passport.serializeUser((_id, done) => {
 passport.deserializeUser((id: string, done) => {
   userRepository.findById(id).then((user) => {
     if (user) {
-      const { _id: idObject, role } = user;
+      const { _id: idObject, role, status } = user;
       const _id = idObject.toHexString();
       done(undefined, {
         _id,
         role,
+        status,
       } as UserSessionType);
     } else {
       done(new Error("User not found."));

@@ -1,17 +1,17 @@
+import { GroupJoinRequestStatus } from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotFoundError from "@src/error/NotFoundError";
 import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
-import { GroupJoinRequestStatus } from "@src/schema/groupJoinRequest.schema";
+
 import groupService from "@src/services/group.service";
-import { Types } from "mongoose";
 
 class GroupJoinRequestService {
-  async createGroupRequest(senderId: string, groupId: string) {
+  async createGroupJoinRequest(senderId: string, groupId: string) {
     // Check if the sender is trying to send a group request which is already sent and pending
     if (
-      await groupJoinRequestRepository.checkGroupJoinRequestExists(
+      await groupJoinRequestRepository.checkPendingGroupJoinRequestExists(
         senderId,
         groupId
       )
@@ -31,10 +31,14 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.ALREADY_GROUP_MEMBER);
     }
 
-    await groupJoinRequestRepository.createGroupJoinRequest(senderId, groupId);
+    const { _id } = await groupJoinRequestRepository.createGroupJoinRequest(
+      senderId,
+      groupId
+    );
+    return await groupJoinRequestRepository.getGroupJoinRequestById(_id);
   }
 
-  async changeGroupRequestStatus(
+  async changeGroupJoinRequestStatus(
     senderId: string,
     requestId: string,
     status: GroupJoinRequestStatus
@@ -45,7 +49,8 @@ class GroupJoinRequestService {
     if (!groupJoinRequest) {
       throw new NotFoundError("group join request");
     }
-    // Check if the group request is not pending
+    // Check if the group request is not pending, then it cannot be changed
+    // because it is already accepted, rejected, or cancelled
     if (groupJoinRequest.status !== GroupJoinRequestStatus.PENDING) {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_REQUEST_STATUS);
     }
@@ -95,9 +100,9 @@ class GroupJoinRequestService {
       status
     );
   }
-  public async getMyPendingReceivedGroupJoinRequests(userId: string) {
-    return await groupJoinRequestRepository.getMyPendingReceivedGroupJoinRequests(
-      userId
+  public async getPendingGroupJoinRequests(groupId: string) {
+    return await groupJoinRequestRepository.getPendingGroupJoinRequests(
+      groupId
     );
   }
 }

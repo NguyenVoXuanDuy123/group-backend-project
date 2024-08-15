@@ -1,21 +1,11 @@
 // src/models/User.ts
+import { UserRole, UserStatus } from "@src/enums/user.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Notification interface
 interface INotification {
   message: string;
   date: Date;
-}
-
-// Define enums for role and status
-export enum UserRole {
-  ADMIN = "admin",
-  USER = "user",
-}
-
-export enum UserStatus {
-  ACTIVE = "active",
-  BANNED = "banned",
 }
 
 // Define the User interface extending Document
@@ -47,12 +37,12 @@ const UserSchema: Schema<IUser> = new Schema(
     groups: [{ type: Schema.Types.ObjectId, ref: "groups" }],
     role: {
       type: String,
-      enum: Object.values(UserRole),
+      enum: UserRole,
       default: UserRole.USER,
     },
     status: {
       type: String,
-      enum: Object.values(UserStatus),
+      enum: UserStatus,
       default: UserStatus.ACTIVE,
     },
     notifications: [

@@ -1,3 +1,6 @@
+import { GroupStatus } from "@src/enums/group.enum";
+import { UserRole } from "@src/enums/user.enum";
+import NotFoundError from "@src/error/NotFoundError";
 import GroupModel, { IGroup } from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";
 import { Types } from "mongoose";
@@ -8,11 +11,17 @@ class GroupRepository {
   }
 
   async updateGroupById(_id: string, payload: Partial<IGroup>) {
-    return await GroupModel.findByIdAndUpdate(_id, payload, { new: true });
+    return await GroupModel.findByIdAndUpdate<IGroup>(_id, payload, {
+      new: true,
+    });
   }
 
-  async getGroupById(_id: string) {
-    return await GroupModel.findById(_id, { __v: 0 }).lean();
+  async getGroupById(
+    _id: string,
+    projection?: Record<string, number>,
+    role: UserRole = UserRole.USER
+  ) {
+    return await GroupModel.findById(_id, projection).lean();
   }
 
   async addMemberToGroup(groupId: string, userId: string) {
@@ -48,6 +57,12 @@ class GroupRepository {
         },
       },
     ]);
+  }
+
+  async checkIfGroupIsApproved(groupId: string) {
+    const group = await GroupModel.findById(groupId, { status: 1 });
+    if (!group) throw new NotFoundError("Group");
+    return group.status === GroupStatus.APPROVED;
   }
 }
 

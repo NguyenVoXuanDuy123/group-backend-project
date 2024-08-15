@@ -4,15 +4,19 @@ import groupService from "@src/services/group.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
-  CreateGroupRequestType,
+  CreateGroupJoinRequestType,
   GroupMemberRequestType,
   RemoveGroupMemberRequestType,
-  UpdateGroupRequestType,
+  UpdateGroupJoinRequestType,
 } from "@src/types/group.types";
 import { UserSessionType } from "@src/types/user.types";
+import { Types } from "mongoose";
 
 class GroupController {
-  async createGroup(req: APIRequest<CreateGroupRequestType>, res: APIResponse) {
+  async createGroup(
+    req: APIRequest<CreateGroupJoinRequestType>,
+    res: APIResponse
+  ) {
     const { _id } = req.user as UserSessionType;
     await groupService.createGroup(_id, req.body);
     return res
@@ -20,18 +24,25 @@ class GroupController {
       .json({ message: "Group created successfully" });
   }
 
-  async updateGroup(req: APIRequest<UpdateGroupRequestType>, res: APIResponse) {
+  async updateGroup(
+    req: APIRequest<UpdateGroupJoinRequestType>,
+    res: APIResponse
+  ) {
     const { _id } = req.user as UserSessionType;
     const { groupId } = req.params;
-    await groupService.updateGroup(_id, groupId, req.body);
-    return res
-      .status(HttpStatusCodes.OK)
-      .json({ message: "Group updated successfully" });
+    const group = await groupService.updateGroup(_id, groupId, req.body);
+    return res.status(HttpStatusCodes.OK).json({
+      message: "Group updated successfully",
+      result: camelCaseifyWithDateConversion(group),
+    });
   }
 
   async getGroupById(req: APIRequest, res: APIResponse) {
     const { groupId } = req.params;
-    const group = await groupService.getGroupById(groupId);
+    const { _id } = req.user as UserSessionType;
+
+    const group = await groupService.getGroupById(groupId, _id);
+
     return res.status(HttpStatusCodes.OK).json({
       message: "Group fetched successfully",
       result: camelCaseifyWithDateConversion(group),
@@ -47,26 +58,41 @@ class GroupController {
     });
   }
 
-  async sendGroupRequest(
+  async sendGroupJoinRequest(
     req: APIRequest<GroupMemberRequestType>,
     res: APIResponse
   ) {
     const { _id } = req.user as UserSessionType;
     const { groupId } = req.body;
-    await groupService.sendGroupRequest(_id, groupId);
-    return res
-      .status(HttpStatusCodes.OK)
-      .json({ message: "Group request sent successfully" });
+    const groupRequest = await groupService.sendGroupJoinRequest(_id, groupId);
+    return res.status(HttpStatusCodes.OK).json({
+      message: "Group request sent successfully",
+      result: camelCaseifyWithDateConversion(groupRequest),
+    });
   }
 
-  async changeGroupRequestStatus(
+  async getPendingGroupJoinRequests(req: APIRequest, res: APIResponse) {
+    const { _id } = req.user as UserSessionType;
+    const { groupId } = req.params;
+    const groupJoinRequests = await groupService.getPendingGroupJoinRequests(
+      _id,
+      groupId
+    );
+
+    return res.status(HttpStatusCodes.OK).json({
+      message: "Group join requests fetched successfully",
+      result: groupJoinRequests.map(camelCaseifyWithDateConversion),
+    });
+  }
+
+  async changeGroupJoinRequestStatus(
     req: APIRequest<ChangeGroupJoinRequestStatusRequestType>,
     res: APIResponse
   ) {
     const { _id } = req.user as UserSessionType;
     const { requestId } = req.params;
     const { status } = req.body;
-    await groupService.changeGroupRequestStatus(_id, requestId, status);
+    await groupService.changeGroupJoinRequestStatus(_id, requestId, status);
     return res
       .status(HttpStatusCodes.OK)
       .json({ message: "Group request status changed successfully" });

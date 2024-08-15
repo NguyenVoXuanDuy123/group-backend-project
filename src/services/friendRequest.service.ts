@@ -16,17 +16,18 @@ class FriendRequestService {
     }
     // Check if the sender is trying to send a friend request which is already sent and pending
     if (
-      await friendRequestRepository.checkFriendRequestExists(
+      await friendRequestRepository.checkPendingFriendRequestExists(
         senderId,
         receiverId
       )
     ) {
+      console.log(senderId, receiverId);
       throw new ApiError(ApiErrorCodes.FRIEND_REQUEST_ALREADY_SENT);
     }
 
     // Check if the sender is trying to send a friend request to who  have already send a friend request to the sender
     if (
-      await friendRequestRepository.checkFriendRequestExists(
+      await friendRequestRepository.checkPendingFriendRequestExists(
         receiverId,
         senderId
       )
@@ -34,7 +35,12 @@ class FriendRequestService {
       throw new ApiError(ApiErrorCodes.CANNOT_SEND_FRIEND_REQUEST_TO_SENDER);
     }
 
-    await friendRequestRepository.createFriendRequest(senderId, receiverId);
+    const friendRequest = await friendRequestRepository.createFriendRequest(
+      senderId,
+      receiverId
+    );
+
+    return friendRequestRepository.getFriendRequestById(friendRequest._id);
   }
 
   public async changeFriendRequestStatus(
@@ -58,11 +64,11 @@ class FriendRequestService {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
+    //check if the user is the sender of the friend request and they are not trying to cancel the request
     if (
       senderId === friendRequest.sender_id.toHexString() &&
       status !== FriendRequestStatus.CANCELLED
     ) {
-      //check if the user is the sender of the friend request and they are not trying to cancel the request
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
@@ -93,6 +99,8 @@ class FriendRequestService {
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
+
+    return friendRequestRepository.getFriendRequestById(requestId);
   }
 
   public async getMyPendingReceivedFriendRequests(userId: string) {

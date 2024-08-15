@@ -24,11 +24,8 @@ authRouter.post(
 
 authRouter.post("/logout", wrapRequestHandler(authController.logout));
 
-authRouter.get("/test", (req, res) => {
-  console.log(req.isAuthenticated());
-  console.log(req.cookies);
-  console.log(req.user);
-  res.json({ isAuthen: req.isAuthenticated(), user: req.user });
+authRouter.get("/introspect", (req, res) => {
+  res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
 });
 
 export default authRouter;

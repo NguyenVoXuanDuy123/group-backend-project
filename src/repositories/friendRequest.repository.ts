@@ -4,12 +4,14 @@ import FriendRequestModel, {
 import { Types } from "mongoose";
 
 class FriendRequestRepository {
-  public async getFriendRequestById(requestId: string) {
-    return await FriendRequestModel.findById(requestId).lean();
+  public async getFriendRequestById(requestId: string | Types.ObjectId) {
+    return await FriendRequestModel.findById(requestId, {
+      __v: 0,
+    }).lean();
   }
 
   public async createFriendRequest(sender_id: string, receiver_id: string) {
-    await FriendRequestModel.create({ sender_id, receiver_id });
+    return await FriendRequestModel.create({ sender_id, receiver_id });
   }
 
   public async changeStatusFriendRequest(
@@ -19,15 +21,30 @@ class FriendRequestRepository {
     await FriendRequestModel.updateOne({ _id: requestId }, { status: status });
   }
 
-  public async checkFriendRequestExists(
+  public async checkPendingFriendRequestExists(
     sender_id: string,
     receiver_id: string
   ) {
-    return !!(await FriendRequestModel.findOne({
+    return !!(await this.getPendingFriendRequestBySenderIdAndReceiverId(
       sender_id,
-      receiver_id,
-      status: FriendRequestStatus.PENDING,
-    }).lean());
+      receiver_id
+    ));
+  }
+
+  public async getPendingFriendRequestBySenderIdAndReceiverId(
+    sender_id: string,
+    receiver_id: string
+  ) {
+    return await FriendRequestModel.findOne(
+      {
+        sender_id,
+        receiver_id,
+        status: FriendRequestStatus.PENDING,
+      },
+      {
+        __v: 0,
+      }
+    ).lean();
   }
 
   public async getMyPendingReceivedFriendRequests(receiverId: string) {

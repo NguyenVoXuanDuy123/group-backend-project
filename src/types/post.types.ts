@@ -1,15 +1,15 @@
-import { PostVisibilityLevel } from "@src/schema/post.schema";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 
 export type CreatePostRequestType = {
   content: string;
-  images: string[];
+  images?: string[];
   visibilityLevel: PostVisibilityLevel;
-  group?: string;
+  groupId?: string;
 };
 
 export type UpdatePostRequestType = {
   content?: string;
   images?: string[];
   visibilityLevel?: PostVisibilityLevel;
-  group?: string;
+  groupId?: string;
 };
