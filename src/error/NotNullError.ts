@@ -11,7 +11,7 @@ class NotNullError extends RouteError {
   }
 
   private static createMessage(fieldName: string): string {
-    return `The value of ${fieldName} cannot be null.`;
+    return `The value of ${fieldName} is required.`;
   }
 }
 

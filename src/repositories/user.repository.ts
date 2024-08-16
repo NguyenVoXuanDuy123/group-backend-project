@@ -1,12 +1,15 @@
 import GroupModel from "@src/schema/group.schema";
 import UserModel, { IUser } from "@src/schema/user.schema";
-import { FriendDetailType } from "@src/types/user.types";
+import { FriendDetailType, GroupDetailType } from "@src/types/user.types";
 
 import { FilterQuery, ProjectionType, Types } from "mongoose";
 
 class UserRepository {
   //find a user by their id
-  public async findById(_id: string, projection: ProjectionType<IUser> = {}) {
+  public async findById(
+    _id: string | Types.ObjectId,
+    projection: ProjectionType<IUser> = {}
+  ) {
     return await UserModel.findById(_id, projection).lean();
   }
 
@@ -25,7 +28,7 @@ class UserRepository {
     return await this.findUser({ username }, projection);
   }
 
-  public async createUser(user: IUser) {
+  public async createUser(user: Partial<IUser>) {
     await UserModel.create(user);
   }
 
@@ -60,20 +63,19 @@ class UserRepository {
 
       {
         $project: {
-          _id: 0,
-          "friendDetails._id": 1,
-          "friendDetails.last_name": 1,
-          "friendDetails.first_name": 1,
-          "friendDetails.username": 1,
-          "friendDetails.avatar": 1,
+          _id: "$friendDetails._id",
+          first_name: "$friendDetails.first_name",
+          last_name: "$friendDetails.last_name",
+          avatar: "$friendDetails.avatar",
+          username: "$friendDetails.username",
         },
       },
     ]);
     return friendDetails;
   }
 
-  public async getGroups(_id: string) {
-    const groups = await UserModel.aggregate([
+  public async getUserGroups(_id: string) {
+    const groups = await UserModel.aggregate<GroupDetailType>([
       { $match: { _id: new Types.ObjectId(_id) } },
       { $unwind: "$groups" },
       {
@@ -87,11 +89,10 @@ class UserRepository {
       { $unwind: "$groupDetails" },
       {
         $project: {
-          _id: 0,
-          "groupDetails._id": 1,
-          "groupDetails.name": 1,
-          "groupDetails.description": 1,
-          "groupDetails.avatar": 1,
+          _id: "$groupDetails._id",
+          name: "$groupDetails.name",
+          description: "$groupDetails.description",
+          avatar: "$groupDetails.avatar",
         },
       },
     ]);

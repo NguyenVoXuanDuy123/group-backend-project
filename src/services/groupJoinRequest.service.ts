@@ -19,7 +19,7 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_REQUEST_ALREADY_SENT);
     }
 
-    const group = await groupRepository.getGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new NotFoundError("group");
     }
@@ -27,7 +27,7 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }
 
-    if (group.members.some((member) => member.toString() === senderId)) {
+    if (group.members.some((member) => member.equals(senderId))) {
       throw new ApiError(ApiErrorCodes.ALREADY_GROUP_MEMBER);
     }
 
@@ -55,7 +55,7 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_REQUEST_STATUS);
     }
 
-    const group = await groupRepository.getGroupById(
+    const group = await groupRepository.findGroupById(
       groupJoinRequest.group_id.toHexString()
     );
 

@@ -7,8 +7,6 @@ import morgan from "morgan";
 import helmet from "helmet";
 import express, { Request, Response, NextFunction } from "express";
 
-import "express-async-errors";
-
 import BaseRouter from "@src/routes/index.routes";
 
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
@@ -31,7 +29,7 @@ databaseConfig.connectDB();
 
 // Basic middleware
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser(EnvVars.CookieProps.Secret));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(UPLOAD_DIR));
 // Show routes called in console during development

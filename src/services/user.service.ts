@@ -6,11 +6,9 @@ import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import userRepository from "@src/repositories/user.repository";
 import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
-import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
-import { UserRelation } from "@src/enums/user.enum";
+import { UserFriendRelation } from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
-import { GroupStatus } from "@src/enums/group.enum";
 
 class UserService {
   public async getUser(userId: string, senderId: string) {
@@ -25,17 +23,17 @@ class UserService {
       throw new NotFoundError("user");
     }
     const { friends, groups, ...rest } = user;
-    console.log(userId, senderId);
-    let userRelationship: UserRelation | null = null;
 
-    userRelationship = UserRelation.NOT_FRIEND;
+    let UserFriendRelationship: UserFriendRelation | null = null;
+
+    UserFriendRelationship = UserFriendRelation.NOT_FRIEND;
 
     let friendRequest = null;
 
     if (senderId === userId) {
-      userRelationship = UserRelation.SELF;
-    } else if (friends?.some((friend) => friend.toString() === senderId)) {
-      userRelationship = UserRelation.FRIEND;
+      UserFriendRelationship = UserFriendRelation.SELF;
+    } else if (friends?.some((friend) => friend.equals(senderId))) {
+      UserFriendRelationship = UserFriendRelation.FRIEND;
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
@@ -43,7 +41,7 @@ class UserService {
           userId
         ))
     ) {
-      userRelationship = UserRelation.INCOMING_REQUEST;
+      UserFriendRelationship = UserFriendRelation.INCOMING_REQUEST;
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
@@ -51,14 +49,14 @@ class UserService {
           senderId
         ))
     ) {
-      userRelationship = UserRelation.OUTGOING_REQUEST;
+      UserFriendRelationship = UserFriendRelation.OUTGOING_REQUEST;
     }
 
     return {
       ...rest,
       friendCount: friends?.length || 0,
       groupCount: groups?.length || 0,
-      userRelationship: userRelationship,
+      UserFriendRelationship: UserFriendRelationship,
       friendRequest,
     };
   }
@@ -77,8 +75,6 @@ class UserService {
         bio: updateMeRequest.bio,
       })
     );
-    const user = this.getUser(_id, senderId);
-    return user;
   }
 
   public async sendFriendRequest(senderId: string, receiverId: string) {
@@ -91,7 +87,7 @@ class UserService {
       throw new NotFoundError("user");
     }
 
-    if (user.friends?.some((friend) => friend.toString() === receiverId)) {
+    if (user.friends.some((friend) => friend.equals(receiverId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USER_ALREADY_FRIENDS);
     }
 
@@ -120,7 +116,7 @@ class UserService {
       throw new NotFoundError("user");
     }
 
-    if (!user.friends?.some((friend) => friend.toString() === friendId)) {
+    if (!user.friends.some((friend) => friend.equals(friendId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USERS_NOT_FRIENDS);
     }
     await userRepository.removeFriend(userId, friendId);
@@ -145,7 +141,7 @@ class UserService {
     if (!(await userRepository.checkUserExistsById(userId))) {
       throw new NotFoundError("user");
     }
-    return await userRepository.getGroups(userId);
+    return await userRepository.getUserGroups(userId);
   }
 
   public async leaveGroup(userId: string, groupId: string) {
@@ -154,12 +150,12 @@ class UserService {
       throw new NotFoundError("user");
     }
 
-    const group = await groupRepository.getGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new NotFoundError("group");
     }
 
-    if (!user.groups?.some((group) => group.toString() === groupId)) {
+    if (!user.groups?.some((group) => group.equals(groupId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
     }
 

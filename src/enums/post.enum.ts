@@ -10,3 +10,8 @@ export enum ReactionType {
   HAHA = "haha",
   ANGRY = "angry",
 }
+
+export enum ReactionTargetType {
+  POST = "post",
+  COMMENT = "comment",
+}

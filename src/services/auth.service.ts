@@ -16,7 +16,7 @@ class AuthService {
     ) {
       throw new AlreadyExistError("username");
     }
-    const user: IUser = {
+    const user: Partial<IUser> = {
       first_name: registerRequest.firstName,
       last_name: registerRequest.lastName,
       username: registerRequest.username,

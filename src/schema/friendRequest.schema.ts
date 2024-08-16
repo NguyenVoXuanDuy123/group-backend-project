@@ -4,9 +4,9 @@ import { model, Model, Schema, Types } from "mongoose";
 interface IFriendRequest {
   sender_id: Types.ObjectId;
   receiver_id: Types.ObjectId;
-  status?: FriendRequestStatus;
-  created_at?: Date;
-  updated_at?: Date;
+  status: FriendRequestStatus;
+  created_at: Date;
+  updated_at: Date;
 }
 
 // Define enums for status

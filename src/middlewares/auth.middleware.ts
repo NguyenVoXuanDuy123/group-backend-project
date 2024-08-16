@@ -37,6 +37,7 @@ export const registerValidator: RequestHandler = (
 
   validateLength({
     password: { value: password, minLength: 6, maxLength: 20 },
+    username: { value: username, minLength: 6, maxLength: 20 },
   });
 
   if (password !== confirmPassword) {

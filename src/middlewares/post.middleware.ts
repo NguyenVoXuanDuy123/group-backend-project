@@ -1,10 +1,13 @@
-import { PostVisibilityLevel } from "@src/enums/post.enum";
+import { PostVisibilityLevel, ReactionType } from "@src/enums/post.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotNull } from "@src/helpers/validation";
 
 import { APIRequest, APIResponse } from "@src/types/api.types";
-import { CreatePostRequestType } from "@src/types/post.types";
+import {
+  CreatePostRequestType,
+  ReactToPostRequestType,
+} from "@src/types/post.types";
 import { NextFunction } from "express";
 
 export const createPostValidator = (
@@ -12,11 +15,16 @@ export const createPostValidator = (
   _: APIResponse,
   next: NextFunction
 ) => {
-  const { content, images, visibilityLevel, groupId } = req.body;
+  const { content, visibilityLevel, groupId } = req.body;
   validateNotNull({ content, visibilityLevel });
-  if (groupId && visibilityLevel !== PostVisibilityLevel.GROUP) {
-    throw new ApiError(ApiErrorCodes.VISIBILITY_LEVEL_MUST_BE_GROUP);
+
+  // when group id is provided, visibility level must be group
+  if (groupId) {
+    if (visibilityLevel !== PostVisibilityLevel.GROUP)
+      throw new ApiError(ApiErrorCodes.VISIBILITY_LEVEL_MUST_BE_GROUP);
   }
+
+  // when visibility level is group, group id must be provided
   if (visibilityLevel === PostVisibilityLevel.GROUP) {
     if (!groupId) {
       throw new ApiError(
@@ -25,12 +33,22 @@ export const createPostValidator = (
     }
   }
 
-  if (
-    visibilityLevel !== PostVisibilityLevel.PUBLIC &&
-    visibilityLevel !== PostVisibilityLevel.FRIENDS &&
-    !groupId
-  ) {
+  // visibility level must be public or friends for post in personal timeline
+  if (!Object.values(PostVisibilityLevel).includes(visibilityLevel)) {
     throw new ApiError(ApiErrorCodes.INVALID_POST_VISIBILITY_LEVEL);
+  }
+  next();
+};
+
+export const reactToPostValidator = (
+  req: APIRequest<ReactToPostRequestType>,
+  _: APIResponse,
+  next: NextFunction
+) => {
+  const { reactionType } = req.body;
+  validateNotNull({ reactionType });
+  if (!Object.values(ReactionType).includes(reactionType)) {
+    throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
   }
   next();
 };

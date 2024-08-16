@@ -1,6 +1,6 @@
 export enum GroupVisibilityLevel {
   PUBLIC = "public",
-  FRIENDS = "friends",
+  PRIVATE = "private",
 }
 
 export enum GroupStatus {
@@ -16,9 +16,15 @@ export enum GroupJoinRequestStatus {
   CANCELED = "cancelled",
 }
 
+export enum GroupRole {
+  ADMIN = "admin",
+  MEMBER = "member",
+}
+
 export enum UserGroupRelation {
   ADMIN = "admin",
   MEMBER = "member",
   NOT_MEMBER = "not_member",
-  INCOMING_REQUEST = "incoming_request", // When the sender has sent a group request to the user.
+  // When the sender has sent a group request to the user.
+  INCOMING_REQUEST = "incoming_request",
 }

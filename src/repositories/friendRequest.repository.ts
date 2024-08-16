@@ -1,6 +1,7 @@
 import FriendRequestModel, {
   FriendRequestStatus,
 } from "@src/schema/friendRequest.schema";
+import { FriendRequestDetailType } from "@src/types/user.types";
 import { Types } from "mongoose";
 
 class FriendRequestRepository {
@@ -48,7 +49,7 @@ class FriendRequestRepository {
   }
 
   public async getMyPendingReceivedFriendRequests(receiverId: string) {
-    return await FriendRequestModel.aggregate([
+    return await FriendRequestModel.aggregate<FriendRequestDetailType>([
       {
         $match: {
           receiver_id: new Types.ObjectId(receiverId),

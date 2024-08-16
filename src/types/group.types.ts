@@ -1,5 +1,6 @@
 import {
   GroupJoinRequestStatus,
+  GroupRole,
   GroupVisibilityLevel,
 } from "@src/enums/group.enum";
 
@@ -26,10 +27,31 @@ export type ChangeGroupJoinRequestStatusRequestType = {
 export type RemoveGroupMemberRequestType = {
   memberId: string;
 };
+/**
+ * when group admins fetch group join requests,
+ * they will get the group join request details defined below
+ */
+export type GroupJoinRequestDetailType = {
+  _id: string;
+  status: GroupJoinRequestStatus;
+  user: {
+    _id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    avatar: string;
+  };
+};
 
-export enum UserRelationshipWithGroup {
-  ADMIN = "ADMIN",
-  MEMBER = "MEMBER",
-  NONE_MEMBER = "NONE_MEMBER",
-  REQUESTED = "REQUESTED",
-}
+/**
+ * when group admins fetch group members,
+ * they will get the group member details defined below
+ */
+export type GroupMemberDetailType = {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  groupRole: GroupRole;
+  avatar?: string;
+};

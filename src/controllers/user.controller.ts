@@ -39,10 +39,9 @@ class UserController {
 
     //updateUser requires 3 parameters, userId, senderId, and updateMeRequest
     //userId and senderId are the same in this case
-    const user = await userService.updateUser(_id, _id, req.body);
+    await userService.updateUser(_id, _id, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Update me successful",
-      result: camelCaseifyWithDateConversion(user),
     });
   };
 
@@ -131,11 +130,11 @@ class UserController {
     });
   };
 
-  public getGroups = async (req: APIRequest, res: APIResponse) => {
+  public getUserGroups = async (req: APIRequest, res: APIResponse) => {
     const groups = await userService.getGroupsByUserId(req.params.userId);
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successful",
-      result: groups.map((group) => camelCaseifyWithDateConversion(group)),
+      result: groups.map(camelCaseifyWithDateConversion),
     });
   };
 

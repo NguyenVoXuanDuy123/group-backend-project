@@ -1,5 +1,5 @@
 import { PostVisibilityLevel } from "@src/enums/post.enum";
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 // Define an interface representing a document in MongoDB.
 interface IEditHistory {
@@ -10,12 +10,13 @@ interface IEditHistory {
 export interface IPost {
   author: Types.ObjectId;
   content: string;
-  images?: string[];
+  images: string[];
   visibility_level: PostVisibilityLevel;
   group: Types.ObjectId | null;
-  edit_history?: IEditHistory[];
-  created_at?: Date;
-  updated_at?: Date;
+  edit_history: IEditHistory[];
+  numberOfReactions: number;
+  created_at: Date;
+  updated_at: Date;
 }
 
 // Create a schema corresponding to the document interface.
@@ -45,6 +46,7 @@ const postSchema = new Schema<IPost>(
         },
       },
     ],
+    numberOfReactions: { type: Number, default: 0 },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
   },

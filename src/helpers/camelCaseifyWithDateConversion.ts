@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Types } from "mongoose";
 
 type CamelCaseObject = {
   [key: string]: unknown;
 };
-type transformKeysToCamelCaseType = {
+export type TransformKeysToCamelCaseType = {
   [key: string | number | symbol]: unknown;
 };
 
@@ -28,7 +30,7 @@ function snakeToCamel(str: string): string {
  */
 
 export const camelCaseifyWithDateConversion = (
-  obj: transformKeysToCamelCaseType | null
+  obj: TransformKeysToCamelCaseType | null
 ): CamelCaseObject | null => {
   if (obj === null) {
     return null; // Handle null values
@@ -73,7 +75,7 @@ export const camelCaseifyWithDateConversion = (
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const newKey = snakeToCamel(key);
       result[newKey] = camelCaseifyWithDateConversion(
-        obj[key] as transformKeysToCamelCaseType
+        obj[key] as TransformKeysToCamelCaseType
       );
     }
   }

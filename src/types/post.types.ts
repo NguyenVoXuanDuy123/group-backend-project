@@ -1,4 +1,4 @@
-import { PostVisibilityLevel } from "@src/enums/post.enum";
+import { PostVisibilityLevel, ReactionType } from "@src/enums/post.enum";
 
 export type CreatePostRequestType = {
   content: string;
@@ -12,4 +12,8 @@ export type UpdatePostRequestType = {
   images?: string[];
   visibilityLevel?: PostVisibilityLevel;
   groupId?: string;
+};
+
+export type ReactToPostRequestType = {
+  reactionType: ReactionType;
 };

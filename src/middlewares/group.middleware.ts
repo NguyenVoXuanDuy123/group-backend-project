@@ -21,10 +21,7 @@ export const createGroupValidator = (
 ) => {
   const { name, description, visibilityLevel } = req.body;
   validateNotNull({ name, description, visibilityLevel });
-  if (
-    visibilityLevel !== GroupVisibilityLevel.PUBLIC &&
-    visibilityLevel !== GroupVisibilityLevel.FRIENDS
-  ) {
+  if (!Object.values(GroupVisibilityLevel).includes(visibilityLevel)) {
     throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
   }
   next();
@@ -47,11 +44,7 @@ export const changeGroupJoinRequestStatusValidator = (
 ) => {
   const { status } = req.body;
   validateNotNull({ status });
-  if (
-    status !== GroupJoinRequestStatus.ACCEPTED &&
-    status !== GroupJoinRequestStatus.REJECTED &&
-    status !== GroupJoinRequestStatus.CANCELED
-  ) {
+  if (!Object.values(GroupJoinRequestStatus).includes(status)) {
     throw new ApiError(ApiErrorCodes.INVALID_GROUP_JOIN_REQUEST_STATUS);
   }
   next();

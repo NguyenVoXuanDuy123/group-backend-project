@@ -90,7 +90,6 @@ type InputIsNumberValidator = {
  */
 
 export const validateIsNumber = (input: InputIsNumberValidator): void => {
-  const notNumberFields = [];
   for (const fieldName in input) {
     if (isNaN(Number(input[fieldName]))) {
       throw new IsNotNumberError(fieldName);

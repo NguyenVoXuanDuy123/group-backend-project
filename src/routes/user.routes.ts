@@ -44,7 +44,10 @@ userRouter.patch(
 
 // Groups
 userRouter.get("/me/groups", wrapRequestHandler(userController.getMyGroups));
-userRouter.get("/:userId/groups", wrapRequestHandler(userController.getGroups));
+userRouter.get(
+  "/:userId/groups",
+  wrapRequestHandler(userController.getUserGroups)
+);
 userRouter.delete(
   "/me/groups/:groupId",
   wrapRequestHandler(userController.leaveGroup)

@@ -8,8 +8,6 @@ import { RemoveGroupMemberRequestType } from "@src/types/group.types";
 import {
   ChangeFriendRequestStatusType,
   SendFriendRequestType,
-  UpdateMeRequestType,
-  UserSessionType,
 } from "@src/types/user.types";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
@@ -51,11 +49,7 @@ export const changeFriendRequestStatusValidator: RequestHandler = (
   const { status } = req.body;
   validateNotNull({ status });
   validateNotEmpty({ status });
-  if (
-    status !== FriendRequestStatus.ACCEPTED &&
-    status !== FriendRequestStatus.REJECTED &&
-    status !== FriendRequestStatus.CANCELLED
-  ) {
+  if (!Object.values(FriendRequestStatus).includes(status)) {
     throw new ApiError(ApiErrorCodes.INVALID_FRIEND_REQUEST_STATUS);
   }
   next();

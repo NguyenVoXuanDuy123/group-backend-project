@@ -1,19 +1,23 @@
 import { GroupJoinRequestStatus } from "@src/enums/group.enum";
-import GroupModel from "@src/schema/group.schema";
+
 import GroupJoinRequestModel from "@src/schema/groupJoinRequest.schema";
+import { GroupJoinRequestDetailType } from "@src/types/group.types";
 import { Types } from "mongoose";
 
 class GroupJoinRequestRepository {
-  async getGroupJoinRequestById(requestId: string | Types.ObjectId) {
+  public async getGroupJoinRequestById(requestId: string | Types.ObjectId) {
     return await GroupJoinRequestModel.findById(requestId).lean();
   }
-  async createGroupJoinRequest(sender_id: string, group_id: string) {
+  public async createGroupJoinRequest(
+    sender_id: string | Types.ObjectId,
+    group_id: string | Types.ObjectId
+  ) {
     return await GroupJoinRequestModel.create({ user_id: sender_id, group_id });
   }
 
-  async checkPendingGroupJoinRequestExists(
-    sender_id: string,
-    group_id: string
+  public async checkPendingGroupJoinRequestExists(
+    sender_id: string | Types.ObjectId,
+    group_id: string | Types.ObjectId
   ) {
     return !!(await this.getPendingGroupJoinRequestBySenderIdAndGroupId(
       sender_id,
@@ -21,9 +25,9 @@ class GroupJoinRequestRepository {
     ));
   }
 
-  async getPendingGroupJoinRequestBySenderIdAndGroupId(
-    sender_id: string,
-    group_id: string
+  public async getPendingGroupJoinRequestBySenderIdAndGroupId(
+    sender_id: string | Types.ObjectId,
+    group_id: string | Types.ObjectId
   ) {
     return await GroupJoinRequestModel.findOne({
       user_id: sender_id,
@@ -32,8 +36,8 @@ class GroupJoinRequestRepository {
     }).lean();
   }
 
-  async changeStatusGroupJoinRequest(
-    requestId: string,
+  public async changeStatusGroupJoinRequest(
+    requestId: string | Types.ObjectId,
     status: GroupJoinRequestStatus
   ) {
     await GroupJoinRequestModel.updateOne(
@@ -42,8 +46,8 @@ class GroupJoinRequestRepository {
     );
   }
 
-  async getPendingGroupJoinRequests(groupId: string) {
-    return await GroupJoinRequestModel.aggregate([
+  public async getPendingGroupJoinRequests(groupId: string) {
+    return await GroupJoinRequestModel.aggregate<GroupJoinRequestDetailType>([
       {
         $match: {
           group_id: new Types.ObjectId(groupId),

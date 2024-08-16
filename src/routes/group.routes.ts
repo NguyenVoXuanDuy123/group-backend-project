@@ -18,7 +18,7 @@ groupRouter.post(
 
 groupRouter.patch("/:groupId", wrapRequestHandler(groupController.updateGroup));
 
-groupRouter.get("/:groupId", wrapRequestHandler(groupController.getGroupById));
+groupRouter.get("/:groupId", wrapRequestHandler(groupController.findGroupById));
 
 groupRouter.get(
   "/:groupId/members",

@@ -1,4 +1,3 @@
-// src/models/Group.ts
 import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
@@ -7,11 +6,11 @@ export interface IGroup {
   admin: Types.ObjectId;
   name: string;
   description: string;
-  visibilityLevel: GroupVisibilityLevel;
+  visibility_level: GroupVisibilityLevel;
   members: Types.ObjectId[];
-  status?: GroupStatus;
-  created_at?: Date;
-  updated_at?: Date;
+  status: GroupStatus;
+  created_at: Date;
+  updated_at: Date;
 }
 
 // Define the Group Schema
@@ -21,7 +20,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
     description: { type: String, required: true },
     admin: { type: Schema.Types.ObjectId, ref: "users", required: true },
     members: [{ type: Schema.Types.ObjectId, ref: "users" }],
-    visibilityLevel: {
+    visibility_level: {
       type: String,
       enum: GroupVisibilityLevel,
       required: true,

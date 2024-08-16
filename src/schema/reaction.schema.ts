@@ -1,42 +1,43 @@
-import { ReactionType } from "@src/enums/post.enum";
-import { Schema, model, Types, Document } from "mongoose";
+import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
+import { model, Model, Schema, Types } from "mongoose";
 
-// Define an interface representing a document in MongoDB.
+// Define the Reaction interface
 export interface IReaction {
-  post: Types.ObjectId;
+  _id: Types.ObjectId;
   user: Types.ObjectId;
-  reaction_type: ReactionType;
+  target_type: ReactionTargetType;
+  target: Types.ObjectId;
+  type: ReactionType;
   created_at: Date;
+  updated_at: Date;
 }
 
-// Create a schema corresponding to the document interface.
-const reactionSchema = new Schema<IReaction>(
+// Define the Reaction Schema
+const ReactionSchema: Schema<IReaction> = new Schema(
   {
-    post: {
+    user: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    target_type: { type: String, enum: ReactionTargetType, required: true },
+    target: {
       type: Schema.Types.ObjectId,
-      ref: "posts",
+      ref: "comments" || "groups",
       required: true,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    },
-    reaction_type: {
-      type: String,
-      required: true,
-      enum: ReactionType,
-    },
+    type: { type: String, enum: ReactionType, required: true },
     created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now },
   },
   {
     timestamps: {
       createdAt: "created_at",
+      updatedAt: "updated_at",
     },
   }
 );
 
-// Create a model based on the schema.
-const ReactionModel = model<IReaction>("reactions", reactionSchema);
+// Create the Reaction model
+const ReactionModel: Model<IReaction> = model<IReaction>(
+  "reactions",
+  ReactionSchema
+);
 
 export default ReactionModel;

@@ -1,6 +1,9 @@
 import postController from "@src/controllers/post.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
-import { createPostValidator } from "@src/middlewares/post.middleware";
+import {
+  createPostValidator,
+  reactToPostValidator,
+} from "@src/middlewares/post.middleware";
 
 import { Router } from "express";
 
@@ -12,11 +15,11 @@ postRouter.post(
   wrapRequestHandler(postController.createPost)
 );
 
-// postRouter.patch("/:postId", wrapRequestHandler(postController.updatePost));
+postRouter.patch("/:postId", wrapRequestHandler(postController.updatePost));
 
 // postRouter.delete("/:postId", wrapRequestHandler(postController.deletePost));
 
-// postRouter.get("/:postId", wrapRequestHandler(postController.getPostById));
+postRouter.get("/:postId", wrapRequestHandler(postController.getPostById));
 
 // postRouter.post(
 //   "/:postId/comments",
@@ -38,15 +41,16 @@ postRouter.post(
 //   wrapRequestHandler(postController.getCommentById)
 // );
 
-postRouter.post(
+postRouter.put(
   "/:postId/reactions",
+  wrapRequestHandler(reactToPostValidator),
   wrapRequestHandler(postController.reactToPost)
 );
 
-// postRouter.delete(
-//   "/:postId/reactions/:reactionId",
-//   wrapRequestHandler(postController.removeReaction)
-// );
+postRouter.delete(
+  "/:postId/reactions/",
+  wrapRequestHandler(postController.removeReactionFromPost)
+);
 
 // postRouter.get(
 //   "/:postId/reactions",

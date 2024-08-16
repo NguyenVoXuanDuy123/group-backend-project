@@ -8,6 +8,7 @@ import NotFoundError from "@src/error/NotFoundError";
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
+import userRepository from "@src/repositories/user.repository";
 import { IGroup } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
@@ -18,56 +19,62 @@ import {
 import { Types } from "mongoose";
 
 class GroupService {
-  async createGroup(
+  public async createGroup(
     userId: string,
     createGroupJoinRequest: CreateGroupJoinRequestType
   ) {
-    const group: IGroup = {
-      ...createGroupJoinRequest,
+    const group: Partial<IGroup> = {
+      description: createGroupJoinRequest.description,
+      name: createGroupJoinRequest.name,
+      visibility_level: createGroupJoinRequest.visibilityLevel,
       admin: new Types.ObjectId(userId),
       members: [new Types.ObjectId(userId)],
     };
 
-    return await groupRepository.createGroup(group);
+    const groupObject = await groupRepository.createGroup(group);
+    return this.findGroupById(groupObject._id, userId);
   }
 
-  async updateGroup(
-    userId: string,
+  public async updateGroup(
+    senderId: string,
     groupId: string,
     updateGroupJoinRequest: UpdateGroupJoinRequestType
   ) {
-    const group = await groupRepository.getGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new NotFoundError("group");
     }
-
-    if (group.admin.toHexString() !== userId) {
+    // if the sender is not the admin of the group, they cannot update the group
+    if (group.admin.toHexString() !== senderId) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
     await groupRepository.updateGroupById(
       groupId,
       removeNullValues(updateGroupJoinRequest)
     );
-    return await this.getGroupById(groupId, userId);
   }
 
-  async getGroupById(groupId: string, senderId: string) {
-    const group = await groupRepository.getGroupById(groupId, {
+  public async findGroupById(
+    groupId: string | Types.ObjectId,
+    senderId: string
+  ) {
+    const group = await groupRepository.findGroupById(groupId, {
       __v: 0,
-      updated_at: 0,
     });
     if (!group) {
       throw new NotFoundError("group");
     }
     const { admin, members, ...rest } = group;
-
     let userGroupRelation = UserGroupRelation.NOT_MEMBER;
     let groupJoinRequest = null;
     if (admin.toHexString() === senderId) {
       userGroupRelation = UserGroupRelation.ADMIN;
-    } else if (members.some((member) => member.toString() === senderId)) {
+    } else if (members.some((member) => member.equals(senderId))) {
       userGroupRelation = UserGroupRelation.MEMBER;
     } else if (
+      // for some reason, eslint thinks groupJoinRequest is unused
+      // but it is used in when return so I have to disable the rule
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (groupJoinRequest =
         await groupJoinRequestRepository.getPendingGroupJoinRequestBySenderIdAndGroupId(
           senderId,
@@ -77,27 +84,34 @@ class GroupService {
       userGroupRelation = UserGroupRelation.INCOMING_REQUEST;
     }
 
+    const adminObject = await userRepository.findById(admin, {
+      _id: 1,
+      last_name: 1,
+      first_name: 1,
+      username: 1,
+    });
+
     return {
       ...rest,
-      admin: admin.toHexString(),
+      admin: adminObject,
       memberCount: members.length,
       userGroupRelation,
     };
   }
 
-  async getGroupMembers(groupId: string) {
+  public async getGroupMembers(groupId: string) {
     const groupMembers = await groupRepository.getGroupMembers(groupId);
     return groupMembers;
   }
 
-  async sendGroupJoinRequest(senderId: string, groupId: string) {
+  public async sendGroupJoinRequest(senderId: string, groupId: string) {
     return await groupJoinRequestService.createGroupJoinRequest(
       senderId,
       groupId
     );
   }
-  async getPendingGroupJoinRequests(senderId: string, groupId: string) {
-    const group = await groupRepository.getGroupById(groupId);
+  public async getPendingGroupJoinRequests(senderId: string, groupId: string) {
+    const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new NotFoundError("group");
     }
@@ -107,7 +121,7 @@ class GroupService {
     return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
   }
 
-  async changeGroupJoinRequestStatus(
+  public async changeGroupJoinRequestStatus(
     userId: string,
     requestId: string,
     status: GroupJoinRequestStatus
@@ -119,16 +133,16 @@ class GroupService {
     );
   }
 
-  async addMemberToGroup(groupId: string, userId: string) {
+  public async addMemberToGroup(groupId: string, userId: string) {
     return await groupRepository.addMemberToGroup(groupId, userId);
   }
 
-  async removeMemberFromGroup(
+  public async removeMemberFromGroup(
     senderId: string,
     groupId: string,
     memberId: string
   ) {
-    const group = await groupRepository.getGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new NotFoundError("group");
     }
@@ -144,7 +158,7 @@ class GroupService {
     }
 
     // check if the member is in the group
-    if (!group.members.some((id) => id.toString() === memberId)) {
+    if (!group.members.some((member) => member.equals(memberId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
     }
 

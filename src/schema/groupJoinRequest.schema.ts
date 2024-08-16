@@ -5,7 +5,7 @@ import { model, Model, Schema, Types } from "mongoose";
 interface IGroupJoinRequest {
   user_id: Types.ObjectId;
   group_id: Types.ObjectId;
-  status: string;
+  status: GroupJoinRequestStatus;
   created_at: Date;
   updated_at: Date;
 }

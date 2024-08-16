@@ -1,4 +1,3 @@
-// src/models/User.ts
 import { UserRole, UserStatus } from "@src/enums/user.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
@@ -14,15 +13,15 @@ export interface IUser {
   first_name: string;
   username: string;
   password: string;
-  bio?: string;
-  avatar?: string;
-  friends?: Types.ObjectId[];
-  groups?: Types.ObjectId[];
-  role?: UserRole;
-  status?: UserStatus;
-  notifications?: INotification[];
-  created_at?: Date;
-  updated_at?: Date;
+  bio: string;
+  avatar: string;
+  friends: Types.ObjectId[];
+  groups: Types.ObjectId[];
+  role: UserRole;
+  status: UserStatus;
+  notifications: INotification[];
+  created_at: Date;
+  updated_at: Date;
 }
 
 // Define the User Schema
