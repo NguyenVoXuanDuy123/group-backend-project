@@ -1,8 +1,9 @@
 import postController from "@src/controllers/post.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import {
+  addCommentValidator,
   createPostValidator,
-  reactToPostValidator,
+  reactToValidator,
 } from "@src/middlewares/post.middleware";
 
 import { Router } from "express";
@@ -17,33 +18,24 @@ postRouter.post(
 
 postRouter.patch("/:postId", wrapRequestHandler(postController.updatePost));
 
-// postRouter.delete("/:postId", wrapRequestHandler(postController.deletePost));
+postRouter.delete("/:postId", wrapRequestHandler(postController.deletePost));
 
 postRouter.get("/:postId", wrapRequestHandler(postController.getPostById));
 
-// postRouter.post(
-//   "/:postId/comments",
-//   wrapRequestHandler(postController.createComment)
-// );
-
-// postRouter.patch(
-//   "/:postId/comments/:commentId",
-//   wrapRequestHandler(postController.updateComment)
-// );
-
-// postRouter.delete(
-//   "/:postId/comments/:commentId",
-//   wrapRequestHandler(postController.deleteComment)
-// );
+postRouter.post(
+  "/:postId/comments",
+  wrapRequestHandler(addCommentValidator),
+  wrapRequestHandler(postController.createCommentToPost)
+);
 
 // postRouter.get(
-//   "/:postId/comments/:commentId",
-//   wrapRequestHandler(postController.getCommentById)
+//   "/:postId/comments",
+//   wrapRequestHandler(postController.getCommentsFromPost)
 // );
 
 postRouter.put(
   "/:postId/reactions",
-  wrapRequestHandler(reactToPostValidator),
+  wrapRequestHandler(reactToValidator),
   wrapRequestHandler(postController.reactToPost)
 );
 
@@ -52,16 +44,9 @@ postRouter.delete(
   wrapRequestHandler(postController.removeReactionFromPost)
 );
 
-// postRouter.get(
-//   "/:postId/reactions",
-//   wrapRequestHandler(postController.getReactions)
-// );
-
-// postRouter.get(
-//   "/:postId/comments",
-//   wrapRequestHandler(postController.getComments)
-// );
-
-// postRouter.post
+postRouter.get(
+  "/:postId/reactions",
+  wrapRequestHandler(postController.getReactionsFromPost)
+);
 
 export default postRouter;

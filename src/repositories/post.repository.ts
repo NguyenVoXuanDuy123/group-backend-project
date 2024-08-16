@@ -1,4 +1,4 @@
-import PostModel, { IPost } from "@src/schema/post.schema";
+import PostModel, { IPostEditHistory, IPost } from "@src/schema/post.schema";
 import { ProjectionType, Types } from "mongoose";
 
 class PostRepository {
@@ -24,6 +24,15 @@ class PostRepository {
     return await PostModel.findByIdAndUpdate(postId, { $set: post });
   }
 
+  public async pushPostHistory(
+    postId: string | Types.ObjectId,
+    edit_history: Partial<IPostEditHistory>
+  ) {
+    return await PostModel.findByIdAndUpdate(postId, {
+      $push: { edit_history },
+    });
+  }
+
   public async incrementReactionCount(postId: string | Types.ObjectId) {
     return await PostModel.findByIdAndUpdate(postId, {
       $inc: { numberOfReactions: 1 },
@@ -34,6 +43,10 @@ class PostRepository {
     return await PostModel.findByIdAndUpdate(postId, {
       $inc: { numberOfReactions: -1 },
     });
+  }
+
+  public async deletePostById(postId: string | Types.ObjectId) {
+    return await PostModel.findByIdAndDelete(postId);
   }
 }
 

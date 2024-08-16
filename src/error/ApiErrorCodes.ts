@@ -94,7 +94,7 @@ class ApiErrorCodes {
   /** Group errors */
   public static readonly INVALID_GROUP_VISIBILITY_LEVEL = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Group visibility level must be either 'public' or 'friends'."
+    "Group visibility level must be either 'public' or 'private'."
   );
 
   public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
@@ -137,7 +137,7 @@ class ApiErrorCodes {
   /** Post errors */
   public static readonly INVALID_POST_VISIBILITY_LEVEL = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "Post visibility level must be either 'public' or 'friends' for posts in a personal timeline, or 'group' for posts in a group."
+    "Post visibility level must be either 'public' or 'friend' for posts on home (wall) , or 'group' for posts in a group."
   );
 
   public static readonly VISIBILITY_LEVEL_MUST_BE_GROUP = new ApiErrorCodes(
@@ -159,7 +159,7 @@ class ApiErrorCodes {
 
   public static readonly USER_NOT_REACTED = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
-    "User has not reacted to this post."
+    "User has not reacted to this post or this comment."
   );
 
   private constructor(

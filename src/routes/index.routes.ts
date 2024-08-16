@@ -8,6 +8,7 @@ import {
   IsUserActiveValidator,
 } from "@src/middlewares/util.middleware";
 import { wrapRequestHandler } from "@src/helpers/handlers";
+import commentRouter from "@src/routes/comment.routes";
 
 const apiRouter = Router();
 
@@ -21,5 +22,6 @@ apiRouter.use(wrapRequestHandler(IsUserActiveValidator));
 apiRouter.use("/users", userRouter);
 apiRouter.use("/groups", groupRouter);
 apiRouter.use("/posts", postRouter);
+apiRouter.use("/comments", commentRouter);
 
 export default apiRouter;

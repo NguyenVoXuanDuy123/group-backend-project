@@ -1,5 +1,6 @@
 import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
 import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
+import { ReactionDetailType } from "@src/types/post.types";
 import { ProjectionType, Types } from "mongoose";
 
 class ReactionRepository {
@@ -25,6 +26,12 @@ class ReactionRepository {
         projection: { __v: 0 },
       }
     );
+  }
+
+  public async getReactionCountByTargetId(targetId: string | Types.ObjectId) {
+    return await ReactionModel.countDocuments({
+      target: targetId,
+    });
   }
 
   public async removeReaction(
@@ -62,6 +69,46 @@ class ReactionRepository {
       },
       projection
     ).lean();
+  }
+
+  public async getReactionsByTargetId(targetId: string | Types.ObjectId) {
+    // we don't need worry about the target type here
+    // because percentage of two targetId duplication is very low (almost 0)
+    // it is not worth to add target_type to the query, it will slow down the query
+    // since we have index on target and user
+
+    return await ReactionModel.aggregate<ReactionDetailType>([
+      {
+        $match: {
+          target: new Types.ObjectId(targetId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          _id: "$_id",
+          type: "$type",
+          target_type: "$target_type",
+          user: {
+            _id: "$user._id",
+            first_name: "$user.first_name",
+            last_name: "$user.last_name",
+            avatar: "$user.avatar",
+            username: "$user.username",
+          },
+        },
+      },
+    ]);
   }
 }
 

@@ -18,7 +18,13 @@ groupRouter.post(
 
 groupRouter.patch("/:groupId", wrapRequestHandler(groupController.updateGroup));
 
-groupRouter.get("/:groupId", wrapRequestHandler(groupController.findGroupById));
+groupRouter.get("/:groupId", wrapRequestHandler(groupController.getGroupById));
+
+// this api is not required
+// groupRouter.delete(
+//   "/:groupId",
+//   wrapRequestHandler(groupController.removeGroup)
+// );
 
 groupRouter.get(
   "/:groupId/members",
@@ -45,5 +51,10 @@ groupRouter.delete(
   "/:groupId/members/:memberId",
   wrapRequestHandler(groupController.removeMemberFromGroup)
 );
+
+// groupRouter.get(
+//   "/:groupId/posts",
+//   wrapRequestHandler(groupController.getGroupPosts)
+// );
 
 export default groupRouter;

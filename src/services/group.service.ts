@@ -32,7 +32,7 @@ class GroupService {
     };
 
     const groupObject = await groupRepository.createGroup(group);
-    return this.findGroupById(groupObject._id, userId);
+    return this.getGroupById(groupObject._id, userId);
   }
 
   public async updateGroup(
@@ -54,7 +54,7 @@ class GroupService {
     );
   }
 
-  public async findGroupById(
+  public async getGroupById(
     groupId: string | Types.ObjectId,
     senderId: string
   ) {
@@ -98,6 +98,17 @@ class GroupService {
       userGroupRelation,
     };
   }
+
+  // public async removeGroup(senderId: string, groupId: string) {
+  //   const group = await groupRepository.findGroupById(groupId);
+  //   if (!group) {
+  //     throw new NotFoundError("group");
+  //   }
+  //   if (group.admin.toHexString() !== senderId) {
+  //     throw new ApiError(ApiErrorCodes.FORBIDDEN);
+  //   }
+  //   await groupRepository.removeGroupById(groupId);
+  // }
 
   public async getGroupMembers(groupId: string) {
     const groupMembers = await groupRepository.getGroupMembers(groupId);

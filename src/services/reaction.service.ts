@@ -5,7 +5,7 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import reactionRepository from "@src/repositories/reaction.repository";
 
 class ReactionService {
-  public async reactToPost(
+  public async createReaction(
     postID: string,
     userID: string,
     target_type: ReactionTargetType,

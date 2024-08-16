@@ -4,9 +4,10 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotNull } from "@src/helpers/validation";
 
 import { APIRequest, APIResponse } from "@src/types/api.types";
+import { CreateCommentRequestType } from "@src/types/comment.types";
 import {
   CreatePostRequestType,
-  ReactToPostRequestType,
+  ReactToRequestType,
 } from "@src/types/post.types";
 import { NextFunction } from "express";
 
@@ -40,8 +41,8 @@ export const createPostValidator = (
   next();
 };
 
-export const reactToPostValidator = (
-  req: APIRequest<ReactToPostRequestType>,
+export const reactToValidator = (
+  req: APIRequest<ReactToRequestType>,
   _: APIResponse,
   next: NextFunction
 ) => {
@@ -50,5 +51,15 @@ export const reactToPostValidator = (
   if (!Object.values(ReactionType).includes(reactionType)) {
     throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
   }
+  next();
+};
+
+export const addCommentValidator = (
+  req: APIRequest<CreateCommentRequestType>,
+  _: APIResponse,
+  next: NextFunction
+) => {
+  const { content } = req.body;
+  validateNotNull({ content });
   next();
 };

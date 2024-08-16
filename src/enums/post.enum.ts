@@ -1,6 +1,6 @@
 export enum PostVisibilityLevel {
   PUBLIC = "public",
-  FRIENDS = "friends",
+  FRIEND = "friend",
   GROUP = "group",
 }
 

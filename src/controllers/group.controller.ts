@@ -40,17 +40,26 @@ class GroupController {
     });
   };
 
-  public findGroupById = async (req: APIRequest, res: APIResponse) => {
+  public getGroupById = async (req: APIRequest, res: APIResponse) => {
     const { groupId } = req.params;
     const { _id } = req.user as UserSessionType;
 
-    const group = await groupService.findGroupById(groupId, _id);
+    const group = await groupService.getGroupById(groupId, _id);
 
     res.status(HttpStatusCodes.OK).json({
       message: "Group fetched successfully",
       result: camelCaseifyWithDateConversion(group),
     });
   };
+
+  // public removeGroup = async (req: APIRequest, res: APIResponse) => {
+  //   const { _id } = req.user as UserSessionType;
+  //   const { groupId } = req.params;
+  //   await groupService.removeGroup(_id, groupId);
+  //   res.status(HttpStatusCodes.OK).json({
+  //     message: "Group removed successfully",
+  //   });
+  // };
 
   public getGroupMembers = async (req: APIRequest, res: APIResponse) => {
     const { groupId } = req.params;

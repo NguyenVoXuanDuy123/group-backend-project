@@ -1,49 +1,38 @@
-import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { Schema, model, Types } from "mongoose";
 
 // Define an interface representing a document in MongoDB.
-export interface IPostEditHistory {
+export interface ICommentEditHistory {
   content: string;
-  images: string[];
   edited_at: Date;
 }
 
-export interface IPost {
+export interface IComment {
   author: Types.ObjectId;
+  post: Types.ObjectId;
   content: string;
-  images: string[];
-  visibility_level: PostVisibilityLevel;
-  group: Types.ObjectId | null;
-  edit_history: IPostEditHistory[];
+  edit_history: ICommentEditHistory[];
   created_at: Date;
   updated_at: Date;
 }
 
 // Create a schema corresponding to the document interface.
-const postSchema = new Schema<IPost>(
+const commentSchema = new Schema<IComment>(
   {
     author: {
       type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },
-    content: { type: String, required: true },
-    images: [{ type: String }, { default: [] }],
-    visibility_level: {
-      type: String,
-      enum: PostVisibilityLevel,
+    post: {
+      type: Schema.Types.ObjectId,
+      ref: "posts",
       required: true,
     },
-    group: { type: Schema.Types.ObjectId, ref: "groups" },
+    content: { type: String, required: true },
     edit_history: [
       {
         content: { type: String, required: true },
         edited_at: { type: Date, required: true, default: Date.now },
-      },
-      {
-        timestamps: {
-          createdAt: "edited_at",
-        },
       },
     ],
     created_at: { type: Date, default: Date.now },
@@ -58,6 +47,6 @@ const postSchema = new Schema<IPost>(
 );
 
 // Create a model based on the schema.
-const PostModel = model<IPost>("posts", postSchema);
+const CommentModel = model<IComment>("comments", commentSchema);
 
-export default PostModel;
+export default CommentModel;
