@@ -10,7 +10,6 @@ export type UserSessionType = {
 export type UpdateMeRequestType = {
   firstName?: string;
   lastName?: string;
-  avatar?: string;
   bio?: string;
 };
 

@@ -1,10 +1,7 @@
-import LengthError from "@src/error/LengthError";
 import NotEmptyError from "@src/error/NotEmptyError";
+import LengthError from "@src/error/LengthError";
 import NotNullError from "@src/error/NotNullError";
 
-import ApiError from "@src/error/ApiError";
-import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import { Request } from "express";
 import IsNotNumberError from "@src/error/IsNotNumberError";
 
 // export const validateUsername = (username: string): void => {
@@ -53,7 +50,7 @@ export const validateNotNull = (input: InputNotNullValidator): void => {
     }
   }
   if (nullFields.length > 0) {
-    throw new NotNullError(nullFields.join(", "));
+    throw new NotNullError(nullFields);
   }
 };
 
@@ -97,31 +94,20 @@ export const validateIsNumber = (input: InputIsNumberValidator): void => {
   }
 };
 
-/**
- * Function to validate if a user is authenticated
- * @param req - The request object
- * @throws ApiError
- */
-export const validateIsAuthenticated = (req: Request): void => {
-  if (!req.isAuthenticated()) {
-    throw new ApiError(ApiErrorCodes.USER_NOT_AUTHENTICATED);
-  }
-};
+// type InputIsStringValidator = {
+//   [key: string]: unknown;
+// };
 
 /**
- * Function to validate if value in Enum
- * @param input - An Object containing the field name and value and Enum to check against
- * @throws ApiError
+ * Function to validate if a value is string
+ * @param input - An object containing the field name and value.
+ * @throws IsNotStringError
  */
 
-// export const validateIsInEnum = <T extends object>(
-//   enumObj: T,
-//   value: {
-//     value: string;
-//   }
-// ): void => {
-
-//   if (!Object.values(enumObj).includes(value)) {
-//     throw new NotInEnumError(value);
+// export const validateIsString = (input: InputIsStringValidator): void => {
+//   for (const fieldName in input) {
+//     if (typeof input[fieldName] !== "string") {
+//       throw new IsNotStringError(fieldName);
+//     }
 //   }
 // };

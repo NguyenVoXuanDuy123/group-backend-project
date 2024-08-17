@@ -15,7 +15,7 @@ const apiRouter = Router();
 apiRouter.use("/auth", authRouter);
 
 //check if user is authenticated
-userRouter.use(wrapRequestHandler(AuthenticationValidator));
+apiRouter.use(wrapRequestHandler(AuthenticationValidator));
 
 //if user is authenticated, check if user is not banned, if banned, throw error
 apiRouter.use(wrapRequestHandler(IsUserActiveValidator));

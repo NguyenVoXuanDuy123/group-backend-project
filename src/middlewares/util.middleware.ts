@@ -1,10 +1,11 @@
 import { UserStatus } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import { validateIsAuthenticated } from "@src/helpers/validation";
-import { APIRequest } from "@src/types/api.types";
+import { APIRequest, APIResponse } from "@src/types/api.types";
+
 import { UserSessionType } from "@src/types/user.types";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction } from "express";
+
 /**
  * description: This middleware checks if the user is logged in or not
  * @param req
@@ -12,11 +13,13 @@ import { NextFunction, Request, Response } from "express";
  * @param next
  */
 export const AuthenticationValidator = (
-  req: Request,
-  res: Response,
+  req: APIRequest,
+  res: APIResponse,
   next: NextFunction
 ) => {
-  validateIsAuthenticated(req);
+  if (!req.isAuthenticated()) {
+    throw new ApiError(ApiErrorCodes.USER_NOT_AUTHENTICATED);
+  }
   next();
 };
 
@@ -28,8 +31,8 @@ export const AuthenticationValidator = (
  */
 
 export const IsUserActiveValidator = (
-  req: Request,
-  res: Response,
+  req: APIRequest,
+  res: APIResponse,
   next: NextFunction
 ) => {
   const { status } = req.user as UserSessionType;
@@ -38,9 +41,3 @@ export const IsUserActiveValidator = (
   }
   next();
 };
-
-export const isGroupApproved = (
-  req: APIRequest,
-  res: Response,
-  next: NextFunction
-) => {};

@@ -22,6 +22,12 @@ class ApiErrorCodes {
     "Something went wrong, please contact the administrator."
   );
 
+  public static readonly INVALID_IMAGE_FORMAT = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Invalid image format. Supported formats are JPEG, PNG, and JPG."
+  );
+
+  /**  Authentication and authorization errors */
   public static readonly UNAUTHORIZED = new ApiErrorCodes(
     HttpStatusCodes.UNAUTHORIZED,
     "Unauthorized"
@@ -32,7 +38,6 @@ class ApiErrorCodes {
     "Forbidden"
   );
 
-  /**  Authentication and authorization errors */
   public static readonly PASSWORD_CONFIRM_PASSWORD_MISMATCH = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "Password and confirm password do not match"

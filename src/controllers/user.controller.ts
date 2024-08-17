@@ -45,6 +45,17 @@ class UserController {
     });
   };
 
+  public updateAvatar = (req: APIRequest, res: APIResponse) => {
+    if (!req.file) {
+      throw new Error("No file uploaded");
+    }
+    const filePath = req.file.path;
+    res.status(HttpStatusCodes.OK).json({
+      message: "Update avatar successful test",
+      result: filePath,
+    });
+  };
+
   public sendFriendRequest = async (
     req: APIRequest<SendFriendRequestType>,
     res: APIResponse

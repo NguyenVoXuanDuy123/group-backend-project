@@ -2,7 +2,6 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import {
-  validateIsAuthenticated,
   validateLength,
   validateNotEmpty,
   validateNotNull,

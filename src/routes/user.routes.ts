@@ -6,6 +6,7 @@ import {
   removeFriendRequestValidator,
   sendFriendRequestValidator,
 } from "@src/middlewares/user.middleware";
+import upload from "@src/configs/multer.config";
 
 const userRouter = Router();
 
@@ -14,6 +15,13 @@ const userRouter = Router();
 // Profile
 userRouter.get("/profile/me", wrapRequestHandler(userController.getMe));
 userRouter.patch("/profile/me", wrapRequestHandler(userController.updateMe));
+
+userRouter.patch(
+  "/profile/me/avatar",
+  upload.single("avatar"),
+  wrapRequestHandler(userController.updateAvatar)
+);
+
 userRouter.get("/profile/:userId", wrapRequestHandler(userController.getUser));
 
 // Friends

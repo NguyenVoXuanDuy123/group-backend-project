@@ -71,7 +71,6 @@ class UserService {
       removeNullValues({
         first_name: updateMeRequest.firstName,
         last_name: updateMeRequest.lastName,
-        avatar: updateMeRequest.avatar,
         bio: updateMeRequest.bio,
       })
     );

@@ -19,6 +19,7 @@ import connectMongoDBSession from "connect-mongodb-session";
 import "./configs/passport.config"; // import to run passport config
 import { UPLOAD_DIR } from "@src/constant/dir";
 import databaseConfig from "@src/configs/database.config";
+
 // **** Variables **** //
 
 const app = express();
@@ -28,6 +29,7 @@ const app = express();
 databaseConfig.connectDB();
 
 // Basic middleware
+
 app.use(express.json());
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 app.use(express.urlencoded({ extended: true }));
