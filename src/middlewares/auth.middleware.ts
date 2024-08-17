@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import {
-  validateLength,
-  validateNotEmpty,
-  validateNotNull,
-} from "@src/helpers/validation";
+import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
 import { APIRequest } from "@src/types/api.types";
 import { LoginRequestType, RegisterRequestType } from "@src/types/auth.types";
 
@@ -34,10 +30,13 @@ export const registerValidator: RequestHandler = (
     confirmPassword,
   });
 
-  validateLength({
-    password: { value: password, minLength: 6, maxLength: 20 },
-    username: { value: username, minLength: 6, maxLength: 20 },
-  });
+  if (password.length < 6) {
+    throw new ApiError(ApiErrorCodes.INVALID_PASSWORD_LENGTH);
+  }
+
+  if (username.length < 6) {
+    throw new ApiError(ApiErrorCodes.INVALID_USERNAME_LENGTH);
+  }
 
   if (password !== confirmPassword) {
     throw new ApiError(ApiErrorCodes.PASSWORD_CONFIRM_PASSWORD_MISMATCH);

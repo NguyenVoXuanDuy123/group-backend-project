@@ -6,7 +6,11 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
  */
 class ApiError extends RouteError {
   public constructor(ApiErrorCodes: ApiErrorCodes) {
-    super(ApiErrorCodes.httpStatusCode, ApiErrorCodes.message);
+    super(
+      ApiErrorCodes.responseCode,
+      ApiErrorCodes.httpStatusCode,
+      ApiErrorCodes.message
+    );
   }
 }
 

@@ -24,16 +24,20 @@ class UserService {
     }
     const { friends, groups, ...rest } = user;
 
-    let UserFriendRelationship: UserFriendRelation | null = null;
-
-    UserFriendRelationship = UserFriendRelation.NOT_FRIEND;
+    let userFriendRelationship: UserFriendRelation =
+      UserFriendRelation.NOT_FRIEND;
 
     let friendRequest = null;
 
+    // if the sender is the same as the user, then the user is the sender
     if (senderId === userId) {
-      UserFriendRelationship = UserFriendRelation.SELF;
-    } else if (friends?.some((friend) => friend.equals(senderId))) {
-      UserFriendRelationship = UserFriendRelation.FRIEND;
+      userFriendRelationship = UserFriendRelation.SELF;
+
+      // if the sender is the friend of the user
+    } else if (friends.some((friend) => friend.equals(senderId))) {
+      userFriendRelationship = UserFriendRelation.FRIEND;
+
+      // if the sender has sent a friend request to the user
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
@@ -41,7 +45,9 @@ class UserService {
           userId
         ))
     ) {
-      UserFriendRelationship = UserFriendRelation.INCOMING_REQUEST;
+      userFriendRelationship = UserFriendRelation.INCOMING_REQUEST;
+
+      // if the user has sent a friend request to the sender
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
@@ -49,14 +55,14 @@ class UserService {
           senderId
         ))
     ) {
-      UserFriendRelationship = UserFriendRelation.OUTGOING_REQUEST;
+      userFriendRelationship = UserFriendRelation.OUTGOING_REQUEST;
     }
 
     return {
       ...rest,
       friendCount: friends?.length || 0,
       groupCount: groups?.length || 0,
-      UserFriendRelationship: UserFriendRelationship,
+      userFriendRelationship,
       friendRequest,
     };
   }
@@ -109,10 +115,6 @@ class UserService {
       requestId,
       status
     );
-  }
-
-  public async addFriend(userId: string, friendId: string) {
-    await userRepository.addFriend(userId, friendId);
   }
 
   public async removeFriend(userId: string, friendId: string) {

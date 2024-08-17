@@ -5,10 +5,16 @@ import HttpStatusCodes from "@src/constant/HttpStatusCodes";
  */
 class RouteError extends Error {
   public status: HttpStatusCodes;
+  public responseCode: number;
 
-  public constructor(status: HttpStatusCodes, message: string) {
+  public constructor(
+    responseCode: number,
+    status: HttpStatusCodes,
+    message: string
+  ) {
     super(message);
     this.status = status;
+    this.responseCode = responseCode;
   }
 }
 

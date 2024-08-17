@@ -1,25 +1,23 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import authService from "@src/services/auth.service";
-import { APIResponse } from "@src/types/api.types";
+import { APIRequest, APIResponse } from "@src/types/api.types";
 import { RegisterRequestType } from "@src/types/auth.types";
 
-import { Request } from "express";
-
 class AuthController {
-  public register = async (req: Request, res: APIResponse) => {
+  public register = async (req: APIRequest, res: APIResponse) => {
     await authService.createUser(req.body as RegisterRequestType);
     res.status(HttpStatusCodes.CREATED).json({
-      message: "User created successfully",
+      message: "Register new user successfully",
     });
   };
 
-  public login = (req: Request, res: APIResponse) => {
-    res.status(HttpStatusCodes.OK).json({ message: "Login successful" });
+  public login = (req: APIRequest, res: APIResponse) => {
+    res.status(HttpStatusCodes.OK).json({ message: "Login successfully" });
   };
 
-  public logout = (req: Request, res: APIResponse) => {
+  public logout = (req: APIRequest, res: APIResponse) => {
     authService.logout(req);
-    res.status(HttpStatusCodes.OK).json({ message: "Successfully logged out" });
+    res.status(HttpStatusCodes.OK).json({ message: "Logout successfully" });
   };
 }
 

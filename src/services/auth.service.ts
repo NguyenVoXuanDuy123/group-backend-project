@@ -2,11 +2,10 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import userRepository from "@src/repositories/user.repository";
 
-import { Request } from "express";
 import bcrypt from "bcrypt";
 import { LoginRequestType, RegisterRequestType } from "@src/types/auth.types";
-import AlreadyExistError from "@src/error/AlreadyExistError";
 import { IUser } from "@src/schema/user.schema";
+import { APIRequest } from "@src/types/api.types";
 
 class AuthService {
   private readonly saltRounds = 9;
@@ -14,7 +13,7 @@ class AuthService {
     if (
       await userRepository.checkUserExistsByUsername(registerRequest.username)
     ) {
-      throw new AlreadyExistError("username");
+      throw new ApiError(ApiErrorCodes.USERNAME_ALREADY_TAKEN);
     }
     const user: Partial<IUser> = {
       first_name: registerRequest.firstName,
@@ -39,7 +38,7 @@ class AuthService {
     return user;
   }
 
-  public logout(req: Request) {
+  public logout(req: APIRequest) {
     req.logout((err) => {
       if (err) {
         throw new Error("Error logging out: " + err);

@@ -4,7 +4,6 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
 import userRepository from "@src/repositories/user.repository";
-import userService from "@src/services/user.service";
 
 class FriendRequestService {
   public async createFriendRequest(senderId: string, receiverId: string) {
@@ -89,9 +88,9 @@ class FriendRequestService {
 
     //If the status is accepted, add the sender to the receiver's friend list and vice versa
     if (status === FriendRequestStatus.ACCEPTED) {
-      const senderId = friendRequest.sender_id.toHexString();
+      const senderId = friendRequest.sender_id;
 
-      userService.addFriend(senderId, senderId);
+      userRepository.addFriend(senderId, senderId);
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
@@ -99,9 +98,9 @@ class FriendRequestService {
     return friendRequestRepository.getFriendRequestById(requestId);
   }
 
-  public async getMyPendingReceivedFriendRequests(userId: string) {
+  public async getMyPendingReceivedFriendRequests(senderId: string) {
     return await friendRequestRepository.getMyPendingReceivedFriendRequests(
-      userId
+      senderId
     );
   }
 }

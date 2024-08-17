@@ -36,7 +36,10 @@ class UserRepository {
     await UserModel.findByIdAndUpdate<IUser>(_id, { $set: user });
   }
 
-  public async addFriend(userId: string, friendId: string) {
+  public async addFriend(
+    userId: string | Types.ObjectId,
+    friendId: string | Types.ObjectId
+  ) {
     await UserModel.findByIdAndUpdate(userId, { $push: { friends: friendId } });
     await UserModel.findByIdAndUpdate(friendId, { $push: { friends: userId } });
   }

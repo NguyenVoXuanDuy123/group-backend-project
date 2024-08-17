@@ -2,11 +2,14 @@ import { GroupJoinRequestStatus } from "@src/enums/group.enum";
 
 import GroupJoinRequestModel from "@src/schema/groupJoinRequest.schema";
 import { GroupJoinRequestDetailType } from "@src/types/group.types";
-import { Types } from "mongoose";
+import { ProjectionType, Types } from "mongoose";
 
 class GroupJoinRequestRepository {
-  public async getGroupJoinRequestById(requestId: string | Types.ObjectId) {
-    return await GroupJoinRequestModel.findById(requestId).lean();
+  public async getGroupJoinRequestById(
+    requestId: string | Types.ObjectId,
+    projection: ProjectionType<GroupJoinRequestDetailType> = {}
+  ) {
+    return await GroupJoinRequestModel.findById(requestId, projection).lean();
   }
   public async createGroupJoinRequest(
     sender_id: string | Types.ObjectId,

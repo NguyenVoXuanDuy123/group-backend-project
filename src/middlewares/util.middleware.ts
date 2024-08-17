@@ -40,3 +40,21 @@ export const IsUserActiveValidator = (
   }
   next();
 };
+
+// export const isParameterIdValidValidator = (
+//   req: APIRequest,
+//   res: APIResponse,
+//   next: NextFunction
+// ) => {
+//   const invalidIds = [];
+//   console.log(req.params.groupId);
+//   for (const key in req.params) {
+//     if (!Types.ObjectId.isValid(req.params[key])) {
+//       invalidIds.push(key);
+//     }
+//   }
+//   if (invalidIds.length > 0) {
+//     throw new InvalidIdError(invalidIds);
+//   }
+//   next();
+// };

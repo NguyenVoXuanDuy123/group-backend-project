@@ -11,22 +11,23 @@ import RouteError from "@src/error/RouteError";
 class NotEmptyError extends RouteError {
   /**
    * Public constructor.
-   * @param fieldName - The name of the field that is empty.
+   * @param fieldNames - The name of the field that is empty.
    */
 
-  public constructor(fieldName: string) {
-    const message = NotEmptyError.createMessage(fieldName);
-    super(HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
+  public constructor(fieldNames: string[]) {
+    const responseCode = 2;
+    const message = NotEmptyError.createMessage(fieldNames);
+    super(responseCode, HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
   }
 
   /**
    * Creates an error message indicating that the specified field cannot be empty.
-   * @param fieldName - The name of the field that cannot be empty.
+   * @param fieldNames - The name of the field that cannot be empty.
    * @returns The error message string.
    */
 
-  private static createMessage(fieldName: string): string {
-    return `${fieldName} cannot be empty.`;
+  private static createMessage(fieldNames: string[]): string {
+    return `The following fields cannot be empty: ${fieldNames.join(", ")}`;
   }
 }
 

@@ -46,7 +46,7 @@ class GroupService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
     // if the sender is not the admin of the group, they cannot update the group
-    if (group.admin.toHexString() !== senderId) {
+    if (!group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.UPDATE_GROUP_FORBIDDEN);
     }
     await groupRepository.updateGroupById(
@@ -68,7 +68,7 @@ class GroupService {
     const { admin, members, ...rest } = group;
     let userGroupRelation = UserGroupRelation.NOT_MEMBER;
     let groupJoinRequest = null;
-    if (admin.toHexString() === senderId) {
+    if (admin.equals(senderId)) {
       userGroupRelation = UserGroupRelation.ADMIN;
     } else if (members.some((member) => member.equals(senderId))) {
       userGroupRelation = UserGroupRelation.MEMBER;
@@ -181,12 +181,12 @@ class GroupService {
     }
 
     // check if the sender is the admin of the group
-    if (senderId !== group.admin.toHexString()) {
+    if (!group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.REMOVE_MEMBER_FORBIDDEN);
     }
 
     // check if the member is the admin of the group
-    if (memberId === group.admin.toHexString()) {
+    if (group.admin.equals(memberId)) {
       throw new ApiError(ApiErrorCodes.CANNOT_REMOVE_GROUP_ADMIN);
     }
 
