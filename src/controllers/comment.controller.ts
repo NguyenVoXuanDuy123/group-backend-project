@@ -23,8 +23,8 @@ class commentController {
   };
 
   public deleteComment = async (req: APIRequest, res: APIResponse) => {
-    const { _id } = req.user as UserSessionType;
-    await commentService.deleteComment(_id, req.params.commentId);
+    const { _id, role } = req.user as UserSessionType;
+    await commentService.deleteComment(_id, req.params.commentId, role);
     res.status(HttpStatusCodes.OK).json({
       message: "Delete comment successful",
     });

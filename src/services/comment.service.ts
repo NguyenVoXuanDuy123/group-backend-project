@@ -1,9 +1,16 @@
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
+import {
+  PostVisibilityLevel,
+  ReactionTargetType,
+  ReactionType,
+} from "@src/enums/post.enum";
+import { UserRole } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import commentRepository from "@src/repositories/comment.repository";
+import groupRepository from "@src/repositories/group.repository";
+import postRepository from "@src/repositories/post.repository";
 import reactionRepository from "@src/repositories/reaction.repository";
 import userRepository from "@src/repositories/user.repository";
 import { IComment } from "@src/schema/comment.schema";
@@ -39,7 +46,7 @@ class CommentService {
   ) {
     const comment = await commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw new NotFoundError("comment");
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     const author = await userRepository.findById(comment.author, {
       first_name: 1,
@@ -85,7 +92,7 @@ class CommentService {
   ) {
     const comment = await commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw new NotFoundError("comment");
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     if (!comment.author.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
@@ -106,15 +113,69 @@ class CommentService {
     return await this.getCommentById(commentId, senderId);
   }
 
-  public async deleteComment(senderId: string, commentId: string) {
+  public async deleteComment(
+    senderId: string,
+    commentId: string,
+    senderRole: UserRole
+  ) {
     const comment = await commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw new NotFoundError("comment");
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    if (!comment.author.equals(senderId)) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+    /**
+     * sender can only delete comment if:
+     * 1. sender is the author of the comment
+     * 2. sender is the author of the post
+     * 3. sender is the admin of the group where the comment is posted
+     * 4. sender is an site admin
+     */
+
+    // site admin and author of the comment can delete the comment
+    if (comment.author.equals(senderId) || senderRole === UserRole.ADMIN) {
+      await commentRepository.deleteCommentById(commentId);
+      return;
     }
-    await commentRepository.deleteCommentById(commentId);
+
+    const post = await postRepository.findPostById(comment.post, {
+      author: 1,
+    });
+
+    if (!post) {
+      // there is no way when a comment exists, but the post cannot be found
+      throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
+    }
+
+    // author of the post can delete the comment
+    if (post.author.equals(senderId)) {
+      await commentRepository.deleteCommentById(commentId);
+      return;
+    }
+
+    // if the post visibility level is group, admin of the group can delete the comment
+    if (post.visibility_level === PostVisibilityLevel.GROUP) {
+      if (!post.group) {
+        // there is no way when a post has a group visibility level,
+        // but group is null
+        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
+      }
+
+      const group = await groupRepository.findGroupById(post.group, {
+        admin: 1,
+      });
+
+      if (!group) {
+        // there is no way when a post has a group visibility level,
+        // but the group cannot be found
+        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
+      }
+
+      if (group.admin.equals(senderId)) {
+        commentRepository.deleteCommentById(commentId);
+        return;
+      }
+    }
+
+    throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
   }
 
   public async reactToComment(
@@ -124,7 +185,7 @@ class CommentService {
   ) {
     const comment = await commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw new NotFoundError("comment");
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     // if the post does not exist, or not visible to the sender
     // the method below will throw an error
@@ -142,7 +203,7 @@ class CommentService {
   public async removeReactionFromComment(commentId: string, senderId: string) {
     const comment = await commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw new NotFoundError("comment");
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     // if the post does not exist, or not visible to the sender
     // the method below will throw an error

@@ -22,9 +22,21 @@ class ApiErrorCodes {
     "Something went wrong, please contact the administrator."
   );
 
+  /** Image upload errors */
+
   public static readonly INVALID_IMAGE_FORMAT = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "Invalid image format. Supported formats are JPEG, PNG, and JPG."
+  );
+
+  public static readonly IMAGE_SIZE_TOO_LARGE = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "Image size is too large. Maximum allowed size is 5MB."
+  );
+
+  public static readonly NO_IMAGE_ATTACHED = new ApiErrorCodes(
+    HttpStatusCodes.BAD_REQUEST,
+    "No image attached."
   );
 
   /**  Authentication and authorization errors */
@@ -57,11 +69,23 @@ class ApiErrorCodes {
     HttpStatusCodes.FORBIDDEN,
     "User is banned"
   );
+  /** User errors */
+
+  public static readonly USER_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "User not found"
+  );
 
   /** Friend request errors */
+
   public static readonly INVALID_FRIEND_REQUEST_STATUS = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "Friend status must be either 'accepted', 'rejected' if the user is the receiver of the request, or 'cancelled' if the user is the sender."
+  );
+
+  public static readonly FRIEND_REQUEST_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "Friend request not found."
   );
 
   public static readonly CANNOT_CHANGE_FRIEND_REQUEST_STATUS =
@@ -102,6 +126,11 @@ class ApiErrorCodes {
     "Group visibility level must be either 'public' or 'private'."
   );
 
+  public static readonly GROUP_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "Group not found."
+  );
+
   public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
     HttpStatusCodes.FORBIDDEN,
     "Cannot remove the admin of the group."
@@ -118,7 +147,12 @@ class ApiErrorCodes {
     "Group join request status must be either 'accepted', 'rejected' if the user is the admin of the group, or 'cancelled' if the user is the requester."
   );
 
-  public static readonly GROUP_REQUEST_ALREADY_SENT = new ApiErrorCodes(
+  public static readonly GROUP_JOIN_REQUEST_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "Group join request not found."
+  );
+
+  public static readonly GROUP_JOIN_REQUEST_ALREADY_SENT = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
     "The user has already sent a group request to this group."
   );
@@ -155,6 +189,16 @@ class ApiErrorCodes {
       HttpStatusCodes.BAD_REQUEST,
       "Group ID is required when visibility level is 'group'."
     );
+
+  public static readonly POST_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "Post not found."
+  );
+  /** Comment errors */
+  public static readonly COMMENT_NOT_FOUND = new ApiErrorCodes(
+    HttpStatusCodes.NOT_FOUND,
+    "Comment not found."
+  );
 
   /** Reaction errors */
   public static readonly INVALID_REACTION_TYPE = new ApiErrorCodes(

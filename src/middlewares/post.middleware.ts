@@ -17,6 +17,7 @@ export const createPostValidator = (
   next: NextFunction
 ) => {
   const { content, visibilityLevel, groupId } = req.body;
+
   validateNotNull({ content, visibilityLevel });
 
   // when group id is provided, visibility level must be group

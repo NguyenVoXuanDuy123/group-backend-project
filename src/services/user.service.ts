@@ -1,6 +1,6 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import userRepository from "@src/repositories/user.repository";
@@ -20,7 +20,7 @@ class UserService {
       updated_at: 0,
     });
     if (!user) {
-      throw new NotFoundError("user");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
     const { friends, groups, ...rest } = user;
 
@@ -76,6 +76,12 @@ class UserService {
     );
   }
 
+  public async updateAvatar(senderId: string, imageUrl: string) {
+    await userRepository.updateUserById(senderId, {
+      avatar: imageUrl,
+    });
+  }
+
   public async sendFriendRequest(senderId: string, receiverId: string) {
     if (senderId === receiverId) {
       throw new ApiError(ApiErrorCodes.CANNOT_SEND_FRIEND_REQUEST_TO_SELF);
@@ -83,7 +89,7 @@ class UserService {
     const user = await userRepository.findById(senderId);
 
     if (!user) {
-      throw new NotFoundError("user");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
 
     if (user.friends.some((friend) => friend.equals(receiverId))) {
@@ -112,7 +118,7 @@ class UserService {
   public async removeFriend(userId: string, friendId: string) {
     const user = await userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundError("user");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
 
     if (!user.friends.some((friend) => friend.equals(friendId))) {
@@ -123,46 +129,41 @@ class UserService {
 
   public async getFriendsByUserId(userId: string) {
     if (!(await userRepository.checkUserExistsById(userId))) {
-      throw new NotFoundError("user");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
     return await userRepository.getFriends(userId);
   }
 
-  public async getMyPendingReceivedFriendRequests(userId: string) {
-    if (!(await userRepository.checkUserExistsById(userId))) {
-      throw new NotFoundError("user");
-    }
+  public async getMyPendingReceivedFriendRequests(senderId: string) {
     return await friendRequestService.getMyPendingReceivedFriendRequests(
-      userId
+      senderId
     );
   }
   public async getGroupsByUserId(userId: string) {
     if (!(await userRepository.checkUserExistsById(userId))) {
-      throw new NotFoundError("user");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
     return await userRepository.getUserGroups(userId);
   }
 
-  public async leaveGroup(userId: string, groupId: string) {
-    const user = await userRepository.findById(userId);
-    if (!user) {
-      throw new NotFoundError("user");
-    }
-
-    const group = await groupRepository.findGroupById(groupId);
+  public async leaveGroup(senderId: string, groupId: string) {
+    const group = await groupRepository.findGroupById(groupId, {
+      admin: 1,
+      members: 1,
+    });
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
-    if (!user.groups?.some((group) => group.equals(groupId))) {
+    if (!group.members.some((member) => member.equals(senderId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
     }
 
-    if (group.admin.toHexString() === userId) {
+    if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.CANNOT_REMOVE_GROUP_ADMIN);
     }
 
-    await userRepository.leaveGroup(userId, groupId);
+    await userRepository.leaveGroup(senderId, groupId);
   }
 }
 

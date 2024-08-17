@@ -9,6 +9,8 @@ import {
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
+import ApiErrorCodes from "@src/error/ApiErrorCodes";
+import ApiError from "@src/error/ApiError";
 
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
@@ -45,14 +47,29 @@ class UserController {
     });
   };
 
-  public updateAvatar = (req: APIRequest, res: APIResponse) => {
+  public updateAvatar = async (req: APIRequest, res: APIResponse) => {
     if (!req.file) {
-      throw new Error("No file uploaded");
+      throw new ApiError(ApiErrorCodes.NO_IMAGE_ATTACHED);
     }
-    const filePath = req.file.path;
+    const fileName = req.file.filename;
+    const imageUrl = `localhost:3000/images/${fileName}`;
+    const { _id } = req.user as UserSessionType;
+    await userService.updateAvatar(_id, imageUrl);
     res.status(HttpStatusCodes.OK).json({
-      message: "Update avatar successful test",
-      result: filePath,
+      message: "Update avatar successful",
+      result: {
+        url: imageUrl,
+        size: req.file.size + " bytes",
+        mimetype: req.file.mimetype,
+      },
+    });
+  };
+
+  public removeAvatar = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+    await userService.updateAvatar(_id, "");
+    res.status(HttpStatusCodes.OK).json({
+      message: "Remove avatar successful",
     });
   };
 

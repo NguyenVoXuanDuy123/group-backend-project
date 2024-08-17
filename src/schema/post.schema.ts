@@ -38,6 +38,7 @@ const postSchema = new Schema<IPost>(
     edit_history: [
       {
         content: { type: String, required: true },
+        images: [{ type: String }, { default: [] }],
         edited_at: { type: Date, required: true, default: Date.now },
       },
       {

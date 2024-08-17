@@ -9,6 +9,7 @@ import {
 } from "@src/middlewares/util.middleware";
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import commentRouter from "@src/routes/comment.routes";
+import uploadRouter from "@src/routes/upload.routes";
 
 const apiRouter = Router();
 
@@ -23,5 +24,6 @@ apiRouter.use("/users", userRouter);
 apiRouter.use("/groups", groupRouter);
 apiRouter.use("/posts", postRouter);
 apiRouter.use("/comments", commentRouter);
+apiRouter.use("/upload", uploadRouter);
 
 export default apiRouter;

@@ -7,7 +7,7 @@ import {
 import { UserRole } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import commentRepository from "@src/repositories/comment.repository";
 import groupRepository from "@src/repositories/group.repository";
@@ -36,6 +36,7 @@ class PostService {
         : null,
       visibility_level: createPostRequest.visibilityLevel,
       content: createPostRequest.content,
+      images: createPostRequest.images || [],
     };
     const { _id } = await postRepository.createPost(post);
 
@@ -55,7 +56,7 @@ class PostService {
     });
 
     if (!post) {
-      throw new NotFoundError("post");
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
     const { author: authorId, group: groupId, ...rest } = post;
 
@@ -175,19 +176,24 @@ class PostService {
     });
 
     if (!post) {
-      throw new NotFoundError("post");
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
 
     if (!post.author.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
     }
 
-    // if the post update contains content or images, we need to push the post history
-    if (updatePostRequest.content || updatePostRequest.images) {
+    // if the content or images are changed, we need to push the history
+    if (
+      post.content !== updatePostRequest.content ||
+      post.images.toString() !== updatePostRequest.images?.toString()
+    ) {
       const postHistory: Partial<IPostEditHistory> = {
         content: post.content,
         images: post.images,
+        edited_at: new Date(),
       };
+
       await postRepository.pushPostHistory(postID, postHistory);
     }
 
@@ -199,6 +205,8 @@ class PostService {
         visibility_level: updatePostRequest.visibilityLevel,
       })
     );
+
+    return this.getPostById(postID, senderId, UserRole.USER, true);
   }
 
   public async deletePost(
@@ -213,7 +221,7 @@ class PostService {
     });
 
     if (!post) {
-      throw new NotFoundError("post");
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
     // if the sender is the author of the post or the sender is an admin
     // the sender can delete the post
@@ -271,7 +279,7 @@ class PostService {
 
   public async removeReactionFromPost(postID: string, userID: string) {
     if (!(await postRepository.checkPostExistsById(postID))) {
-      throw new NotFoundError("post");
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
     await reactionService.removeReactionFromPost(
       postID,

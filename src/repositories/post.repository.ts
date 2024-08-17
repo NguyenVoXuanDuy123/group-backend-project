@@ -28,6 +28,7 @@ class PostRepository {
     postId: string | Types.ObjectId,
     edit_history: Partial<IPostEditHistory>
   ) {
+    console.log(postId, "asd", edit_history);
     return await PostModel.findByIdAndUpdate(postId, {
       $push: { edit_history },
     });

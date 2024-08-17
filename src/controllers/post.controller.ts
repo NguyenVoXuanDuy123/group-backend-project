@@ -39,8 +39,10 @@ class PostController {
   ) => {
     const { _id } = req.user as UserSessionType;
     await postService.updatePost(_id, req.params.postId, req.body);
+    const post = await postService.updatePost(_id, req.params.postId, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Update post successful",
+      result: camelCaseifyWithDateConversion(post),
     });
   };
 

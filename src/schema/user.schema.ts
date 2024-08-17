@@ -34,6 +34,7 @@ const UserSchema: Schema<IUser> = new Schema(
     bio: { type: String, default: "" },
     friends: [{ type: Schema.Types.ObjectId, ref: "users" }],
     groups: [{ type: Schema.Types.ObjectId, ref: "groups" }],
+    avatar: { type: String, default: "" },
     role: {
       type: String,
       enum: UserRole,

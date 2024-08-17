@@ -43,8 +43,8 @@ export const camelCaseifyWithDateConversion = (
 
   for (const key in obj) {
     // if the key is created_at or updated_at, convert the date to ISO string
-    if (key === "created_at" || key === "updated_at") {
-      result[snakeToCamel(key)] = (obj[key] as Date).toISOString();
+    if (typeof obj[key] === "object" && obj[key] instanceof Date) {
+      result[snakeToCamel(key)] = obj[key].toISOString();
 
       continue;
     }

@@ -1,10 +1,11 @@
 import {
   GroupJoinRequestStatus,
+  GroupVisibilityLevel,
   UserGroupRelation,
 } from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
@@ -42,7 +43,7 @@ class GroupService {
   ) {
     const group = await groupRepository.findGroupById(groupId);
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
     // if the sender is not the admin of the group, they cannot update the group
     if (group.admin.toHexString() !== senderId) {
@@ -62,7 +63,7 @@ class GroupService {
       __v: 0,
     });
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
     const { admin, members, ...rest } = group;
     let userGroupRelation = UserGroupRelation.NOT_MEMBER;
@@ -102,7 +103,7 @@ class GroupService {
   // public async removeGroup(senderId: string, groupId: string) {
   //   const group = await groupRepository.findGroupById(groupId);
   //   if (!group) {
-  //     throw new NotFoundError("group");
+  //     throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
   //   }
   //   if (group.admin.toHexString() !== senderId) {
   //     throw new ApiError(ApiErrorCodes.FORBIDDEN);
@@ -110,7 +111,25 @@ class GroupService {
   //   await groupRepository.removeGroupById(groupId);
   // }
 
-  public async getGroupMembers(groupId: string) {
+  public async getGroupMembers(senderId: string, groupId: string) {
+    const group = await groupRepository.findGroupById(groupId);
+    if (!group) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
+
+    /*
+     * user can view the members of the group if
+     * 1. the group is public
+     * 2. the group is private but the user is a member of the group (admin is also a member)
+     */
+
+    const canViewMembers =
+      group.visibility_level === GroupVisibilityLevel.PUBLIC ||
+      group.members.some((member) => member.equals(senderId));
+
+    if (!canViewMembers) {
+      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+    }
     const groupMembers = await groupRepository.getGroupMembers(groupId);
     return groupMembers;
   }
@@ -124,9 +143,9 @@ class GroupService {
   public async getPendingGroupJoinRequests(senderId: string, groupId: string) {
     const group = await groupRepository.findGroupById(groupId);
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
-    if (group.admin.toHexString() !== senderId) {
+    if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
     return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
@@ -155,7 +174,7 @@ class GroupService {
   ) {
     const group = await groupRepository.findGroupById(groupId);
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
     // check if the sender is the admin of the group

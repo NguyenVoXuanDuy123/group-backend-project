@@ -1,7 +1,7 @@
 import { GroupJoinRequestStatus } from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
 
@@ -16,12 +16,12 @@ class GroupJoinRequestService {
         groupId
       )
     ) {
-      throw new ApiError(ApiErrorCodes.GROUP_REQUEST_ALREADY_SENT);
+      throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_ALREADY_SENT);
     }
 
     const group = await groupRepository.findGroupById(groupId);
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
     if (senderId === group.admin.toHexString()) {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
@@ -47,7 +47,7 @@ class GroupJoinRequestService {
       await groupJoinRequestRepository.getGroupJoinRequestById(requestId);
 
     if (!groupJoinRequest) {
-      throw new NotFoundError("group join request");
+      throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_NOT_FOUND);
     }
     // Check if the group request is not pending, then it cannot be changed
     // because it is already accepted, rejected, or cancelled
@@ -60,7 +60,7 @@ class GroupJoinRequestService {
     );
 
     if (!group) {
-      throw new NotFoundError("group");
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
     // Check if someone outside this request is trying to change the status

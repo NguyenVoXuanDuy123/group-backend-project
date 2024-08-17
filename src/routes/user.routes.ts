@@ -22,6 +22,11 @@ userRouter.patch(
   wrapRequestHandler(userController.updateAvatar)
 );
 
+userRouter.delete(
+  "/profile/me/avatar",
+  wrapRequestHandler(userController.removeAvatar)
+);
+
 userRouter.get("/profile/:userId", wrapRequestHandler(userController.getUser));
 
 // Friends

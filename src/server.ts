@@ -6,9 +6,7 @@
 import morgan from "morgan";
 import helmet from "helmet";
 import express, { Request, Response, NextFunction } from "express";
-
 import BaseRouter from "@src/routes/index.routes";
-
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import RouteError from "@src/error/RouteError";
 import session from "express-session";
@@ -19,7 +17,7 @@ import connectMongoDBSession from "connect-mongodb-session";
 import "./configs/passport.config"; // import to run passport config
 import { UPLOAD_DIR } from "@src/constant/dir";
 import databaseConfig from "@src/configs/database.config";
-
+import cors from "cors";
 // **** Variables **** //
 
 const app = express();
@@ -29,11 +27,14 @@ const app = express();
 databaseConfig.connectDB();
 
 // Basic middleware
-
+// for some reason, the types are not working for cors
+// so I have to disable the eslint rule for this line
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+app.use(cors<Request>());
 app.use(express.json());
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(UPLOAD_DIR));
+app.use("/images", express.static(UPLOAD_DIR));
 // Show routes called in console during development
 
 app.use(morgan("dev"));

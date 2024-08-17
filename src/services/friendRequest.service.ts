@@ -1,6 +1,6 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import NotFoundError from "@src/error/NotFoundError";
+
 import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
 import userRepository from "@src/repositories/user.repository";
@@ -8,11 +8,8 @@ import userService from "@src/services/user.service";
 
 class FriendRequestService {
   public async createFriendRequest(senderId: string, receiverId: string) {
-    if (!userRepository.checkUserExistsById(senderId)) {
-      throw new NotFoundError("sender");
-    }
     if (!userRepository.checkUserExistsById(receiverId)) {
-      throw new NotFoundError("receiver");
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
     // Check if the sender is trying to send a friend request which is already sent and pending
     if (
@@ -21,7 +18,6 @@ class FriendRequestService {
         receiverId
       )
     ) {
-      console.log(senderId, receiverId);
       throw new ApiError(ApiErrorCodes.FRIEND_REQUEST_ALREADY_SENT);
     }
 
@@ -53,7 +49,7 @@ class FriendRequestService {
     );
 
     if (!friendRequest) {
-      throw new NotFoundError("friend request");
+      throw new ApiError(ApiErrorCodes.FRIEND_REQUEST_NOT_FOUND);
     }
 
     // check if someone outside the friend request is trying to change the status
