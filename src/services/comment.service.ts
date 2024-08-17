@@ -95,7 +95,7 @@ class CommentService {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     if (!comment.author.equals(senderId)) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(ApiErrorCodes.UPDATE_COMMENT_FORBIDDEN);
     }
     if (comment.content === updateCommentRequest.content) {
       return await this.getCommentById(commentId, senderId);
@@ -175,7 +175,7 @@ class CommentService {
       }
     }
 
-    throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
+    throw new ApiError(ApiErrorCodes.DELETE_COMMENT_FORBIDDEN);
   }
 
   public async reactToComment(

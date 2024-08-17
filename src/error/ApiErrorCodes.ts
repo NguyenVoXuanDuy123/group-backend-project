@@ -194,12 +194,37 @@ class ApiErrorCodes {
     HttpStatusCodes.NOT_FOUND,
     "Post not found."
   );
+
+  public static readonly POST_IS_NOT_VISIBLE_TO_USER = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Post is not visible to the user."
+  );
+
+  public static readonly UPDATE_POST_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the author of the post can update the post."
+  );
+
+  public static readonly DELETE_POST_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the author of the post, the admin of the group or site-admin can delete the post."
+  );
+
   /** Comment errors */
   public static readonly COMMENT_NOT_FOUND = new ApiErrorCodes(
     HttpStatusCodes.NOT_FOUND,
     "Comment not found."
   );
 
+  public static readonly UPDATE_COMMENT_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the author of the comment can update the comment."
+  );
+
+  public static readonly DELETE_COMMENT_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the author of the comment, the author of the post, the admin of the group or site-admin can delete the comment."
+  );
   /** Reaction errors */
   public static readonly INVALID_REACTION_TYPE = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,

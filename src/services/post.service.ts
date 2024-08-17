@@ -79,10 +79,11 @@ class PostService {
         throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
       }
       /**
-       * user only can see the post if
-       * 1. user is an admin
+       *
+       * in case visibility_level = group user only can see the post if
+       * 1. user role is site-admin
        * 2. group is public
-       * 3. user is a member of the group
+       * 3. user is a member of the group (group admin is also a member)
        *
        */
       if (!isInternalCall) {
@@ -92,7 +93,7 @@ class PostService {
           group.members.some((member) => member.equals(senderId));
 
         if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
+          throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
         }
       }
     }
@@ -110,14 +111,14 @@ class PostService {
     if (post.visibility_level === PostVisibilityLevel.FRIEND) {
       if (!author) {
         // there is no way the post exists without an author
-        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
+        throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
       }
 
       let canSeePost = false;
 
       /**
-       * user can see the post if
-       * 1. user is an admin
+       * in case visibility_level = friend user can see the post if
+       * 1. user role is site-admin
        * 2. user is the author of the post
        * 3. user is a friend of the author
        */
@@ -128,9 +129,8 @@ class PostService {
           senderRole === UserRole.ADMIN ||
           author.friends.some((friend) => friend.equals(senderId));
 
-        // If the user cannot see the post, throw an unauthorized error
         if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
+          throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
         }
       }
     }
@@ -180,7 +180,7 @@ class PostService {
     }
 
     if (!post.author.equals(senderId)) {
-      throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
+      throw new ApiError(ApiErrorCodes.UPDATE_POST_FORBIDDEN);
     }
 
     // if the content or images are changed, we need to push the history
@@ -223,8 +223,13 @@ class PostService {
     if (!post) {
       throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
-    // if the sender is the author of the post or the sender is an admin
-    // the sender can delete the post
+    /**
+     * sender can only delete post if:
+     * 1. sender is the author of the post
+     * 2. sender is an site admin
+     * 3. sender is the admin of the group where the post is posted
+     */
+
     if (post.author.equals(senderId) || senderRole === UserRole.ADMIN) {
       await postRepository.deletePostById(postID);
       return;
@@ -254,7 +259,7 @@ class PostService {
       }
     }
 
-    throw new ApiError(ApiErrorCodes.UNAUTHORIZED);
+    throw new ApiError(ApiErrorCodes.DELETE_POST_FORBIDDEN);
   }
 
   public async reactToPost(

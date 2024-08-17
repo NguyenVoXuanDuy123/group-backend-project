@@ -54,8 +54,8 @@ class FriendRequestService {
 
     // check if someone outside the friend request is trying to change the status
     if (
-      senderId !== friendRequest.sender_id.toHexString() &&
-      senderId !== friendRequest.receiver_id.toHexString()
+      friendRequest.sender_id.equals(senderId) &&
+      friendRequest.receiver_id.equals(senderId)
     ) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
