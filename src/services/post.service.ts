@@ -93,7 +93,7 @@ class PostService {
           group.members.some((member) => member.equals(senderId));
 
         if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
+          throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
         }
       }
     }
@@ -111,7 +111,7 @@ class PostService {
     if (post.visibility_level === PostVisibilityLevel.FRIEND) {
       if (!author) {
         // there is no way the post exists without an author
-        throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
+        throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
       }
 
       let canSeePost = false;
@@ -130,7 +130,7 @@ class PostService {
           author.friends.some((friend) => friend.equals(senderId));
 
         if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.POST_IS_NOT_VISIBLE_TO_USER);
+          throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
         }
       }
     }

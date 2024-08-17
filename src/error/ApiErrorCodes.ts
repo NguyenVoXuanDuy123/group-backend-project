@@ -120,6 +120,12 @@ class ApiErrorCodes {
     "Can not send the friend request because both users are already friends of each other."
   );
 
+  public static readonly CHANGE_STATUS_FRIEND_REQUEST_FORBIDDEN =
+    new ApiErrorCodes(
+      HttpStatusCodes.FORBIDDEN,
+      "Only the sender of the friend request can cancel the request, and only the receiver of the friend request can accept or reject the request."
+    );
+
   /** Group errors */
   public static readonly INVALID_GROUP_VISIBILITY_LEVEL = new ApiErrorCodes(
     HttpStatusCodes.BAD_REQUEST,
@@ -131,9 +137,29 @@ class ApiErrorCodes {
     "Group not found."
   );
 
+  public static readonly UPDATE_GROUP_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the admin of the group can update the group."
+  );
+
+  public static readonly DELETE_GROUP_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the admin of the group or site-admin can delete the group."
+  );
+
+  public static readonly GROUP_MEMBERS_NOT_VISIBLE = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the members of the group can view the members of the group."
+  );
+
   public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
     HttpStatusCodes.FORBIDDEN,
     "Cannot remove the admin of the group."
+  );
+
+  public static readonly REMOVE_MEMBER_FORBIDDEN = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the admin of the group can remove members from the group."
   );
 
   public static readonly USER_NOT_IN_GROUP = new ApiErrorCodes(
@@ -150,6 +176,17 @@ class ApiErrorCodes {
   public static readonly GROUP_JOIN_REQUEST_NOT_FOUND = new ApiErrorCodes(
     HttpStatusCodes.NOT_FOUND,
     "Group join request not found."
+  );
+
+  public static readonly CHANGE_GROUP_JOIN_REQUEST_STATUS_FORBIDDEN =
+    new ApiErrorCodes(
+      HttpStatusCodes.FORBIDDEN,
+      "Only the user who sent the group join request can cancel the request, and only the admin of the group can accept or reject the request."
+    );
+
+  public static readonly GROUP_JOIN_REQUEST_NOT_VISIBLE = new ApiErrorCodes(
+    HttpStatusCodes.FORBIDDEN,
+    "Only the admin of the group can view the group join requests."
   );
 
   public static readonly GROUP_JOIN_REQUEST_ALREADY_SENT = new ApiErrorCodes(
@@ -195,7 +232,7 @@ class ApiErrorCodes {
     "Post not found."
   );
 
-  public static readonly POST_IS_NOT_VISIBLE_TO_USER = new ApiErrorCodes(
+  public static readonly POST_NOT_VISIBLE_TO_USER = new ApiErrorCodes(
     HttpStatusCodes.FORBIDDEN,
     "Post is not visible to the user."
   );

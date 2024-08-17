@@ -24,7 +24,10 @@ class GroupRepository {
     return await GroupModel.findById(_id, projection).lean();
   }
 
-  public async addMemberToGroup(groupId: string, userId: string) {
+  public async addMemberToGroup(
+    groupId: string | Types.ObjectId,
+    userId: string | Types.ObjectId
+  ) {
     await GroupModel.findByIdAndUpdate(groupId, { $push: { members: userId } });
     await UserModel.findByIdAndUpdate(userId, { $push: { groups: groupId } });
   }

@@ -65,33 +65,36 @@ class GroupJoinRequestService {
 
     // Check if someone outside this request is trying to change the status
     if (
-      senderId !== groupJoinRequest.user_id.toHexString() &&
-      senderId !== group.admin.toHexString()
+      !groupJoinRequest.user_id.equals(senderId) &&
+      !group.admin.equals(senderId)
     ) {
-      console.log(group.admin, senderId);
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
     // Check if the sender is the user who sent the request and they want to accept or reject the request
     if (
-      groupJoinRequest.user_id.toHexString() === senderId &&
+      groupJoinRequest.user_id.equals(senderId) &&
       status !== GroupJoinRequestStatus.CANCELED
     ) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(
+        ApiErrorCodes.CHANGE_GROUP_JOIN_REQUEST_STATUS_FORBIDDEN
+      );
     }
 
     // Check if the sender is the admin of the group and they want to cancel the request
     if (
-      group.admin.toHexString() === senderId &&
+      group.admin.equals(senderId) &&
       status === GroupJoinRequestStatus.CANCELED
     ) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(
+        ApiErrorCodes.CHANGE_GROUP_JOIN_REQUEST_STATUS_FORBIDDEN
+      );
     }
 
     if (status === GroupJoinRequestStatus.ACCEPTED) {
       await groupService.addMemberToGroup(
-        groupJoinRequest.group_id.toHexString(),
-        groupJoinRequest.user_id.toHexString()
+        groupJoinRequest.group_id,
+        groupJoinRequest.user_id
       );
     }
 

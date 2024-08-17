@@ -91,9 +91,11 @@ class CommentService {
     updateCommentRequest: UpdateCommentRequestType
   ) {
     const comment = await commentRepository.findCommentById(commentId);
+
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
+    // only the author of the comment can update the comment
     if (!comment.author.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.UPDATE_COMMENT_FORBIDDEN);
     }

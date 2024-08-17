@@ -47,7 +47,7 @@ class GroupService {
     }
     // if the sender is not the admin of the group, they cannot update the group
     if (group.admin.toHexString() !== senderId) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(ApiErrorCodes.UPDATE_GROUP_FORBIDDEN);
     }
     await groupRepository.updateGroupById(
       groupId,
@@ -128,7 +128,7 @@ class GroupService {
       group.members.some((member) => member.equals(senderId));
 
     if (!canViewMembers) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(ApiErrorCodes.GROUP_MEMBERS_NOT_VISIBLE);
     }
     const groupMembers = await groupRepository.getGroupMembers(groupId);
     return groupMembers;
@@ -146,7 +146,7 @@ class GroupService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
     if (group.admin.equals(senderId)) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_NOT_VISIBLE);
     }
     return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
   }
@@ -163,7 +163,10 @@ class GroupService {
     );
   }
 
-  public async addMemberToGroup(groupId: string, userId: string) {
+  public async addMemberToGroup(
+    groupId: string | Types.ObjectId,
+    userId: string | Types.ObjectId
+  ) {
     return await groupRepository.addMemberToGroup(groupId, userId);
   }
 
@@ -179,7 +182,7 @@ class GroupService {
 
     // check if the sender is the admin of the group
     if (senderId !== group.admin.toHexString()) {
-      throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      throw new ApiError(ApiErrorCodes.REMOVE_MEMBER_FORBIDDEN);
     }
 
     // check if the member is the admin of the group
