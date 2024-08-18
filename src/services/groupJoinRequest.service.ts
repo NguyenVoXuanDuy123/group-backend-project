@@ -76,7 +76,7 @@ class GroupJoinRequestService {
     // Check if the sender is the user who sent the request and they want to accept or reject the request
     if (
       groupJoinRequest.user_id.equals(senderId) &&
-      status !== GroupJoinRequestStatus.CANCELED
+      status !== GroupJoinRequestStatus.CANCELLED
     ) {
       throw new ApiError(
         ApiErrorCodes.CHANGE_GROUP_JOIN_REQUEST_STATUS_FORBIDDEN
@@ -86,7 +86,7 @@ class GroupJoinRequestService {
     // Check if the sender is the admin of the group and they want to cancel the request
     if (
       group.admin.equals(senderId) &&
-      status === GroupJoinRequestStatus.CANCELED
+      status === GroupJoinRequestStatus.CANCELLED
     ) {
       throw new ApiError(
         ApiErrorCodes.CHANGE_GROUP_JOIN_REQUEST_STATUS_FORBIDDEN

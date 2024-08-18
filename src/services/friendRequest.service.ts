@@ -89,8 +89,9 @@ class FriendRequestService {
     //If the status is accepted, add the sender to the receiver's friend list and vice versa
     if (status === FriendRequestStatus.ACCEPTED) {
       const senderId = friendRequest.sender_id;
+      const receiverId = friendRequest.receiver_id;
 
-      userRepository.addFriend(senderId, senderId);
+      userRepository.addFriend(senderId, receiverId);
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);

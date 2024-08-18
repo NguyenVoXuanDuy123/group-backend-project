@@ -101,7 +101,7 @@ class UserService {
     if (user.friends.some((friend) => friend.equals(receiverId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USER_ALREADY_FRIENDS);
     }
-
+    console.log(senderId, receiverId);
     return await friendRequestService.createFriendRequest(senderId, receiverId);
   }
 
@@ -117,16 +117,18 @@ class UserService {
     );
   }
 
-  public async removeFriend(userId: string, friendId: string) {
-    const user = await userRepository.findById(userId);
-    if (!user) {
+  public async removeFriend(senderId: string, friendId: string) {
+    const friend = await userRepository.findById(friendId, { friends: 1 });
+    if (!friend) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
 
-    if (!user.friends.some((friend) => friend.equals(friendId))) {
+    console.log(friend);
+
+    if (!friend.friends.some((friend) => friend.equals(senderId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USERS_NOT_FRIENDS);
     }
-    await userRepository.removeFriend(userId, friendId);
+    await userRepository.removeFriend(senderId, friendId);
   }
 
   public async getFriendsByUserId(userId: string) {

@@ -13,7 +13,7 @@ export enum GroupJoinRequestStatus {
   PENDING = "pending",
   ACCEPTED = "accepted",
   REJECTED = "rejected",
-  CANCELED = "cancelled",
+  CANCELLED = "cancelled",
 }
 
 export enum GroupRole {

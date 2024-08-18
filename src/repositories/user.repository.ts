@@ -44,7 +44,10 @@ class UserRepository {
     await UserModel.findByIdAndUpdate(friendId, { $push: { friends: userId } });
   }
 
-  public async removeFriend(userId: string, friendId: string) {
+  public async removeFriend(
+    userId: string | Types.ObjectId,
+    friendId: string | Types.ObjectId
+  ) {
     await UserModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
     await UserModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
   }

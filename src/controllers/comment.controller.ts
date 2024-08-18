@@ -17,7 +17,7 @@ class commentController {
       req.body
     );
     res.status(HttpStatusCodes.OK).json({
-      message: "Update comment successful",
+      message: "Update comment successfully",
       result: comment,
     });
   };
@@ -26,7 +26,7 @@ class commentController {
     const { _id, role } = req.user as UserSessionType;
     await commentService.deleteComment(_id, req.params.commentId, role);
     res.status(HttpStatusCodes.OK).json({
-      message: "Delete comment successful",
+      message: "Delete comment successfully",
     });
   };
 
@@ -43,12 +43,12 @@ class commentController {
     );
     if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
-        message: "React " + reactionType + " to comment successful",
+        message: "React " + reactionType + " to comment successfully",
       });
       return;
     }
     res.status(HttpStatusCodes.OK).json({
-      message: "Change reaction to " + reactionType + " successful",
+      message: "Change reaction to " + reactionType + " successfully",
     });
   };
 
@@ -59,7 +59,7 @@ class commentController {
     const { _id } = req.user as UserSessionType;
     await commentService.removeReactionFromComment(req.params.commentId, _id);
     res.status(HttpStatusCodes.OK).json({
-      message: "Remove reaction from comment successful",
+      message: "Remove reaction from comment successfully",
     });
   };
 }

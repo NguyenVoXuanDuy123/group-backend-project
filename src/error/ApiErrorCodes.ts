@@ -27,6 +27,12 @@ class ApiErrorCodes {
     "Something went wrong, please contact the administrator."
   );
 
+  public static readonly ROUTE_NOT_FOUND = new ApiErrorCodes(
+    1003,
+    HttpStatusCodes.NOT_FOUND,
+    "Route not found"
+  );
+
   /**  Authentication 2001 - 3000*/
   public static readonly FORBIDDEN = new ApiErrorCodes(
     2001,
@@ -48,7 +54,7 @@ class ApiErrorCodes {
 
   public static readonly USERNAME_ALREADY_TAKEN = new ApiErrorCodes(
     2004,
-    HttpStatusCodes.BAD_REQUEST,
+    HttpStatusCodes.CONFLICT,
     "Username is already taken"
   );
 
@@ -75,11 +81,12 @@ class ApiErrorCodes {
     HttpStatusCodes.FORBIDDEN,
     "User is banned"
   );
+
   /** Media upload errors  3001 - 4000*/
 
   public static readonly INVALID_IMAGE_FORMAT = new ApiErrorCodes(
     3001,
-    HttpStatusCodes.BAD_REQUEST,
+    HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE,
     "Invalid image format. Supported formats are JPEG, PNG, and JPG."
   );
 

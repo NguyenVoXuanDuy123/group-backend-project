@@ -1,8 +1,3 @@
-/**
- * Setup express server.
- */
-
-// import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 import express, { Request, Response, NextFunction } from "express";
@@ -18,6 +13,9 @@ import "./configs/passport.config"; // import to run passport config
 import { UPLOAD_DIR } from "@src/constant/dir";
 import databaseConfig from "@src/configs/database.config";
 import cors from "cors";
+import ApiError from "@src/error/ApiError";
+import ApiErrorCodes from "@src/error/ApiErrorCodes";
+import { APIRequest, APIResponse } from "@src/types/api.types";
 // **** Variables **** //
 
 const app = express();
@@ -67,18 +65,22 @@ app.use(passport.session());
 app.use("/api", BaseRouter);
 
 app.use((_: Request, res: Response, next: NextFunction) => {
-  next(new RouteError(HttpStatusCodes.NOT_FOUND, "Route not found"));
+  next(new ApiError(ApiErrorCodes.ROUTE_NOT_FOUND));
 });
 
 // Add error handler
-app.use((err: Error, _: Request, res: Response, next: NextFunction): void => {
-  let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
-  if (err instanceof RouteError) {
-    status = err.status;
+app.use(
+  (err: Error, _: APIRequest, res: APIResponse, next: NextFunction): void => {
+    let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
+    let errCode = 1001; // error code for unknown error
+    if (err instanceof RouteError) {
+      status = err.status;
+      errCode = err.responseCode;
+    }
+    console.error(err);
+    res.status(status).json({ errorCode: errCode, message: err.message });
+    next();
   }
-  console.error(err);
-  res.status(status).json({ error: err.message });
-  next();
-});
+);
 
 export default app;

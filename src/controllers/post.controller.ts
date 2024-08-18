@@ -18,7 +18,7 @@ class PostController {
     const { _id } = req.user as UserSessionType;
     const post = await postService.createPost(_id, req.body);
     res.status(HttpStatusCodes.OK).json({
-      message: "Create post successful",
+      message: "Create post successfully",
       result: camelCaseifyWithDateConversion(post),
     });
   };
@@ -28,7 +28,7 @@ class PostController {
 
     const post = await postService.getPostById(req.params.postId, _id, role);
     res.status(HttpStatusCodes.OK).json({
-      message: "Get post successful",
+      message: "Get post successfully",
       result: camelCaseifyWithDateConversion(post),
     });
   };
@@ -41,7 +41,7 @@ class PostController {
     await postService.updatePost(_id, req.params.postId, req.body);
     const post = await postService.updatePost(_id, req.params.postId, req.body);
     res.status(HttpStatusCodes.OK).json({
-      message: "Update post successful",
+      message: "Update post successfully",
       result: camelCaseifyWithDateConversion(post),
     });
   };
@@ -50,7 +50,7 @@ class PostController {
     const { _id, role } = req.user as UserSessionType;
     await postService.deletePost(_id, req.params.postId, role);
     res.status(HttpStatusCodes.OK).json({
-      message: "Delete post successful",
+      message: "Delete post successfully",
     });
   };
 
@@ -68,12 +68,12 @@ class PostController {
 
     if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
-        message: "React " + reactionType + " to post successful",
+        message: "React " + reactionType + " to post successfully",
       });
       return;
     }
     res.status(HttpStatusCodes.OK).json({
-      message: "Change reaction to " + reactionType + " successful",
+      message: "Change reaction to " + reactionType + " successfully",
     });
   };
 
@@ -81,7 +81,7 @@ class PostController {
     const { _id } = req.user as UserSessionType;
     await postService.removeReactionFromPost(req.params.postId, _id);
     res.status(HttpStatusCodes.OK).json({
-      message: "Remove reaction from post successful",
+      message: "Remove reaction from post successfully",
     });
   };
 
@@ -94,7 +94,7 @@ class PostController {
     );
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Get reactions from post successful",
+      message: "Get reactions from post successfully",
       result: reactions.map(camelCaseifyWithDateConversion),
     });
   };
@@ -110,7 +110,7 @@ class PostController {
       req.body
     );
     res.status(HttpStatusCodes.OK).json({
-      message: "Create comment successful",
+      message: "Create comment successfully",
       result: camelCaseifyWithDateConversion(comment),
     });
   };
@@ -123,7 +123,7 @@ class PostController {
   //     role
   //   );
   //   res.status(HttpStatusCodes.OK).json({
-  //     message: "Get comments successful",
+  //     message: "Get comments successfully",
   //     result: comments.map(camelCaseifyWithDateConversion),
   //   });
   // };

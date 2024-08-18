@@ -7,6 +7,8 @@ import { Types } from "mongoose";
 class FriendRequestRepository {
   public async getFriendRequestById(requestId: string | Types.ObjectId) {
     return await FriendRequestModel.findById(requestId, {
+      created_at: 0,
+      updated_at: 0,
       __v: 0,
     }).lean();
   }

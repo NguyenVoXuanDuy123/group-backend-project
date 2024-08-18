@@ -11,6 +11,7 @@ import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDat
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import ApiError from "@src/error/ApiError";
+import EnvVars from "@src/constant/EnvVars";
 
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
@@ -19,7 +20,7 @@ class UserController {
     //userId and senderId are the same in this case
     const user = await userService.getUser(_id, _id);
     res.status(HttpStatusCodes.OK).json({
-      message: "Get me successful",
+      message: "Get me successfully",
       result: camelCaseifyWithDateConversion(user),
     });
   };
@@ -28,7 +29,7 @@ class UserController {
     const { _id } = req.user as UserSessionType;
     const user = await userService.getUser(req.params.userId, _id);
     res.status(HttpStatusCodes.OK).json({
-      message: "Get user successful",
+      message: "Get user successfully",
       result: camelCaseifyWithDateConversion(user),
     });
   };
@@ -43,7 +44,7 @@ class UserController {
     //userId and senderId are the same in this case
     await userService.updateUser(_id, _id, req.body);
     res.status(HttpStatusCodes.OK).json({
-      message: "Update me successful",
+      message: "Update me successfully",
     });
   };
 
@@ -52,11 +53,11 @@ class UserController {
       throw new ApiError(ApiErrorCodes.NO_IMAGE_ATTACHED);
     }
     const fileName = req.file.filename;
-    const imageUrl = `localhost:3000/images/${fileName}`;
+    const imageUrl = `localhost:` + EnvVars.Port + `/images/${fileName}`;
     const { _id } = req.user as UserSessionType;
     await userService.updateAvatar(_id, imageUrl);
     res.status(HttpStatusCodes.OK).json({
-      message: "Update avatar successful",
+      message: "Update avatar successfully",
       result: {
         url: imageUrl,
         size: req.file.size + " bytes",
@@ -69,7 +70,7 @@ class UserController {
     const { _id } = req.user as UserSessionType;
     await userService.updateAvatar(_id, "");
     res.status(HttpStatusCodes.OK).json({
-      message: "Remove avatar successful",
+      message: "Remove avatar successfully",
     });
   };
 
@@ -84,7 +85,7 @@ class UserController {
     );
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Send friend request successful",
+      message: "Send friend request successfully",
       result: camelCaseifyWithDateConversion(friendRequest),
     });
   };
@@ -101,7 +102,7 @@ class UserController {
     );
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Change friend request status successful",
+      message: "Change friend request status successfully",
     });
   };
 
@@ -111,7 +112,7 @@ class UserController {
     await userService.removeFriend(_id, req.params.friendId);
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Remove friend successful",
+      message: "Unfriend successfully",
     });
   };
 
@@ -120,7 +121,7 @@ class UserController {
     const friends = await userService.getFriendsByUserId(_id);
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Get friends successful",
+      message: "Get friends successfully",
       result: friends.map(camelCaseifyWithDateConversion),
     });
   };
@@ -128,7 +129,7 @@ class UserController {
   public getFriends = async (req: APIRequest, res: APIResponse) => {
     const friends = await userService.getFriendsByUserId(req.params.userId);
     res.status(HttpStatusCodes.OK).json({
-      message: "Get friends successful",
+      message: "Get friends successfully",
       result: friends.map(camelCaseifyWithDateConversion),
     });
   };
@@ -143,7 +144,7 @@ class UserController {
     );
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Get friend requests successful",
+      message: "Get friend requests successfully",
       result: friendRequests.map(camelCaseifyWithDateConversion),
     });
   };
@@ -153,7 +154,7 @@ class UserController {
     const groups = await userService.getGroupsByUserId(_id);
 
     res.status(HttpStatusCodes.OK).json({
-      message: "Get groups successful",
+      message: "Get groups successfully",
       result: groups.map(camelCaseifyWithDateConversion),
     });
   };
@@ -161,7 +162,7 @@ class UserController {
   public getUserGroups = async (req: APIRequest, res: APIResponse) => {
     const groups = await userService.getGroupsByUserId(req.params.userId);
     res.status(HttpStatusCodes.OK).json({
-      message: "Get groups successful",
+      message: "Get groups successfully",
       result: groups.map(camelCaseifyWithDateConversion),
     });
   };
@@ -171,7 +172,7 @@ class UserController {
     const { groupId } = req.params;
     await userService.leaveGroup(_id, groupId);
     res.status(HttpStatusCodes.OK).json({
-      message: "Leave group successful",
+      message: "Leave group successfully",
     });
   };
 }
