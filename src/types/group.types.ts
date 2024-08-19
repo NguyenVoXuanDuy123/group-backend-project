@@ -53,5 +53,5 @@ export type GroupMemberDetailType = {
   last_name: string;
   username: string;
   groupRole: GroupRole;
-  avatar?: string;
+  avatar: string;
 };

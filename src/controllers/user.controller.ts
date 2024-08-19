@@ -2,7 +2,6 @@ import { Request } from "express";
 import userService from "@src/services/user.service";
 import {
   ChangeFriendRequestStatusType,
-  SendFriendRequestType,
   UpdateMeRequestType,
   UserSessionType,
 } from "@src/types/user.types";
@@ -74,14 +73,11 @@ class UserController {
     });
   };
 
-  public sendFriendRequest = async (
-    req: APIRequest<SendFriendRequestType>,
-    res: APIResponse
-  ) => {
+  public sendFriendRequest = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
     const friendRequest = await userService.sendFriendRequest(
       _id,
-      req.body.receiverId
+      req.params.userId
     );
 
     res.status(HttpStatusCodes.OK).json({

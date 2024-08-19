@@ -7,7 +7,7 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 class ApiError extends RouteError {
   public constructor(ApiErrorCodes: ApiErrorCodes) {
     super(
-      ApiErrorCodes.responseCode,
+      ApiErrorCodes.errorCode,
       ApiErrorCodes.httpStatusCode,
       ApiErrorCodes.message
     );

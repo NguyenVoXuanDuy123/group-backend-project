@@ -6,9 +6,9 @@ import RouteError from "@src/error/RouteError";
  */
 class NotNullError extends RouteError {
   public constructor(fieldNames: string[]) {
-    const responseCode = 1;
+    const errorCode = 1;
     const message = NotNullError.createMessage(fieldNames);
-    super(responseCode, HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
+    super(errorCode, HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
   }
 
   private static createMessage(fieldNames: string[]): string {

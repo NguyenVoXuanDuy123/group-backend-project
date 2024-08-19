@@ -4,6 +4,7 @@ import {
   addCommentValidator,
   createPostValidator,
   reactToValidator,
+  updatePostValidator,
 } from "@src/middlewares/post.middleware";
 
 import { Router } from "express";
@@ -16,7 +17,11 @@ postRouter.post(
   wrapRequestHandler(postController.createPost)
 );
 
-postRouter.patch("/:postId", wrapRequestHandler(postController.updatePost));
+postRouter.patch(
+  "/:postId",
+  wrapRequestHandler(updatePostValidator),
+  wrapRequestHandler(postController.updatePost)
+);
 
 postRouter.delete("/:postId", wrapRequestHandler(postController.deletePost));
 

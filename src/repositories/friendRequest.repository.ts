@@ -1,20 +1,20 @@
+import { FriendRequestStatus } from "@src/enums/user.enum";
 import FriendRequestModel, {
-  FriendRequestStatus,
+  IFriendRequest,
 } from "@src/schema/friendRequest.schema";
 import { FriendRequestDetailType } from "@src/types/user.types";
-import { Types } from "mongoose";
+import { ProjectionType, Types } from "mongoose";
 
 class FriendRequestRepository {
-  public async getFriendRequestById(requestId: string | Types.ObjectId) {
-    return await FriendRequestModel.findById(requestId, {
-      created_at: 0,
-      updated_at: 0,
-      __v: 0,
-    }).lean();
+  public async getFriendRequestById(
+    requestId: string | Types.ObjectId,
+    projection: ProjectionType<IFriendRequest> = {}
+  ) {
+    return await FriendRequestModel.findById(requestId, projection).lean();
   }
 
-  public async createFriendRequest(sender_id: string, receiver_id: string) {
-    return await FriendRequestModel.create({ sender_id, receiver_id });
+  public async createFriendRequest(senderId: string, receiverId: string) {
+    return await FriendRequestModel.create({ senderId, receiverId });
   }
 
   public async changeStatusFriendRequest(
@@ -25,28 +25,27 @@ class FriendRequestRepository {
   }
 
   public async checkPendingFriendRequestExists(
-    sender_id: string,
-    receiver_id: string
+    senderId: string,
+    receiverId: string
   ) {
     return !!(await this.getPendingFriendRequestBySenderIdAndReceiverId(
-      sender_id,
-      receiver_id
+      senderId,
+      receiverId
     ));
   }
 
   public async getPendingFriendRequestBySenderIdAndReceiverId(
-    sender_id: string,
-    receiver_id: string
+    senderId: string,
+    receiverId: string,
+    projection: ProjectionType<IFriendRequest> = {}
   ) {
     return await FriendRequestModel.findOne(
       {
-        sender_id,
-        receiver_id,
+        senderId,
+        receiverId,
         status: FriendRequestStatus.PENDING,
       },
-      {
-        __v: 0,
-      }
+      projection
     ).lean();
   }
 

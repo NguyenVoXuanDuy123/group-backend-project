@@ -16,6 +16,7 @@ import cors from "cors";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, APIResponse } from "@src/types/api.types";
+
 // **** Variables **** //
 
 const app = express();
@@ -25,8 +26,11 @@ const app = express();
 databaseConfig.connectDB();
 
 // Basic middleware
-// for some reason, the types are not working for cors
-// so I have to disable the eslint rule for this line
+
+/*
+ * The types for cors is not working properly
+ * So I have to disable the eslint rule for this line
+ */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(cors<Request>());
 app.use(express.json());
@@ -38,7 +42,6 @@ app.use("/images", express.static(UPLOAD_DIR));
 app.use(morgan("dev"));
 
 // Security
-
 app.use(helmet());
 
 // Passport middleware
@@ -60,22 +63,22 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Add APIs, must be after middleware
-
+// **** Routes **** //
 app.use("/api", BaseRouter);
 
+// if no route is matched by now, it must be a 404
 app.use((_: Request, res: Response, next: NextFunction) => {
   next(new ApiError(ApiErrorCodes.ROUTE_NOT_FOUND));
 });
 
-// Add error handler
+// error handler
 app.use(
   (err: Error, _: APIRequest, res: APIResponse, next: NextFunction): void => {
     let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
     let errCode = 1001; // error code for unknown error
     if (err instanceof RouteError) {
       status = err.status;
-      errCode = err.responseCode;
+      errCode = err.errorCode;
     }
     console.error(err);
     res.status(status).json({ errorCode: errCode, message: err.message });

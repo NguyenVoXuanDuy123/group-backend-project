@@ -1,5 +1,6 @@
 import {
   GroupJoinRequestStatus,
+  GroupStatus,
   GroupVisibilityLevel,
   UserGroupRelation,
 } from "@src/enums/group.enum";
@@ -62,9 +63,11 @@ class GroupService {
     const group = await groupRepository.findGroupById(groupId, {
       __v: 0,
     });
+
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
+
     const { admin, members, ...rest } = group;
     let userGroupRelation = UserGroupRelation.NOT_MEMBER;
     let groupJoinRequest = null;
@@ -90,6 +93,7 @@ class GroupService {
       last_name: 1,
       first_name: 1,
       username: 1,
+      avatar: 1,
     });
 
     return {
@@ -112,9 +116,19 @@ class GroupService {
   // }
 
   public async getGroupMembers(senderId: string, groupId: string) {
-    const group = await groupRepository.findGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId, {
+      members: 1,
+      visibility_level: 1,
+      status: 1,
+    });
+
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
+
+    // if the group is not approved, the members cannot be viewed
+    if (group.status === GroupStatus.PENDING) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
     /*
@@ -141,10 +155,19 @@ class GroupService {
     );
   }
   public async getPendingGroupJoinRequests(senderId: string, groupId: string) {
-    const group = await groupRepository.findGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId, {
+      status: 1,
+      admin: 1,
+    });
+
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
+
+    if (group.status === GroupStatus.PENDING) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
+    }
+
     if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_NOT_VISIBLE);
     }

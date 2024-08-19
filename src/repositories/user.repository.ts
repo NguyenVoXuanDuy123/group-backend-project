@@ -1,8 +1,7 @@
-import GroupModel from "@src/schema/group.schema";
 import UserModel, { IUser } from "@src/schema/user.schema";
 import { FriendDetailType, GroupDetailType } from "@src/types/user.types";
 
-import { FilterQuery, ProjectionType, Types } from "mongoose";
+import { ProjectionType, Types } from "mongoose";
 
 class UserRepository {
   //find a user by their id
@@ -13,19 +12,16 @@ class UserRepository {
     return await UserModel.findById(_id, projection).lean();
   }
 
-  //check if a user exists by their id
   public async checkUserExistsById(_id: string) {
     return !!(await this.findById(_id));
   }
 
-  //check if a user exists by their username
   public async checkUserExistsByUsername(username: string) {
     return !!(await this.findByUsername(username));
   }
 
-  //find a user by their username
   public async findByUsername(username: string, projection = {}) {
-    return await this.findUser({ username }, projection);
+    return await UserModel.findOne({ username }, projection).lean();
   }
 
   public async createUser(user: Partial<IUser>) {
@@ -103,19 +99,6 @@ class UserRepository {
       },
     ]);
     return groups;
-  }
-
-  public async leaveGroup(userId: string, groupId: string) {
-    await UserModel.findByIdAndUpdate(userId, { $pull: { groups: groupId } });
-    await GroupModel.findByIdAndUpdate(groupId, { $pull: { members: userId } });
-  }
-
-  //find a user by options and projection
-  private findUser(
-    query: FilterQuery<IUser>,
-    projection: ProjectionType<IUser>
-  ) {
-    return UserModel.findOne(query, projection).lean();
   }
 }
 

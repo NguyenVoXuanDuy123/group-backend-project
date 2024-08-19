@@ -1,4 +1,4 @@
-import { GroupJoinRequestStatus } from "@src/enums/group.enum";
+import { GroupJoinRequestStatus, GroupStatus } from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
@@ -8,7 +8,7 @@ import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repos
 import groupService from "@src/services/group.service";
 
 class GroupJoinRequestService {
-  async createGroupJoinRequest(senderId: string, groupId: string) {
+  public async createGroupJoinRequest(senderId: string, groupId: string) {
     // Check if the sender is trying to send a group request which is already sent and pending
     if (
       await groupJoinRequestRepository.checkPendingGroupJoinRequestExists(
@@ -19,10 +19,19 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_ALREADY_SENT);
     }
 
-    const group = await groupRepository.findGroupById(groupId);
+    const group = await groupRepository.findGroupById(groupId, {
+      admin: 1,
+      members: 1,
+      status: 1,
+    });
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
+
+    if (group.status === GroupStatus.PENDING) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
+    }
+
     if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }
@@ -40,7 +49,7 @@ class GroupJoinRequestService {
     });
   }
 
-  async changeGroupJoinRequestStatus(
+  public async changeGroupJoinRequestStatus(
     senderId: string,
     requestId: string,
     status: GroupJoinRequestStatus
@@ -58,11 +67,19 @@ class GroupJoinRequestService {
     }
 
     const group = await groupRepository.findGroupById(
-      groupJoinRequest.group_id
+      groupJoinRequest.group_id,
+      {
+        admin: 1,
+        status: 1,
+      }
     );
 
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
+
+    if (group.status === GroupStatus.PENDING) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
     // Check if someone outside this request is trying to change the status

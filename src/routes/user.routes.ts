@@ -45,7 +45,7 @@ userRouter.delete(
   wrapRequestHandler(userController.removeFriend)
 );
 userRouter.post(
-  "/me/friends/requests",
+  "/me/friends/{userId}/requests",
   wrapRequestHandler(sendFriendRequestValidator),
   wrapRequestHandler(userController.sendFriendRequest)
 );

@@ -1,6 +1,3 @@
-import { GroupStatus } from "@src/enums/group.enum";
-import ApiError from "@src/error/ApiError";
-import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import GroupModel, { IGroup } from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";
 import { GroupMemberDetailType } from "@src/types/group.types";
@@ -73,12 +70,6 @@ class GroupRepository {
         },
       },
     ]);
-  }
-
-  public async checkIfGroupIsApproved(groupId: string) {
-    const group = await GroupModel.findById(groupId, { status: 1 });
-    if (!group) throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
-    return group.status === GroupStatus.APPROVED;
   }
 }
 

@@ -1,11 +1,12 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
+import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import commentService from "@src/services/comment.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import { UpdateCommentRequestType } from "@src/types/comment.types";
 import { ReactToRequestType } from "@src/types/post.types";
 import { UserSessionType } from "@src/types/user.types";
 
-class commentController {
+class CommentController {
   public updateComment = async (
     req: APIRequest<UpdateCommentRequestType>,
     res: APIResponse
@@ -18,7 +19,7 @@ class commentController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Update comment successfully",
-      result: comment,
+      result: camelCaseifyWithDateConversion(comment),
     });
   };
 
@@ -35,20 +36,24 @@ class commentController {
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    const { reactionType } = req.body;
+    const { type } = req.body;
     const reaction = await commentService.reactToComment(
       _id,
       req.params.commentId,
-      reactionType
+      type
     );
+    // If the reaction is created at the same time as updated at, it means the reaction is new
+    // Therefore, return 201 status code
     if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
-        message: "React " + reactionType + " to comment successfully",
+        message: "React " + type + " to comment successfully",
       });
       return;
     }
+
+    // Otherwise, return 200 status code
     res.status(HttpStatusCodes.OK).json({
-      message: "Change reaction to " + reactionType + " successfully",
+      message: "Change reaction to " + type + " successfully",
     });
   };
 
@@ -64,4 +69,4 @@ class commentController {
   };
 }
 
-export default new commentController();
+export default new CommentController();

@@ -8,6 +8,7 @@ import { CreateCommentRequestType } from "@src/types/comment.types";
 import {
   CreatePostRequestType,
   ReactToRequestType,
+  UpdatePostRequestType,
 } from "@src/types/post.types";
 import { NextFunction } from "express";
 
@@ -42,14 +43,31 @@ export const createPostValidator = (
   next();
 };
 
+export const updatePostValidator = (
+  req: APIRequest<UpdatePostRequestType>,
+  _: APIResponse,
+  next: NextFunction
+) => {
+  const { visibilityLevel } = req.body;
+
+  if (
+    visibilityLevel &&
+    !Object.values(PostVisibilityLevel).includes(visibilityLevel)
+  ) {
+    throw new ApiError(ApiErrorCodes.INVALID_POST_VISIBILITY_LEVEL);
+  }
+
+  next();
+};
+
 export const reactToValidator = (
   req: APIRequest<ReactToRequestType>,
   _: APIResponse,
   next: NextFunction
 ) => {
-  const { reactionType } = req.body;
-  validateNotNull({ reactionType });
-  if (!Object.values(ReactionType).includes(reactionType)) {
+  const { type } = req.body;
+  validateNotNull({ type });
+  if (!Object.values(ReactionType).includes(type)) {
     throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
   }
   next();

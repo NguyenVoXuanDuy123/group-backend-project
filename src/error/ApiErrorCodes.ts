@@ -218,6 +218,12 @@ class ApiErrorCodes {
     "User is not a member of this group."
   );
 
+  public static readonly GROUP_NOT_APPROVED = new ApiErrorCodes(
+    6009,
+    HttpStatusCodes.FORBIDDEN,
+    "This action cannot be performed because the group is not approved yet."
+  );
+
   /** Group join request errors 7001 - 8000*/
   public static readonly INVALID_GROUP_JOIN_REQUEST_STATUS = new ApiErrorCodes(
     7001,
@@ -313,6 +319,13 @@ class ApiErrorCodes {
     "Only the author of the post, the admin of the group or site-admin can delete the post."
   );
 
+  public static readonly INVALID_UPDATE_POST_VISIBILITY_LEVEL =
+    new ApiErrorCodes(
+      8008,
+      HttpStatusCodes.FORBIDDEN,
+      "If the post is in a group, the visibility level cannot be changed. If the post is on the wall, the visibility level can only be changed to 'public' or 'friend'."
+    );
+
   /** Comment errors 9001 - 10000*/
   public static readonly COMMENT_NOT_FOUND = new ApiErrorCodes(
     9001,
@@ -331,7 +344,8 @@ class ApiErrorCodes {
     HttpStatusCodes.FORBIDDEN,
     "Only the author of the comment, the author of the post, the admin of the group or site-admin can delete the comment."
   );
-  /** Reaction errors */
+
+  /** Reaction errors 10001 - 11000*/
   public static readonly INVALID_REACTION_TYPE = new ApiErrorCodes(
     10001,
     HttpStatusCodes.BAD_REQUEST,
@@ -345,7 +359,7 @@ class ApiErrorCodes {
   );
 
   private constructor(
-    public readonly responseCode: number,
+    public readonly errorCode: number,
     public readonly httpStatusCode: HttpStatusCodes,
     public readonly message: string
   ) {}

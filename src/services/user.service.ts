@@ -2,12 +2,12 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 import { removeNullValues } from "@src/helpers/removeNullValue";
-import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
+
 import userRepository from "@src/repositories/user.repository";
 import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
-import { UserFriendRelation } from "@src/enums/user.enum";
+import { FriendRequestStatus, UserFriendRelation } from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
 
 class UserService {
@@ -24,28 +24,33 @@ class UserService {
     }
     const { friends, groups, ...rest } = user;
 
-    let userFriendRelationship: UserFriendRelation =
-      UserFriendRelation.NOT_FRIEND;
+    let userFriendRelation: UserFriendRelation = UserFriendRelation.NOT_FRIEND;
 
     let friendRequest = null;
 
     // if the sender is the same as the user, then the user is the sender
     if (senderId === userId) {
-      userFriendRelationship = UserFriendRelation.SELF;
+      userFriendRelation = UserFriendRelation.SELF;
 
       // if the sender is the friend of the user
     } else if (friends.some((friend) => friend.equals(senderId))) {
-      userFriendRelationship = UserFriendRelation.FRIEND;
+      userFriendRelation = UserFriendRelation.FRIEND;
 
       // if the sender has sent a friend request to the user
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
           senderId,
-          userId
+          userId,
+          {
+            __v: 0,
+            updated_at: 0,
+            receiver_id: 0,
+            sender_id: 0,
+          }
         ))
     ) {
-      userFriendRelationship = UserFriendRelation.INCOMING_REQUEST;
+      userFriendRelation = UserFriendRelation.INCOMING_REQUEST;
 
       // if the user has sent a friend request to the sender
     } else if (
@@ -55,14 +60,14 @@ class UserService {
           senderId
         ))
     ) {
-      userFriendRelationship = UserFriendRelation.OUTGOING_REQUEST;
+      userFriendRelation = UserFriendRelation.OUTGOING_REQUEST;
     }
 
     return {
       ...rest,
       friendCount: friends?.length || 0,
       groupCount: groups?.length || 0,
-      userFriendRelationship,
+      userFriendRelation,
       friendRequest,
     };
   }
@@ -89,6 +94,7 @@ class UserService {
   }
 
   public async sendFriendRequest(senderId: string, receiverId: string) {
+    // check if the sender and receiver are the same
     if (senderId === receiverId) {
       throw new ApiError(ApiErrorCodes.CANNOT_SEND_FRIEND_REQUEST_TO_SELF);
     }
@@ -97,11 +103,11 @@ class UserService {
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
-
+    // check if the sender and receiver are already friends
     if (user.friends.some((friend) => friend.equals(receiverId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USER_ALREADY_FRIENDS);
     }
-    console.log(senderId, receiverId);
+
     return await friendRequestService.createFriendRequest(senderId, receiverId);
   }
 
@@ -167,7 +173,7 @@ class UserService {
       throw new ApiError(ApiErrorCodes.CANNOT_REMOVE_GROUP_ADMIN);
     }
 
-    await userRepository.leaveGroup(senderId, groupId);
+    await groupRepository.removeMemberFromGroup(groupId, senderId);
   }
 }
 

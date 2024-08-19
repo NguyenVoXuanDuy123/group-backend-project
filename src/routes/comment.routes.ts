@@ -1,4 +1,4 @@
-import commentController from "@src/controllers/comment.controller";
+import CommentController from "@src/controllers/comment.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import { reactToValidator } from "@src/middlewares/post.middleware";
 
@@ -10,23 +10,23 @@ const commentRouter = Router();
 
 commentRouter.patch(
   "/:commentId",
-  wrapRequestHandler(commentController.updateComment)
+  wrapRequestHandler(CommentController.updateComment)
 );
 
 commentRouter.delete(
   "/:commentId",
-  wrapRequestHandler(commentController.deleteComment)
+  wrapRequestHandler(CommentController.deleteComment)
 );
 
 commentRouter.put(
   "/:commentId/reactions",
   wrapRequestHandler(reactToValidator),
-  wrapRequestHandler(commentController.reactToComment)
+  wrapRequestHandler(CommentController.reactToComment)
 );
 
 commentRouter.delete(
   "/:commentId/reactions",
-  wrapRequestHandler(commentController.removeReactionFromComment)
+  wrapRequestHandler(CommentController.removeReactionFromComment)
 );
 
 export default commentRouter;

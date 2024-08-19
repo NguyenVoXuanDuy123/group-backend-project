@@ -2,7 +2,7 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
-import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
+import { FriendRequestStatus } from "@src/enums/user.enum";
 import { APIRequest } from "@src/types/api.types";
 import { RemoveGroupMemberRequestType } from "@src/types/group.types";
 import {

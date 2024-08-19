@@ -15,11 +15,10 @@ export type UpdatePostRequestType = {
   content?: string;
   images?: string[];
   visibilityLevel?: PostVisibilityLevel;
-  groupId?: string;
 };
 
 export type ReactToRequestType = {
-  reactionType: ReactionType;
+  type: ReactionType;
 };
 
 /*

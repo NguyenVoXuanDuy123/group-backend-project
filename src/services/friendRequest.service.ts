@@ -1,7 +1,7 @@
+import { FriendRequestStatus } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
-import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
 import userRepository from "@src/repositories/user.repository";
 
@@ -35,7 +35,10 @@ class FriendRequestService {
       receiverId
     );
 
-    return friendRequestRepository.getFriendRequestById(friendRequest._id);
+    return friendRequestRepository.getFriendRequestById(friendRequest._id, {
+      _id: 1,
+      status: 1,
+    });
   }
 
   public async changeFriendRequestStatus(

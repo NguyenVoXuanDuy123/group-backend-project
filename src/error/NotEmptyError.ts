@@ -4,20 +4,14 @@ import RouteError from "@src/error/RouteError";
 /**
  * Custom error class representing an error when a required field is empty.
  * Extends the RouteError class.
- * @class NotEmptyError
- * @extends RouteError
+ *
  */
 
 class NotEmptyError extends RouteError {
-  /**
-   * Public constructor.
-   * @param fieldNames - The name of the field that is empty.
-   */
-
   public constructor(fieldNames: string[]) {
-    const responseCode = 2;
+    const errorCode = 2;
     const message = NotEmptyError.createMessage(fieldNames);
-    super(responseCode, HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
+    super(errorCode, HttpStatusCodes.UNPROCESSABLE_ENTITY, message);
   }
 
   /**

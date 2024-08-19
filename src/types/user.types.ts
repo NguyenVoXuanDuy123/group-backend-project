@@ -1,5 +1,5 @@
 import { UserRole, UserStatus } from "@src/enums/user.enum";
-import { FriendRequestStatus } from "@src/schema/friendRequest.schema";
+import { FriendRequestStatus } from "@src/enums/user.enum";
 
 export type UserSessionType = {
   _id: string;

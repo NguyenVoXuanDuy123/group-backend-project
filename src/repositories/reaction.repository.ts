@@ -58,10 +58,11 @@ class ReactionRepository {
     userId: string | Types.ObjectId,
     projection: ProjectionType<IReaction> = {}
   ) {
-    // we don't need worry about the target type here
-    // because percentage of two targetId duplication is very low (almost 0)
-    // it is not worth to add target_type to the query, it will slow down the query
-    // since we have index on target and user
+    /**
+     * We don't need to worry about the target type here
+     * because the percentage of two targetId duplication is very low (almost 0)
+     * it is not worth to add target_type to the query, it will slow down the query
+     */
     return await ReactionModel.findOne(
       {
         target: targetId,
@@ -72,10 +73,11 @@ class ReactionRepository {
   }
 
   public async getReactionsByTargetId(targetId: string | Types.ObjectId) {
-    // we don't need worry about the target type here
-    // because percentage of two targetId duplication is very low (almost 0)
-    // it is not worth to add target_type to the query, it will slow down the query
-    // since we have index on target and user
+    /**
+     * We don't need to worry about the target type here
+     * because the percentage of two targetId duplication is very low (almost 0)
+     * it is not worth to add target_type to the query, it will slow down the query
+     */
 
     return await ReactionModel.aggregate<ReactionDetailType>([
       {

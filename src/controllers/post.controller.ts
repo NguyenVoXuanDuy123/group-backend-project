@@ -17,7 +17,7 @@ class PostController {
   ) => {
     const { _id } = req.user as UserSessionType;
     const post = await postService.createPost(_id, req.body);
-    res.status(HttpStatusCodes.OK).json({
+    res.status(HttpStatusCodes.CREATED).json({
       message: "Create post successfully",
       result: camelCaseifyWithDateConversion(post),
     });
@@ -37,9 +37,15 @@ class PostController {
     req: APIRequest<UpdatePostRequestType>,
     res: APIResponse
   ) => {
-    const { _id } = req.user as UserSessionType;
-    await postService.updatePost(_id, req.params.postId, req.body);
-    const post = await postService.updatePost(_id, req.params.postId, req.body);
+    const { _id, role } = req.user as UserSessionType;
+
+    await postService.updatePost(_id, role, req.params.postId, req.body);
+    const post = await postService.updatePost(
+      _id,
+      role,
+      req.params.postId,
+      req.body
+    );
     res.status(HttpStatusCodes.OK).json({
       message: "Update post successfully",
       result: camelCaseifyWithDateConversion(post),
@@ -59,21 +65,21 @@ class PostController {
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    const { reactionType } = req.body;
+    const { type } = req.body;
     const reaction = await postService.reactToPost(
       req.params.postId,
       _id,
-      reactionType
+      type
     );
 
     if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
-        message: "React " + reactionType + " to post successfully",
+        message: "React " + type + " to post successfully",
       });
       return;
     }
     res.status(HttpStatusCodes.OK).json({
-      message: "Change reaction to " + reactionType + " successfully",
+      message: "Change reaction to " + type + " successfully",
     });
   };
 

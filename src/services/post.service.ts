@@ -29,6 +29,19 @@ class PostService {
     authorID: string,
     createPostRequest: CreatePostRequestType
   ) {
+    if (createPostRequest.visibilityLevel === PostVisibilityLevel.GROUP) {
+      const group = await groupRepository.findGroupById(
+        createPostRequest.groupId as string
+      );
+      if (!group) {
+        throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+      }
+
+      if (!group.members.some((member) => member.equals(authorID))) {
+        throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
+      }
+    }
+
     const post: Partial<IPost> = {
       author: new Types.ObjectId(authorID),
       group: createPostRequest.groupId
@@ -166,19 +179,30 @@ class PostService {
 
   public async updatePost(
     senderId: string,
+    senderRole: UserRole,
     postID: string,
     updatePostRequest: UpdatePostRequestType
   ) {
-    const post = await postRepository.findPostById(postID, {
+    // if the post does not exist, or not visible to the sender
+    // the method below will throw an error
+    await this.getPostById(postID, senderId, senderRole);
+
+    // if it comes here, post 100% exists, so we can safely cast it to IPost
+    const post = (await postRepository.findPostById(postID, {
       author: 1,
       content: 1,
       images: 1,
-    });
+      visibility_level: 1,
+    })) as IPost;
 
-    if (!post) {
-      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
+    //if the post visibility level is group, the visibility level cannot be changed
+    if (post.visibility_level === PostVisibilityLevel.GROUP) {
+      if (updatePostRequest.visibilityLevel !== PostVisibilityLevel.GROUP) {
+        throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
+      }
     }
 
+    // only the author of the post can update the post
     if (!post.author.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.UPDATE_POST_FORBIDDEN);
     }

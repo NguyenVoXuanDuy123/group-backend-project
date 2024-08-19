@@ -8,6 +8,13 @@ export enum UserStatus {
   BANNED = "banned",
 }
 
+export enum FriendRequestStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+  CANCELLED = "cancelled",
+}
+
 export enum UserFriendRelation {
   FRIEND = "friend",
   NOT_FRIEND = "not_friend",

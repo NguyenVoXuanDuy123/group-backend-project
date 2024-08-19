@@ -1,7 +1,8 @@
+import { FriendRequestStatus } from "@src/enums/user.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Request interface
-interface IFriendRequest {
+export interface IFriendRequest {
   sender_id: Types.ObjectId;
   receiver_id: Types.ObjectId;
   status: FriendRequestStatus;
@@ -10,12 +11,6 @@ interface IFriendRequest {
 }
 
 // Define enums for status
-export enum FriendRequestStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-  CANCELLED = "cancelled",
-}
 
 // Define the Request Schema
 const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
