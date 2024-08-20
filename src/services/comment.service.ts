@@ -189,9 +189,11 @@ class CommentService {
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await postService.getPostById(comment.post, senderId);
     const reaction = await reactionService.createReaction(
       commentId,
@@ -207,9 +209,11 @@ class CommentService {
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await postService.getPostById(comment.post, senderId);
     await reactionService.removeReactionFromPost(
       commentId,

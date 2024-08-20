@@ -93,7 +93,8 @@ class PostService {
       }
       /**
        *
-       * in case visibility_level = group user only can see the post if
+       * in case visibility_level = 'group'
+       * user only can see the post if one of the following conditions is met:
        * 1. user role is site-admin
        * 2. group is public
        * 3. user is a member of the group (group admin is also a member)
@@ -130,7 +131,8 @@ class PostService {
       let canSeePost = false;
 
       /**
-       * in case visibility_level = friend user can see the post if
+       * In case visibility_level = friend
+       * user only can see the post if one of the following conditions is met:
        * 1. user role is site-admin
        * 2. user is the author of the post
        * 3. user is a friend of the author
@@ -157,7 +159,6 @@ class PostService {
       group: group && {
         id: group._id,
         name: group.name,
-        visibility_level: group.visibility_level,
       },
       author: author && {
         id: author._id,
@@ -248,7 +249,7 @@ class PostService {
       throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
     /**
-     * sender can only delete post if:
+     * sender can only delete post if one of the following conditions is met:
      * 1. sender is the author of the post
      * 2. sender is an site admin
      * 3. sender is the admin of the group where the post is posted
@@ -291,9 +292,11 @@ class PostService {
     senderId: string,
     type: ReactionType
   ) {
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await this.getPostById(postID, senderId);
 
     const react = await reactionService.createReaction(
@@ -320,14 +323,17 @@ class PostService {
   public async getReactionsFromPost(
     postID: string,
     senderId: string,
-    senderRole: UserRole
+    senderRole: UserRole,
+    type: ReactionType
   ) {
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await this.getPostById(postID, senderId, senderRole);
 
-    return await reactionRepository.getReactionsByTargetId(postID);
+    return await reactionRepository.getReactionsByTargetId(postID, type);
   }
 
   public async createCommentToPost(
@@ -335,9 +341,11 @@ class PostService {
     postID: string,
     createCommentRequest: CreateCommentRequestType
   ) {
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await this.getPostById(postID, senderId);
 
     return await commentService.createComment(
@@ -352,10 +360,11 @@ class PostService {
     senderId: string,
     senderRole: UserRole
   ) {
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    // so that we reuse the method to check if the post exists and visible to the sender
-
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
     await this.getPostById(postID, senderId, senderRole);
     // return await commentRepository.getCommentDetailsByPostId(postID);
   }

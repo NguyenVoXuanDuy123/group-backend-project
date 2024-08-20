@@ -48,39 +48,3 @@ export const validateNotEmpty = (input: InputNotEmptyValidator): void => {
     throw new NotEmptyError(emptyFields);
   }
 };
-
-// type InputIsNumberValidator = {
-//   [key: string]: unknown;
-// };
-
-/**
- * Function to validate if a value is a number
- * @param input - An object containing the field name and value.
- * @throws IsNotNumberError
- */
-
-// export const validateIsNumber = (input: InputIsNumberValidator): void => {
-//   for (const fieldName in input) {
-//     if (isNaN(Number(input[fieldName]))) {
-//       throw new IsNotNumberError(fieldName);
-//     }
-//   }
-// };
-
-// type InputIsStringValidator = {
-//   [key: string]: unknown;
-// };
-
-/**
- * Function to validate if a value is string
- * @param input - An object containing the field name and value.
- * @throws IsNotStringError
- */
-
-// export const validateIsString = (input: InputIsStringValidator): void => {
-//   for (const fieldName in input) {
-//     if (typeof input[fieldName] !== "string") {
-//       throw new IsNotStringError(fieldName);
-//     }
-//   }
-// };

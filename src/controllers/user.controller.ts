@@ -2,6 +2,7 @@ import { Request } from "express";
 import userService from "@src/services/user.service";
 import {
   ChangeFriendRequestStatusType,
+  ChangeUserStatusRequestType,
   UpdateMeRequestType,
   UserSessionType,
 } from "@src/types/user.types";
@@ -39,9 +40,7 @@ class UserController {
   ) => {
     const { _id } = req.user as UserSessionType;
 
-    //updateUser requires 3 parameters, userId, senderId, and updateMeRequest
-    //userId and senderId are the same in this case
-    await userService.updateUser(_id, _id, req.body);
+    await userService.updateUser(_id, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Update me successfully",
     });
@@ -169,6 +168,19 @@ class UserController {
     await userService.leaveGroup(_id, groupId);
     res.status(HttpStatusCodes.OK).json({
       message: "Leave group successfully",
+    });
+  };
+
+  //Only admin can change user status
+  public changeUserStatus = async (
+    req: APIRequest<ChangeUserStatusRequestType>,
+    res: APIResponse
+  ) => {
+    const { role } = req.user as UserSessionType;
+    const { userId } = req.params;
+    await userService.changeUserStatus(userId, req.body.status, role);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Change user status successfully",
     });
   };
 }

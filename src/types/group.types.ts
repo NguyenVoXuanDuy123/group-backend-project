@@ -1,6 +1,7 @@
 import {
   GroupJoinRequestStatus,
   GroupRole,
+  GroupStatus,
   GroupVisibilityLevel,
 } from "@src/enums/group.enum";
 
@@ -54,4 +55,9 @@ export type GroupMemberDetailType = {
   username: string;
   groupRole: GroupRole;
   avatar: string;
+};
+
+//Only admin can change user status
+export type ChangeGroupStatusRequestType = {
+  status: GroupStatus;
 };

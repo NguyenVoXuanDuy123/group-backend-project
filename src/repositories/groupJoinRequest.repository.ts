@@ -1,4 +1,5 @@
 import { GroupJoinRequestStatus } from "@src/enums/group.enum";
+import { IGroup } from "@src/schema/group.schema";
 
 import GroupJoinRequestModel from "@src/schema/groupJoinRequest.schema";
 import { GroupJoinRequestDetailType } from "@src/types/group.types";
@@ -7,7 +8,7 @@ import { ProjectionType, Types } from "mongoose";
 class GroupJoinRequestRepository {
   public async getGroupJoinRequestById(
     requestId: string | Types.ObjectId,
-    projection: ProjectionType<GroupJoinRequestDetailType> = {}
+    projection: ProjectionType<IGroup> = {}
   ) {
     return await GroupJoinRequestModel.findById(requestId, projection).lean();
   }
@@ -30,13 +31,17 @@ class GroupJoinRequestRepository {
 
   public async getPendingGroupJoinRequestBySenderIdAndGroupId(
     sender_id: string | Types.ObjectId,
-    group_id: string | Types.ObjectId
+    group_id: string | Types.ObjectId,
+    projection: ProjectionType<IGroup> = {}
   ) {
-    return await GroupJoinRequestModel.findOne({
-      user_id: sender_id,
-      group_id,
-      status: GroupJoinRequestStatus.PENDING,
-    }).lean();
+    return await GroupJoinRequestModel.findOne(
+      {
+        user_id: sender_id,
+        group_id,
+        status: GroupJoinRequestStatus.PENDING,
+      },
+      projection
+    ).lean();
   }
 
   public async changeStatusGroupJoinRequest(

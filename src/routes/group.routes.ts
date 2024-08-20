@@ -1,8 +1,8 @@
 import groupController from "@src/controllers/group.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import {
+  changeGroupStatusValidator,
   createGroupValidator,
-  sendGroupJoinRequestValidator,
 } from "@src/middlewares/group.middleware";
 import { changeFriendRequestStatusValidator } from "@src/middlewares/user.middleware";
 
@@ -32,10 +32,10 @@ groupRouter.get(
 );
 
 groupRouter.post(
-  "/requests",
-  wrapRequestHandler(sendGroupJoinRequestValidator),
+  "/:groupId/requests",
   wrapRequestHandler(groupController.sendGroupJoinRequest)
 );
+
 groupRouter.get(
   "/:groupId/pending-requests",
   wrapRequestHandler(groupController.getPendingGroupJoinRequests)
@@ -56,5 +56,13 @@ groupRouter.delete(
 //   "/:groupId/posts",
 //   wrapRequestHandler(groupController.getGroupPosts)
 // );
+
+//Only admin can change group status
+
+groupRouter.patch(
+  "/:groupId/status",
+  wrapRequestHandler(changeGroupStatusValidator),
+  wrapRequestHandler(groupController.changeGroupStatus)
+);
 
 export default groupRouter;

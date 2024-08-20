@@ -8,17 +8,17 @@ class GroupRepository {
     return await GroupModel.create(group);
   }
 
-  public async updateGroupById(_id: string, payload: Partial<IGroup>) {
-    return await GroupModel.findByIdAndUpdate<IGroup>(_id, payload, {
+  public async updateGroupById(groupId: string, payload: Partial<IGroup>) {
+    return await GroupModel.findByIdAndUpdate<IGroup>(groupId, payload, {
       new: true,
     });
   }
 
   public async findGroupById(
-    _id: string | Types.ObjectId,
+    groupId: string | Types.ObjectId,
     projection: ProjectionType<IGroup> = {}
   ) {
-    return await GroupModel.findById(_id, projection).lean();
+    return await GroupModel.findById(groupId, projection).lean();
   }
 
   public async addMemberToGroup(
@@ -34,9 +34,9 @@ class GroupRepository {
     await UserModel.findByIdAndUpdate(userId, { $pull: { groups: groupId } });
   }
 
-  public async getGroupMembers(_id: string) {
+  public async getGroupMembers(groupId: string) {
     return await GroupModel.aggregate<GroupMemberDetailType>([
-      { $match: { _id: new Types.ObjectId(_id) } },
+      { $match: { _id: new Types.ObjectId(groupId) } },
       { $unwind: "$members" },
       {
         $lookup: {

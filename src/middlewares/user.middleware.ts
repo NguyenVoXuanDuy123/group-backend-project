@@ -2,11 +2,12 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
-import { FriendRequestStatus } from "@src/enums/user.enum";
+import { FriendRequestStatus, UserStatus } from "@src/enums/user.enum";
 import { APIRequest } from "@src/types/api.types";
 import { RemoveGroupMemberRequestType } from "@src/types/group.types";
 import {
   ChangeFriendRequestStatusType,
+  ChangeUserStatusRequestType,
   SendFriendRequestType,
 } from "@src/types/user.types";
 import { NextFunction, Request, RequestHandler, Response } from "express";
@@ -16,17 +17,6 @@ export const getMeValidator: RequestHandler = (
   _: Response,
   next: NextFunction
 ) => {
-  next();
-};
-
-export const sendFriendRequestValidator: RequestHandler = (
-  req: APIRequest<SendFriendRequestType>,
-  _: Response,
-  next: NextFunction
-) => {
-  const { receiverId } = req.body;
-  validateNotNull({ receiverId });
-  validateNotEmpty({ receiverId });
   next();
 };
 
@@ -63,5 +53,18 @@ export const removeGroupMemberValidator: RequestHandler = (
   const { memberId } = req.body;
   validateNotNull({ memberId });
   validateNotEmpty({ memberId });
+  next();
+};
+
+export const changeUserStatusValidator: RequestHandler = (
+  req: APIRequest<ChangeUserStatusRequestType>,
+  _: Response,
+  next: NextFunction
+) => {
+  const { status } = req.body;
+  validateNotNull({ status });
+  if (!Object.values(UserStatus).includes(status)) {
+    throw new ApiError(ApiErrorCodes.INVALID_USER_STATUS);
+  }
   next();
 };

@@ -7,7 +7,12 @@ import userRepository from "@src/repositories/user.repository";
 import friendRequestService from "@src/services/friendRequest.service";
 import { UpdateMeRequestType } from "@src/types/user.types";
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
-import { FriendRequestStatus, UserFriendRelation } from "@src/enums/user.enum";
+import {
+  FriendRequestStatus,
+  UserFriendRelation,
+  UserRole,
+  UserStatus,
+} from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
 
 class UserService {
@@ -72,11 +77,7 @@ class UserService {
     };
   }
 
-  public async updateUser(
-    _id: string,
-    senderId: string,
-    updateMeRequest: UpdateMeRequestType
-  ) {
+  public async updateUser(_id: string, updateMeRequest: UpdateMeRequestType) {
     await userRepository.updateUserById(
       _id,
       removeNullValues({
@@ -100,6 +101,10 @@ class UserService {
     }
     const user = await userRepository.findById(senderId);
 
+    if (!(await userRepository.checkUserExistsById(receiverId))) {
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
+    }
+
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
@@ -107,6 +112,9 @@ class UserService {
     if (user.friends.some((friend) => friend.equals(receiverId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USER_ALREADY_FRIENDS);
     }
+
+    console.log("senderId", senderId);
+    console.log("receiverId", receiverId);
 
     return await friendRequestService.createFriendRequest(senderId, receiverId);
   }
@@ -174,6 +182,32 @@ class UserService {
     }
 
     await groupRepository.removeMemberFromGroup(groupId, senderId);
+  }
+
+  public async changeUserStatus(
+    // user to change status
+    userId: string,
+    status: UserStatus,
+    // role of the user who is changing the status
+    senderRole: UserRole
+  ) {
+    // Only admin can change user status
+    if (senderRole !== UserRole.ADMIN) {
+      throw new ApiError(ApiErrorCodes.ADMIN_ROLE_REQUIRED);
+    }
+
+    const user = await userRepository.findById(userId, { role: 1 });
+
+    if (!user) {
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
+    }
+    if (user.role === UserRole.ADMIN) {
+      throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_ADMIN_STATUS);
+    }
+
+    await userRepository.updateUserById(userId, {
+      status,
+    });
   }
 }
 

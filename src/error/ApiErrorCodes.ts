@@ -7,6 +7,16 @@ import HttpStatusCodes from "@src/constant/HttpStatusCodes";
  */
 
 class ApiErrorCodes {
+  /** Input validation errors 1-1000*/
+
+  // 1 and 2 are already used in NotNullError and NotEmptyError
+
+  public static readonly INVALID_ID = new ApiErrorCodes(
+    3,
+    HttpStatusCodes.UNPROCESSABLE_ENTITY,
+    "Id must be valid ObjectId (24-character hex string)"
+  );
+
   /** Generic API error codes 1001-2000*/
   public static readonly INTERNAL_SERVER_ERROR = new ApiErrorCodes(
     1001,
@@ -82,6 +92,12 @@ class ApiErrorCodes {
     "User is banned"
   );
 
+  public static readonly ADMIN_ROLE_REQUIRED = new ApiErrorCodes(
+    2009,
+    HttpStatusCodes.FORBIDDEN,
+    "Admin role required to perform this action"
+  );
+
   /** Media upload errors  3001 - 4000*/
 
   public static readonly INVALID_IMAGE_FORMAT = new ApiErrorCodes(
@@ -110,6 +126,17 @@ class ApiErrorCodes {
     "User not found"
   );
 
+  public static readonly INVALID_USER_STATUS = new ApiErrorCodes(
+    4002,
+    HttpStatusCodes.BAD_REQUEST,
+    "User status must be either 'active' or 'banned'."
+  );
+
+  public static readonly CANNOT_CHANGE_ADMIN_STATUS = new ApiErrorCodes(
+    4003,
+    HttpStatusCodes.FORBIDDEN,
+    "Cannot change the status of an admin user."
+  );
   /** Friend request errors 5001 - 6000*/
 
   public static readonly INVALID_FRIEND_REQUEST_STATUS = new ApiErrorCodes(
@@ -221,7 +248,19 @@ class ApiErrorCodes {
   public static readonly GROUP_NOT_APPROVED = new ApiErrorCodes(
     6009,
     HttpStatusCodes.FORBIDDEN,
-    "This action cannot be performed because the group is not approved yet."
+    "This action cannot be performed because the group is not approved yet or rejected."
+  );
+
+  public static readonly CANNOT_CHANGE_GROUP_STATUS = new ApiErrorCodes(
+    6010,
+    HttpStatusCodes.BAD_REQUEST,
+    "Once a group is approved or rejected, its status cannot be changed."
+  );
+
+  public static readonly INVALID_GROUP_STATUS = new ApiErrorCodes(
+    7009,
+    HttpStatusCodes.BAD_REQUEST,
+    "Group status must be either 'approved' or 'rejected'."
   );
 
   /** Group join request errors 7001 - 8000*/
@@ -272,7 +311,7 @@ class ApiErrorCodes {
     new ApiErrorCodes(
       7008,
       HttpStatusCodes.FORBIDDEN,
-      "The group admin cannot send a group request."
+      "The group admins cannot send a group request to their group."
     );
 
   /** Post errors 8001 - 9000*/

@@ -93,10 +93,12 @@ class PostController {
 
   public getReactionsFromPost = async (req: APIRequest, res: APIResponse) => {
     const { _id, role } = req.user as UserSessionType;
+    const { type } = req.query as ReactToRequestType;
     const reactions = await postService.getReactionsFromPost(
       req.params.postId,
       _id,
-      role
+      role,
+      type
     );
 
     res.status(HttpStatusCodes.OK).json({

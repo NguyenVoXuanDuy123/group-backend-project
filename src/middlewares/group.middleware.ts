@@ -1,5 +1,6 @@
 import {
   GroupJoinRequestStatus,
+  GroupStatus,
   GroupVisibilityLevel,
 } from "@src/enums/group.enum";
 import ApiError from "@src/error/ApiError";
@@ -9,8 +10,8 @@ import { validateNotNull } from "@src/helpers/validation";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
+  ChangeGroupStatusRequestType,
   CreateGroupJoinRequestType,
-  GroupMemberRequestType,
 } from "@src/types/group.types";
 import { NextFunction } from "express";
 
@@ -27,16 +28,6 @@ export const createGroupValidator = (
   next();
 };
 
-export const sendGroupJoinRequestValidator = (
-  req: APIRequest<GroupMemberRequestType>,
-  _: APIResponse,
-  next: NextFunction
-) => {
-  const { groupId } = req.body;
-  validateNotNull({ groupId });
-  next();
-};
-
 export const changeGroupJoinRequestStatusValidator = (
   req: APIRequest<ChangeGroupJoinRequestStatusRequestType>,
   _: APIResponse,
@@ -46,6 +37,19 @@ export const changeGroupJoinRequestStatusValidator = (
   validateNotNull({ status });
   if (!Object.values(GroupJoinRequestStatus).includes(status)) {
     throw new ApiError(ApiErrorCodes.INVALID_GROUP_JOIN_REQUEST_STATUS);
+  }
+  next();
+};
+
+export const changeGroupStatusValidator = (
+  req: APIRequest<ChangeGroupStatusRequestType>,
+  _: APIResponse,
+  next: NextFunction
+) => {
+  const { status } = req.body;
+  validateNotNull({ status });
+  if (status !== GroupStatus.REJECTED && status !== GroupStatus.APPROVED) {
+    throw new ApiError(ApiErrorCodes.INVALID_GROUP_STATUS);
   }
   next();
 };

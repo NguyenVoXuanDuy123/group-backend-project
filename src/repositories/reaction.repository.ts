@@ -72,7 +72,10 @@ class ReactionRepository {
     ).lean();
   }
 
-  public async getReactionsByTargetId(targetId: string | Types.ObjectId) {
+  public async getReactionsByTargetId(
+    targetId: string | Types.ObjectId,
+    type: ReactionType
+  ) {
     /**
      * We don't need to worry about the target type here
      * because the percentage of two targetId duplication is very low (almost 0)
@@ -83,6 +86,7 @@ class ReactionRepository {
       {
         $match: {
           target: new Types.ObjectId(targetId),
+          type: type,
         },
       },
       {

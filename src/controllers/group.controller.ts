@@ -7,6 +7,7 @@ import groupService from "@src/services/group.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
+  ChangeGroupStatusRequestType,
   CreateGroupJoinRequestType,
   GroupMemberRequestType,
   UpdateGroupJoinRequestType,
@@ -76,7 +77,7 @@ class GroupController {
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    const { groupId } = req.body;
+    const { groupId } = req.params;
     const groupRequest = await groupService.sendGroupJoinRequest(_id, groupId);
 
     res.status(HttpStatusCodes.OK).json({
@@ -122,6 +123,20 @@ class GroupController {
     res
       .status(HttpStatusCodes.OK)
       .json({ message: "Removed member from group successfully" });
+  };
+
+  // only site-admin can change group status
+  public changeGroupStatus = async (
+    req: APIRequest<ChangeGroupStatusRequestType>,
+    res: APIResponse
+  ) => {
+    const { role } = req.user as UserSessionType;
+    const { groupId } = req.params;
+    const { status } = req.body;
+    await groupService.changeGroupStatus(groupId, status, role);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Group status changed successfully",
+    });
   };
 }
 

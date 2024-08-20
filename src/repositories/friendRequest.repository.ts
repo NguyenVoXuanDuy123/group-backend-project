@@ -14,7 +14,10 @@ class FriendRequestRepository {
   }
 
   public async createFriendRequest(senderId: string, receiverId: string) {
-    return await FriendRequestModel.create({ senderId, receiverId });
+    return await FriendRequestModel.create({
+      sender_id: senderId,
+      receiver_id: receiverId,
+    });
   }
 
   public async changeStatusFriendRequest(
@@ -41,8 +44,8 @@ class FriendRequestRepository {
   ) {
     return await FriendRequestModel.findOne(
       {
-        senderId,
-        receiverId,
+        sender_id: senderId,
+        receiver_id: receiverId,
         status: FriendRequestStatus.PENDING,
       },
       projection

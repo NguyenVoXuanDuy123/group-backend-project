@@ -59,3 +59,8 @@ export type FriendRequestDetailType = {
     avatar: string;
   };
 };
+
+//Only admin can change user status
+export type ChangeUserStatusRequestType = {
+  status: UserStatus;
+};

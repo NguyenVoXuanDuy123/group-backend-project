@@ -3,8 +3,8 @@ import userController from "@src/controllers/user.controller";
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import {
   changeFriendRequestStatusValidator,
+  changeUserStatusValidator,
   removeFriendRequestValidator,
-  sendFriendRequestValidator,
 } from "@src/middlewares/user.middleware";
 import upload from "@src/configs/multer.config";
 
@@ -45,8 +45,7 @@ userRouter.delete(
   wrapRequestHandler(userController.removeFriend)
 );
 userRouter.post(
-  "/me/friends/{userId}/requests",
-  wrapRequestHandler(sendFriendRequestValidator),
+  "/me/friends/:userId/requests",
   wrapRequestHandler(userController.sendFriendRequest)
 );
 userRouter.patch(
@@ -76,5 +75,11 @@ userRouter.delete(
 //   "/:userId/posts",
 //   wrapRequestHandler(userController.getUserPosts)
 // );
+
+userRouter.patch(
+  "/:userId/status",
+  wrapRequestHandler(changeUserStatusValidator),
+  wrapRequestHandler(userController.changeUserStatus)
+);
 
 export default userRouter;

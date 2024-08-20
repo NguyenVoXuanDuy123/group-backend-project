@@ -13,7 +13,7 @@ class UserRepository {
   }
 
   public async checkUserExistsById(_id: string) {
-    return !!(await this.findById(_id));
+    return !!(await this.findById(_id, { _id: 1 }));
   }
 
   public async checkUserExistsByUsername(username: string) {

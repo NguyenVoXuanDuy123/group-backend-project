@@ -28,10 +28,11 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
-    if (group.status === GroupStatus.PENDING) {
+    if (group.status !== GroupStatus.APPROVED) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
+    console.log(group.admin, senderId, groupId);
     if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }
@@ -45,7 +46,7 @@ class GroupJoinRequestService {
       groupId
     );
     return await groupJoinRequestRepository.getGroupJoinRequestById(_id, {
-      __v: 0,
+      created_at: 1,
     });
   }
 
@@ -78,7 +79,7 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
-    if (group.status === GroupStatus.PENDING) {
+    if (group.status !== GroupStatus.APPROVED) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 

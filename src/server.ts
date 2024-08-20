@@ -16,6 +16,7 @@ import cors from "cors";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, APIResponse } from "@src/types/api.types";
+import trimRequestBody from "@src/helpers/sanitation";
 
 // **** Variables **** //
 
@@ -28,7 +29,7 @@ databaseConfig.connectDB();
 // Basic middleware
 
 /*
- * The types for cors is not working properly
+ * For some reason, the types for cors is not working properly
  * So I have to disable the eslint rule for this line
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -41,10 +42,10 @@ app.use("/images", express.static(UPLOAD_DIR));
 
 app.use(morgan("dev"));
 
-// Security
+// **** Security **** //
 app.use(helmet());
 
-// Passport middleware
+// **** Passportjs set up **** //
 const MongoDBStore = connectMongoDBSession(session);
 
 const store = new MongoDBStore({
@@ -63,6 +64,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// **** trim request body **** //
+app.use(trimRequestBody);
+
 // **** Routes **** //
 app.use("/api", BaseRouter);
 
@@ -77,11 +81,24 @@ app.use(
     let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
     let errCode = 1001; // error code for unknown error
     if (err instanceof RouteError) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       status = err.status;
       errCode = err.errorCode;
     }
-    console.error(err);
-    res.status(status).json({ errorCode: errCode, message: err.message });
+
+    // handle mongoose cast error for invalid id
+    if (err.message.includes("Cast to ObjectId failed for value")) {
+      const apiError = new ApiError(ApiErrorCodes.INVALID_ID);
+      res.status(ApiErrorCodes.INVALID_ID.httpStatusCode).json({
+        errorCode: apiError.errorCode,
+        message: apiError.message,
+      });
+    }
+
+    res.status(status).json({
+      errorCode: errCode,
+      message: err.message,
+    });
     next();
   }
 );

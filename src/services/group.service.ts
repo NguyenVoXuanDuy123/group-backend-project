@@ -4,6 +4,7 @@ import {
   GroupVisibilityLevel,
   UserGroupRelation,
 } from "@src/enums/group.enum";
+import { UserRole } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
@@ -82,7 +83,11 @@ class GroupService {
       (groupJoinRequest =
         await groupJoinRequestRepository.getPendingGroupJoinRequestBySenderIdAndGroupId(
           senderId,
-          groupId
+          groupId,
+          {
+            _id: 1,
+            created_at: 1,
+          }
         ))
     ) {
       userGroupRelation = UserGroupRelation.INCOMING_REQUEST;
@@ -101,6 +106,7 @@ class GroupService {
       admin: adminObject,
       memberCount: members.length,
       userGroupRelation,
+      groupJoinRequest: groupJoinRequest,
     };
   }
 
@@ -127,7 +133,7 @@ class GroupService {
     }
 
     // if the group is not approved, the members cannot be viewed
-    if (group.status === GroupStatus.PENDING) {
+    if (group.status !== GroupStatus.APPROVED) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
@@ -164,11 +170,11 @@ class GroupService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
 
-    if (group.status === GroupStatus.PENDING) {
+    if (group.status !== GroupStatus.APPROVED) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
-    if (group.admin.equals(senderId)) {
+    if (!group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_NOT_VISIBLE);
     }
     return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
@@ -219,6 +225,27 @@ class GroupService {
     }
 
     return await groupRepository.removeMemberFromGroup(groupId, memberId);
+  }
+
+  public async changeGroupStatus(
+    groupId: string,
+    status: GroupStatus,
+    senderRole: UserRole
+  ) {
+    const group = await groupRepository.findGroupById(groupId, { status: 1 });
+    if (!group) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
+
+    if (senderRole !== UserRole.ADMIN) {
+      throw new ApiError(ApiErrorCodes.ADMIN_ROLE_REQUIRED);
+    }
+
+    if (group.status !== GroupStatus.PENDING) {
+      throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_STATUS);
+    }
+
+    await groupRepository.updateGroupById(groupId, { status });
   }
 }
 
