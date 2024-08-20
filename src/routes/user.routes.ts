@@ -67,7 +67,7 @@ userRouter.delete(
 
 // Posts
 
-// userRouter.get("/me/feeds", wrapRequestHandler(userController.getFeeds));
+userRouter.get("/me/feeds", wrapRequestHandler(userController.getFeeds));
 
 // userRouter.get("/me/posts", wrapRequestHandler(userController.getMyPosts));
 

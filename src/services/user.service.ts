@@ -14,6 +14,8 @@ import {
   UserStatus,
 } from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
+import { PaginationQueryType } from "@src/types/util.types";
+import postService from "@src/services/post.service";
 
 class UserService {
   public async getUser(userId: string, senderId: string) {
@@ -208,6 +210,25 @@ class UserService {
     await userRepository.updateUserById(userId, {
       status,
     });
+  }
+
+  public async getFeeds(
+    senderId: string,
+    paginationQuery: PaginationQueryType
+  ) {
+    const object = await userRepository.getNewFeeds(
+      senderId,
+      paginationQuery.afterId,
+      Number(paginationQuery.limit) || 10
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const ids = object.map((o) => (o as { _id: string })._id);
+    const resolvedResults = await Promise.all(
+      ids.map(async (id) => await postService.getPostById(id, senderId))
+    );
+
+    return resolvedResults;
   }
 }
 

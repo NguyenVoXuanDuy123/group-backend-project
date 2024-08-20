@@ -5,13 +5,13 @@ import {
   GroupVisibilityLevel,
 } from "@src/enums/group.enum";
 
-export type CreateGroupJoinRequestType = {
+export type CreateGroupRequestType = {
   name: string;
   description: string;
   visibilityLevel: GroupVisibilityLevel;
 };
 
-export type UpdateGroupJoinRequestType = {
+export type UpdateGroupRequestType = {
   name?: string;
   description?: string;
   visibilityLevel?: GroupVisibilityLevel;

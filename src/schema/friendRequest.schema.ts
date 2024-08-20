@@ -22,6 +22,8 @@ const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
       enum: FriendRequestStatus,
       default: FriendRequestStatus.PENDING,
     },
+    created_at: { type: Date },
+    updated_at: { type: Date },
   },
   {
     timestamps: {

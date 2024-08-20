@@ -27,6 +27,7 @@ class AuthService {
 
   public async login(loginRequest: LoginRequestType) {
     const user = await userRepository.findByUsername(loginRequest.username);
+
     if (!user) {
       throw new ApiError(ApiErrorCodes.INVALID_CREDENTIALS);
     }
@@ -46,7 +47,7 @@ class AuthService {
     });
   }
 
-  private async hashPassword(password: string): Promise<string> {
+  public async hashPassword(password: string): Promise<string> {
     const hashedPassword = await bcrypt.hash(password, this.saltRounds);
     return hashedPassword;
   }

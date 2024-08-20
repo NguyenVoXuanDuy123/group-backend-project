@@ -7,7 +7,7 @@ class PostRepository {
   }
 
   public async checkPostExistsById(postId: string | Types.ObjectId) {
-    return !!(await this.findPostById(postId));
+    return !!(await this.findPostById(postId, { _id: 1 }));
   }
 
   public async findPostById(
@@ -31,18 +31,6 @@ class PostRepository {
     console.log(postId, "asd", edit_history);
     return await PostModel.findByIdAndUpdate(postId, {
       $push: { edit_history },
-    });
-  }
-
-  public async incrementReactionCount(postId: string | Types.ObjectId) {
-    return await PostModel.findByIdAndUpdate(postId, {
-      $inc: { numberOfReactions: 1 },
-    });
-  }
-
-  public async decrementReactionCount(postId: string | Types.ObjectId) {
-    return await PostModel.findByIdAndUpdate(postId, {
-      $inc: { numberOfReactions: -1 },
     });
   }
 

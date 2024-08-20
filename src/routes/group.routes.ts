@@ -3,6 +3,7 @@ import { wrapRequestHandler } from "@src/helpers/handlers";
 import {
   changeGroupStatusValidator,
   createGroupValidator,
+  updateGroupValidator,
 } from "@src/middlewares/group.middleware";
 import { changeFriendRequestStatusValidator } from "@src/middlewares/user.middleware";
 
@@ -16,7 +17,11 @@ groupRouter.post(
   wrapRequestHandler(groupController.createGroup)
 );
 
-groupRouter.patch("/:groupId", wrapRequestHandler(groupController.updateGroup));
+groupRouter.patch(
+  "/:groupId",
+  wrapRequestHandler(updateGroupValidator),
+  wrapRequestHandler(groupController.updateGroup)
+);
 
 groupRouter.get("/:groupId", wrapRequestHandler(groupController.getGroupById));
 

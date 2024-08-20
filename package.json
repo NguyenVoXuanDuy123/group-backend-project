@@ -44,6 +44,7 @@
     "social-media-backend": "file:"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/connect-mongodb-session": "^2.4.7",
     "@types/cookie-parser": "^1.4.7",

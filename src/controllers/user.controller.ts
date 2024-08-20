@@ -12,6 +12,7 @@ import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import ApiError from "@src/error/ApiError";
 import EnvVars from "@src/constant/EnvVars";
+import { PaginationQueryType } from "@src/types/util.types";
 
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
@@ -181,6 +182,19 @@ class UserController {
     await userService.changeUserStatus(userId, req.body.status, role);
     res.status(HttpStatusCodes.OK).json({
       message: "Change user status successfully",
+    });
+  };
+
+  public getFeeds = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+
+    const feeds = await userService.getFeeds(
+      _id,
+      req.query as PaginationQueryType
+    );
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get feeds successfully",
+      result: feeds,
     });
   };
 }

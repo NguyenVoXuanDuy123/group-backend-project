@@ -50,11 +50,13 @@ export const updatePostValidator = (
 ) => {
   const { visibilityLevel } = req.body;
 
-  if (
-    visibilityLevel &&
-    !Object.values(PostVisibilityLevel).includes(visibilityLevel)
-  ) {
-    throw new ApiError(ApiErrorCodes.INVALID_POST_VISIBILITY_LEVEL);
+  if (visibilityLevel) {
+    if (
+      visibilityLevel !== PostVisibilityLevel.PUBLIC &&
+      visibilityLevel !== PostVisibilityLevel.FRIEND
+    ) {
+      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
+    }
   }
 
   next();

@@ -4,6 +4,8 @@ import userRepository from "@src/repositories/user.repository";
 
 import { UserSessionType } from "@src/types/user.types";
 import authService from "@src/services/auth.service";
+import ApiError from "@src/error/ApiError";
+import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 passport.use(
   new passportStrategy.Strategy(
@@ -34,7 +36,7 @@ passport.deserializeUser((id: string, done) => {
         status,
       } as UserSessionType);
     } else {
-      done(new Error("User not found."));
+      done(new ApiError(ApiErrorCodes.USER_NOT_FOUND));
     }
   });
 });

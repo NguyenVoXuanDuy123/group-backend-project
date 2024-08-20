@@ -19,7 +19,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
     name: { type: String, required: true },
     description: { type: String, required: true },
     admin: { type: Schema.Types.ObjectId, ref: "users", required: true },
-    members: [{ type: Schema.Types.ObjectId, ref: "users" }],
+    members: [{ type: Schema.Types.ObjectId, ref: "users", default: [] }],
     visibility_level: {
       type: String,
       enum: GroupVisibilityLevel,
@@ -30,8 +30,8 @@ const GroupSchema: Schema<IGroup> = new Schema(
       enum: GroupStatus,
       default: GroupStatus.PENDING,
     },
-    created_at: { type: Date, default: Date.now },
-    updated_at: { type: Date, default: Date.now },
+    created_at: { type: Date },
+    updated_at: { type: Date },
   },
   {
     timestamps: {

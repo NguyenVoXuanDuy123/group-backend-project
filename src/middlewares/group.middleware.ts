@@ -11,12 +11,13 @@ import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
   ChangeGroupStatusRequestType,
-  CreateGroupJoinRequestType,
+  CreateGroupRequestType,
+  UpdateGroupRequestType,
 } from "@src/types/group.types";
 import { NextFunction } from "express";
 
 export const createGroupValidator = (
-  req: APIRequest<CreateGroupJoinRequestType>,
+  req: APIRequest<CreateGroupRequestType>,
   _: APIResponse,
   next: NextFunction
 ) => {
@@ -24,6 +25,21 @@ export const createGroupValidator = (
   validateNotNull({ name, description, visibilityLevel });
   if (!Object.values(GroupVisibilityLevel).includes(visibilityLevel)) {
     throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
+  }
+  next();
+};
+
+export const updateGroupValidator = (
+  req: APIRequest<UpdateGroupRequestType>,
+  _: APIResponse,
+  next: NextFunction
+) => {
+  const { visibilityLevel } = req.body;
+
+  if (visibilityLevel) {
+    if (!Object.values(GroupVisibilityLevel).includes(visibilityLevel)) {
+      throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
+    }
   }
   next();
 };

@@ -39,7 +39,7 @@ const postSchema = new Schema<IPost>(
       {
         content: { type: String, required: true },
         images: [{ type: String }, { default: [] }],
-        edited_at: { type: Date, required: true, default: Date.now },
+        edited_at: { type: Date, required: true },
       },
       {
         timestamps: {
@@ -47,8 +47,8 @@ const postSchema = new Schema<IPost>(
         },
       },
     ],
-    created_at: { type: Date, default: Date.now },
-    updated_at: { type: Date, default: Date.now },
+    created_at: { type: Date },
+    updated_at: { type: Date },
   },
   {
     timestamps: {

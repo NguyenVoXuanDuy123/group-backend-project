@@ -17,7 +17,7 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import trimRequestBody from "@src/helpers/sanitation";
-
+import "./zmock-data/fake-data";
 // **** Variables **** //
 
 const app = express();

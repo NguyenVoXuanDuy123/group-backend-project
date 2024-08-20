@@ -63,6 +63,7 @@ class PostService {
     // if internal call = true, we can skip some checks to improve performance
     isInternalCall = false
   ) {
+    console.log("postId", postId);
     let group = null;
     const post = await postRepository.findPostById(postId, {
       __v: 0,
@@ -198,9 +199,7 @@ class PostService {
 
     //if the post visibility level is group, the visibility level cannot be changed
     if (post.visibility_level === PostVisibilityLevel.GROUP) {
-      if (updatePostRequest.visibilityLevel !== PostVisibilityLevel.GROUP) {
-        throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
-      }
+      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
     }
 
     // only the author of the post can update the post

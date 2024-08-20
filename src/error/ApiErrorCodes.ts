@@ -59,7 +59,7 @@ class ApiErrorCodes {
   public static readonly INVALID_USERNAME_LENGTH = new ApiErrorCodes(
     2003,
     HttpStatusCodes.BAD_REQUEST,
-    "Username must be at least 6 characters long"
+    "Username must be at least 6 characters long and at most 20 characters long"
   );
 
   public static readonly USERNAME_ALREADY_TAKEN = new ApiErrorCodes(
@@ -96,6 +96,12 @@ class ApiErrorCodes {
     2009,
     HttpStatusCodes.FORBIDDEN,
     "Admin role required to perform this action"
+  );
+
+  public static readonly INVALID_USERNAME = new ApiErrorCodes(
+    2010,
+    HttpStatusCodes.BAD_REQUEST,
+    "Username can only contain alphanumeric characters."
   );
 
   /** Media upload errors  3001 - 4000*/
@@ -137,6 +143,7 @@ class ApiErrorCodes {
     HttpStatusCodes.FORBIDDEN,
     "Cannot change the status of an admin user."
   );
+
   /** Friend request errors 5001 - 6000*/
 
   public static readonly INVALID_FRIEND_REQUEST_STATUS = new ApiErrorCodes(
@@ -258,7 +265,7 @@ class ApiErrorCodes {
   );
 
   public static readonly INVALID_GROUP_STATUS = new ApiErrorCodes(
-    7009,
+    6011,
     HttpStatusCodes.BAD_REQUEST,
     "Group status must be either 'approved' or 'rejected'."
   );

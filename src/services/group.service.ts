@@ -16,15 +16,15 @@ import { IGroup } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 import {
-  CreateGroupJoinRequestType,
-  UpdateGroupJoinRequestType,
+  CreateGroupRequestType,
+  UpdateGroupRequestType,
 } from "@src/types/group.types";
 import { Types } from "mongoose";
 
 class GroupService {
   public async createGroup(
     userId: string,
-    createGroupJoinRequest: CreateGroupJoinRequestType
+    createGroupJoinRequest: CreateGroupRequestType
   ) {
     const group: Partial<IGroup> = {
       description: createGroupJoinRequest.description,
@@ -41,14 +41,15 @@ class GroupService {
   public async updateGroup(
     senderId: string,
     groupId: string,
-    updateGroupJoinRequest: UpdateGroupJoinRequestType
+    updateGroupJoinRequest: UpdateGroupRequestType
   ) {
     const group = await groupRepository.findGroupById(groupId);
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
-    // if the sender is not the admin of the group, they cannot update the group
+
     if (!group.admin.equals(senderId)) {
+      // if the sender is not the admin of the group, they cannot update the group
       throw new ApiError(ApiErrorCodes.UPDATE_GROUP_FORBIDDEN);
     }
     await groupRepository.updateGroupById(

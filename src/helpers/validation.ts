@@ -1,3 +1,5 @@
+import ApiError from "@src/error/ApiError";
+import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotEmptyError from "@src/error/NotEmptyError";
 import NotNullError from "@src/error/NotNullError";
 
@@ -47,4 +49,9 @@ export const validateNotEmpty = (input: InputNotEmptyValidator): void => {
   if (emptyFields.length > 0) {
     throw new NotEmptyError(emptyFields);
   }
+};
+
+export const validateUsername = (username: string): void => {
+  const regex = /^[a-zA-Z0-9]+$/;
+  if (!regex.test(username)) throw new ApiError(ApiErrorCodes.INVALID_USERNAME);
 };

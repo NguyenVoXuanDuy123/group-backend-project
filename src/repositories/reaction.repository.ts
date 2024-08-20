@@ -50,7 +50,9 @@ class ReactionRepository {
     targetId: string | Types.ObjectId,
     userId: string | Types.ObjectId
   ) {
-    return !!(await this.getReactionsByTargetIdAndUserId(targetId, userId));
+    return !!(await this.getReactionsByTargetIdAndUserId(targetId, userId, {
+      _id: 1,
+    }));
   }
 
   public async getReactionsByTargetIdAndUserId(

@@ -1,3 +1,6 @@
+import ApiError from "@src/error/ApiError";
+import ApiErrorCodes from "@src/error/ApiErrorCodes";
+import PostModel from "@src/schema/post.schema";
 import UserModel, { IUser } from "@src/schema/user.schema";
 import { FriendDetailType, GroupDetailType } from "@src/types/user.types";
 
@@ -100,6 +103,45 @@ class UserRepository {
     ]);
     return groups;
   }
+
+  public getNewFeeds = async (
+    userId: string,
+    afterId: string,
+    limit: number
+  ) => {
+    const user = await UserModel.findById(userId).lean();
+    if (!user) {
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
+    }
+    const friendIds = user.friends;
+    const groupIds = user.groups;
+
+    console.log("friendIds", friendIds);
+    const newFeeds = await PostModel.aggregate([
+      {
+        $match: {
+          $or: [
+            { author: { $in: friendIds } }, // Posts from friends
+            { group: { $in: groupIds } }, // Posts from groups
+          ],
+          _id: afterId
+            ? { $gt: new Types.ObjectId(afterId) }
+            : { $exists: true },
+        },
+      },
+      {
+        $sort: { create_date: -1 }, // Sort by create_date descending
+      },
+      {
+        $limit: limit, // Limit the number of posts returned
+      },
+      {
+        $project: { _id: 1 }, // Return only the post IDs
+      },
+    ]);
+    console.log("newFeeds", newFeeds);
+    return newFeeds as unknown[];
+  };
 }
 
 export default new UserRepository();

@@ -8,15 +8,15 @@ import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
   ChangeGroupJoinRequestStatusRequestType,
   ChangeGroupStatusRequestType,
-  CreateGroupJoinRequestType,
+  CreateGroupRequestType,
   GroupMemberRequestType,
-  UpdateGroupJoinRequestType,
+  UpdateGroupRequestType,
 } from "@src/types/group.types";
 import { UserSessionType } from "@src/types/user.types";
 
 class GroupController {
   public createGroup = async (
-    req: APIRequest<CreateGroupJoinRequestType>,
+    req: APIRequest<CreateGroupRequestType>,
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
@@ -30,7 +30,7 @@ class GroupController {
   };
 
   public updateGroup = async (
-    req: APIRequest<UpdateGroupJoinRequestType>,
+    req: APIRequest<UpdateGroupRequestType>,
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
