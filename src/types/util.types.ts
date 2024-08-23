@@ -1,4 +1,4 @@
 export interface PaginationQueryType {
-  afterId: string;
-  limit: string;
+  beforeDate?: string;
+  limit?: string;
 }

@@ -22,6 +22,7 @@ import {
   CreatePostRequestType,
   UpdatePostRequestType,
 } from "@src/types/post.types";
+import { PaginationQueryType } from "@src/types/util.types";
 import { Types } from "mongoose";
 
 class PostService {
@@ -63,7 +64,6 @@ class PostService {
     // if internal call = true, we can skip some checks to improve performance
     isInternalCall = false
   ) {
-    console.log("postId", postId);
     let group = null;
     const post = await postRepository.findPostById(postId, {
       __v: 0,
@@ -126,7 +126,7 @@ class PostService {
     if (post.visibility_level === PostVisibilityLevel.FRIEND) {
       if (!author) {
         // there is no way the post exists without an author
-        throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
       }
 
       let canSeePost = false;
@@ -144,16 +144,19 @@ class PostService {
           author._id.equals(senderId) ||
           senderRole === UserRole.ADMIN ||
           author.friends.some((friend) => friend.equals(senderId));
-
         if (!canSeePost) {
           throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
         }
       }
     }
+
     // if the post is public, no need to check anything
     return {
       ...rest,
       reactionCount: await reactionRepository.getReactionCountByTargetId(
+        rest._id
+      ),
+      reactionSummary: await reactionRepository.getReactionSummaryByTargetId(
         rest._id
       ),
       commentCount: await commentRepository.getCommentCountByPostId(rest._id),
@@ -331,7 +334,9 @@ class PostService {
      * so that we reuse the method to check if the post exists and visible to the sender
      */
     await this.getPostById(postID, senderId, senderRole);
-
+    if (Object.values(ReactionType).indexOf(type) === -1) {
+      throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
+    }
     return await reactionRepository.getReactionsByTargetId(postID, type);
   }
 
@@ -357,7 +362,8 @@ class PostService {
   public async getCommentsFromPost(
     postID: string,
     senderId: string,
-    senderRole: UserRole
+    senderRole: UserRole,
+    paginationQuery: PaginationQueryType
   ) {
     /**
      * If the post does not exist, or not visible to the sender
@@ -365,7 +371,39 @@ class PostService {
      * so that we reuse the method to check if the post exists and visible to the sender
      */
     await this.getPostById(postID, senderId, senderRole);
-    // return await commentRepository.getCommentDetailsByPostId(postID);
+    const { beforeDate, limit } = paginationQuery;
+    const comments = await commentRepository.getCommentsByPostId(
+      postID,
+      beforeDate,
+      Number(limit)
+    );
+
+    return await Promise.all(
+      comments.map(async (comment) => {
+        const reactionCount =
+          await reactionRepository.getReactionCountByTargetId(comment._id);
+
+        const reactionSummary =
+          await reactionRepository.getReactionSummaryByTargetId(comment._id);
+
+        const userReaction =
+          await reactionRepository.getReactionsByTargetIdAndUserId(
+            comment._id,
+            senderId,
+            {
+              _id: 0,
+              type: 1,
+            }
+          );
+
+        return {
+          ...comment,
+          reactionCount,
+          reactionSummary,
+          userReaction,
+        };
+      })
+    );
   }
 }
 

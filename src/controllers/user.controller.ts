@@ -194,7 +194,7 @@ class UserController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get feeds successfully",
-      result: feeds,
+      result: feeds.map(camelCaseifyWithDateConversion),
     });
   };
 }

@@ -55,3 +55,8 @@ export const validateUsername = (username: string): void => {
   const regex = /^[a-zA-Z0-9]+$/;
   if (!regex.test(username)) throw new ApiError(ApiErrorCodes.INVALID_USERNAME);
 };
+
+export const validateDate = (dateString: string): void => {
+  const date = new Date(dateString);
+  if (!date.getTime()) throw new ApiError(ApiErrorCodes.INVALID_DATE);
+};

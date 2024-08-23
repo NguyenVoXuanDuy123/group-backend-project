@@ -71,6 +71,9 @@ class CommentService {
       reaction_count: await reactionRepository.getReactionCountByTargetId(
         comment._id
       ),
+      reactionSummary: await reactionRepository.getReactionSummaryByTargetId(
+        comment._id
+      ),
       userReaction: await reactionRepository.getReactionsByTargetIdAndUserId(
         commentId,
         senderId,
@@ -205,7 +208,10 @@ class CommentService {
   }
 
   public async removeReactionFromComment(commentId: string, senderId: string) {
-    const comment = await commentRepository.findCommentById(commentId);
+    const comment = await commentRepository.findCommentById(commentId, {
+      _id: 1,
+      post: 1,
+    });
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
@@ -220,6 +226,32 @@ class CommentService {
       senderId,
       ReactionTargetType.COMMENT
     );
+  }
+
+  public async getCommentReactions(
+    commentId: string,
+    senderId: string,
+    type: ReactionType
+  ) {
+    const comment = await commentRepository.findCommentById(commentId, {
+      _id: 1,
+      post: 1,
+    });
+    if (!comment) {
+      throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
+    }
+
+    if (Object.values(ReactionType).indexOf(type) === -1) {
+      throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
+    }
+    /**
+     * If the post does not exist, or not visible to the sender
+     * the method below will throw an error
+     * so that we reuse the method to check if the post exists and visible to the sender
+     */
+    await postService.getPostById(comment.post, senderId);
+
+    return await reactionRepository.getReactionsByTargetId(commentId, type);
   }
 }
 

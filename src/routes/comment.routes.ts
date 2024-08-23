@@ -29,4 +29,9 @@ commentRouter.delete(
   wrapRequestHandler(CommentController.removeReactionFromComment)
 );
 
+commentRouter.get(
+  "/:commentId/reactions",
+  wrapRequestHandler(CommentController.getReactionsOfComment)
+);
+
 export default commentRouter;

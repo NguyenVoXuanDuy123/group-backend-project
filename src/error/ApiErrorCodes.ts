@@ -17,6 +17,12 @@ class ApiErrorCodes {
     "Id must be valid ObjectId (24-character hex string)"
   );
 
+  public static readonly INVALID_DATE = new ApiErrorCodes(
+    4,
+    HttpStatusCodes.UNPROCESSABLE_ENTITY,
+    "Date must ISO 8601 format"
+  );
+
   /** Generic API error codes 1001-2000*/
   public static readonly INTERNAL_SERVER_ERROR = new ApiErrorCodes(
     1001,

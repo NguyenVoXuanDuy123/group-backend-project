@@ -1,14 +1,12 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient } from "mongodb";
 import EnvVars from "@src/constant/EnvVars";
 import mongoose from "mongoose";
 
 class DatabaseConfig {
   private client: MongoClient;
-  private db: Db;
 
   public constructor() {
     this.client = new MongoClient(EnvVars.Mongo.Uri);
-    this.db = this.client.db("test");
   }
 
   public async connectDB(): Promise<void> {

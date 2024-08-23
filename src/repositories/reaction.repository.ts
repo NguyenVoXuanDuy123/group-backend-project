@@ -29,9 +29,38 @@ class ReactionRepository {
   }
 
   public async getReactionCountByTargetId(targetId: string | Types.ObjectId) {
-    return await ReactionModel.countDocuments({
+    return await ReactionModel.countDocuments({ target: targetId });
+  }
+
+  public async getReactionSummaryByTargetId(targetId: string | Types.ObjectId) {
+    /**
+     * We don't need to worry about the target type here
+     * because the percentage of two targetId duplication is very low (almost 0)
+     * it is not worth to add target_type to the query, it will slow down the query
+     */
+    const hahaCount = await ReactionModel.countDocuments({
       target: targetId,
+      type: ReactionType.HAHA,
     });
+    const likeCount = await ReactionModel.countDocuments({
+      target: targetId,
+      type: ReactionType.LIKE,
+    });
+    const loveCount = await ReactionModel.countDocuments({
+      target: targetId,
+      type: ReactionType.LOVE,
+    });
+
+    const angryCount = await ReactionModel.countDocuments({
+      target: targetId,
+      type: ReactionType.ANGRY,
+    });
+    return [
+      { type: ReactionType.HAHA, count: hahaCount },
+      { type: ReactionType.LIKE, count: likeCount },
+      { type: ReactionType.LOVE, count: loveCount },
+      { type: ReactionType.ANGRY, count: angryCount },
+    ];
   }
 
   public async removeReaction(

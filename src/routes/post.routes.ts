@@ -33,10 +33,10 @@ postRouter.post(
   wrapRequestHandler(postController.createCommentToPost)
 );
 
-// postRouter.get(
-//   "/:postId/comments",
-//   wrapRequestHandler(postController.getCommentsFromPost)
-// );
+postRouter.get(
+  "/:postId/comments",
+  wrapRequestHandler(postController.getCommentsFromPost)
+);
 
 postRouter.put(
   "/:postId/reactions",

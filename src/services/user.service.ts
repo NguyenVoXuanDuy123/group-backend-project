@@ -15,7 +15,9 @@ import {
 } from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
 import { PaginationQueryType } from "@src/types/util.types";
-import postService from "@src/services/post.service";
+import postRepository from "@src/repositories/post.repository";
+import reactionRepository from "@src/repositories/reaction.repository";
+import commentRepository from "@src/repositories/comment.repository";
 
 class UserService {
   public async getUser(userId: string, senderId: string) {
@@ -216,19 +218,41 @@ class UserService {
     senderId: string,
     paginationQuery: PaginationQueryType
   ) {
-    const object = await userRepository.getNewFeeds(
+    const { beforeDate, limit } = paginationQuery;
+    const feeds = await postRepository.getNewFeeds(
       senderId,
-      paginationQuery.afterId,
-      Number(paginationQuery.limit) || 10
+      beforeDate,
+      Number(limit)
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const ids = object.map((o) => (o as { _id: string })._id);
-    const resolvedResults = await Promise.all(
-      ids.map(async (id) => await postService.getPostById(id, senderId))
-    );
+    return await Promise.all(
+      feeds.map(async (feed) => {
+        const reactionCount =
+          await reactionRepository.getReactionCountByTargetId(feed._id);
 
-    return resolvedResults;
+        const reactionSummary =
+          await reactionRepository.getReactionSummaryByTargetId(feed._id);
+        const commentCount = await commentRepository.getCommentCountByPostId(
+          feed._id
+        );
+        const userReaction =
+          await reactionRepository.getReactionsByTargetIdAndUserId(
+            feed._id,
+            senderId,
+            {
+              _id: 0,
+              type: 1,
+            }
+          );
+        return {
+          ...feed,
+          reactionCount,
+          reactionSummary,
+          commentCount,
+          userReaction,
+        };
+      })
+    );
   }
 }
 

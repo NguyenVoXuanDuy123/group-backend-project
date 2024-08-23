@@ -67,6 +67,20 @@ class CommentController {
       message: "Remove reaction from comment successfully",
     });
   };
+
+  public getReactionsOfComment = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+    const { type } = req.query as ReactToRequestType;
+    const reactions = await commentService.getCommentReactions(
+      req.params.commentId,
+      _id,
+      type
+    );
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get reactions of comment successfully",
+      result: reactions.map(camelCaseifyWithDateConversion),
+    });
+  };
 }
 
 export default new CommentController();

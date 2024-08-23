@@ -1,0 +1,119 @@
+Date : 2024-08-22 13:42:08
+Directory : c:\Serious Project\Full Stack Development\social-media\group-backend-project\src
+Total : 77 files,  4311 codes, 702 comments, 829 blanks, all 5842 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| TypeScript |         77 |      4,311 |        702 |        829 |      5,842 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                         | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                            |         77 |      4,311 |        702 |        829 |      5,842 |
+| . (Files)                                                                                                                    |          2 |         77 |         19 |         22 |        118 |
+| configs                                                                                                                      |          3 |         99 |          1 |         17 |        117 |
+| constant                                                                                                                     |          3 |         77 |        263 |         68 |        408 |
+| controllers                                                                                                                  |          5 |        489 |         27 |         70 |        586 |
+| enums                                                                                                                        |          3 |         61 |          3 |         12 |         76 |
+| error                                                                                                                        |          5 |        376 |         37 |         88 |        501 |
+| helpers                                                                                                                      |          5 |        132 |         46 |         33 |        211 |
+| middlewares                                                                                                                  |          5 |        279 |         34 |         41 |        354 |
+| repositories                                                                                                                 |          7 |        552 |         14 |         68 |        634 |
+| routes                                                                                                                       |         10 |        269 |         30 |         85 |        384 |
+| routes (Files)                                                                                                               |          7 |        247 |         27 |         70 |        344 |
+| routes\types                                                                                                                 |          3 |         22 |          3 |         15 |         40 |
+| routes\types (Files)                                                                                                         |          1 |          9 |          1 |          5 |         15 |
+| routes\types\express                                                                                                         |          2 |         13 |          2 |         10 |         25 |
+| schema                                                                                                                       |          7 |        299 |         23 |         39 |        361 |
+| services                                                                                                                     |          8 |      1,116 |        138 |        189 |      1,443 |
+| types                                                                                                                        |          7 |        173 |         28 |         34 |        235 |
+| zmock-data                                                                                                                   |          7 |        312 |         39 |         63 |        414 |
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                     | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\configs\database.config.ts                  | TypeScript |         27 |          0 |          6 |         33 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\configs\multer.config.ts                    | TypeScript |         34 |          1 |          6 |         41 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\configs\passport.config.ts                  | TypeScript |         38 |          0 |          5 |         43 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\constant\EnvVars.ts                         | TypeScript |         11 |          4 |          2 |         17 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\constant\HttpStatusCodes.ts                 | TypeScript |         64 |        259 |         64 |        387 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\constant\dir.ts                             | TypeScript |          2 |          0 |          2 |          4 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\auth.controller.ts              | TypeScript |         20 |          0 |          5 |         25 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\comment.controller.ts           | TypeScript |         63 |          3 |          7 |         73 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\group.controller.ts             | TypeScript |        119 |          9 |         16 |        144 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\post.controller.ts              | TypeScript |        114 |         12 |         15 |        141 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\user.controller.ts              | TypeScript |        173 |          3 |         27 |        203 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\enums\group.enum.ts                         | TypeScript |         25 |          1 |          5 |         31 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\enums\post.enum.ts                          | TypeScript |         15 |          0 |          3 |         18 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\enums\user.enum.ts                          | TypeScript |         21 |          2 |          4 |         27 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\error\ApiError.ts                           | TypeScript |         12 |          3 |          3 |         18 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\error\ApiErrorCodes.ts                      | TypeScript |        321 |         23 |         71 |        415 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\error\NotEmptyError.ts                      | TypeScript |         13 |          4 |          5 |         22 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\error\NotNullError.ts                       | TypeScript |         15 |          3 |          4 |         22 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\error\RouteError.ts                         | TypeScript |         15 |          4 |          5 |         24 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\camelCaseifyWithDateConversion.ts   | TypeScript |         53 |         19 |         13 |         85 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\handlers.ts                         | TypeScript |         10 |          0 |          2 |         12 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\removeNullValue.ts                  | TypeScript |         16 |          9 |          6 |         31 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\sanitation.ts                       | TypeScript |         17 |          5 |          3 |         25 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\validation.ts                       | TypeScript |         36 |         13 |          9 |         58 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\index.ts                                    | TypeScript |          5 |          2 |          4 |         11 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\middlewares\auth.middleware.ts              | TypeScript |         51 |          1 |         11 |         63 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\middlewares\group.middleware.ts             | TypeScript |         65 |          0 |          7 |         72 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\middlewares\post.middleware.ts              | TypeScript |         72 |          3 |         12 |         87 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\middlewares\user.middleware.ts              | TypeScript |         64 |          1 |          6 |         71 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\middlewares\util.middleware.ts              | TypeScript |         27 |         29 |          5 |         61 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\comment.repository.ts          | TypeScript |         41 |          0 |          9 |         50 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\friendRequest.repository.ts    | TypeScript |         84 |          0 |          8 |         92 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\group.repository.ts            | TypeScript |         68 |          1 |          8 |         77 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\groupJoinRequest.repository.ts | TypeScript |         86 |          0 |          7 |         93 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\post.repository.ts             | TypeScript |         37 |          2 |          9 |         48 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\reaction.repository.ts         | TypeScript |        104 |         11 |          9 |        124 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\user.repository.ts             | TypeScript |        132 |          0 |         18 |        150 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\auth.routes.ts                       | TypeScript |         25 |          0 |          7 |         32 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\comment.routes.ts                    | TypeScript |         23 |          1 |          9 |         33 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\group.routes.ts                      | TypeScript |         48 |         10 |         16 |         74 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\index.routes.ts                      | TypeScript |         22 |          2 |          6 |         30 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\post.routes.ts                       | TypeScript |         41 |          4 |         13 |         58 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\types\express\index.d.ts             | TypeScript |          6 |          1 |          5 |         12 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\types\express\misc.ts                | TypeScript |          7 |          1 |          5 |         13 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\types\types.ts                       | TypeScript |          9 |          1 |          5 |         15 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\upload.routes.ts                     | TypeScript |         27 |          0 |          4 |         31 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\user.routes.ts                       | TypeScript |         61 |         10 |         15 |         86 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\comment.schema.ts                    | TypeScript |         44 |          3 |          6 |         53 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\friendRequest.schema.ts              | TypeScript |         33 |          4 |          6 |         43 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\group.schema.ts                      | TypeScript |         40 |          3 |          5 |         48 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\groupJoinRequest.schema.ts           | TypeScript |         31 |          3 |          5 |         39 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\post.schema.ts                       | TypeScript |         56 |          3 |          6 |         65 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\reaction.schema.ts                   | TypeScript |         36 |          3 |          5 |         44 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\schema\user.schema.ts                       | TypeScript |         59 |          4 |          6 |         69 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\server.ts                                   | TypeScript |         72 |         17 |         18 |        107 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\auth.service.ts                    | TypeScript |         54 |          0 |         11 |         65 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\comment.service.ts                 | TypeScript |        178 |         27 |         22 |        227 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\friendRequest.service.ts           | TypeScript |         87 |          8 |         18 |        113 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\group.service.ts                   | TypeScript |        196 |         23 |         35 |        254 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\groupJoinRequest.service.ts        | TypeScript |        108 |          6 |         19 |        133 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\post.service.ts                    | TypeScript |        268 |         64 |         43 |        375 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\reaction.service.ts                | TypeScript |         35 |          0 |          5 |         40 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\user.service.ts                    | TypeScript |        190 |         10 |         36 |        236 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\api.types.ts                          | TypeScript |         13 |          0 |          3 |         16 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\auth.types.ts                         | TypeScript |         11 |          0 |          2 |         13 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\comment.types.ts                      | TypeScript |         22 |          3 |          5 |         30 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\group.types.ts                        | TypeScript |         47 |          9 |          8 |         64 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\post.types.ts                         | TypeScript |         31 |          3 |          6 |         40 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\user.types.ts                         | TypeScript |         45 |         13 |          9 |         67 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\util.types.ts                         | TypeScript |          4 |          0 |          1 |          5 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\fake-data.ts                     | TypeScript |         14 |          7 |          7 |         28 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\helper.ts                        | TypeScript |         14 |          1 |          4 |         19 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\mockComments.ts                  | TypeScript |         54 |          6 |         12 |         72 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\mockGroups.ts                    | TypeScript |         39 |          4 |          6 |         49 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\mockPosts.ts                     | TypeScript |         53 |          8 |          9 |         70 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\mockReactions.ts                 | TypeScript |         96 |          7 |         17 |        120 |
+| c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\zmock-data\mockUsers.ts                     | TypeScript |         42 |          6 |          8 |         56 |
+| Total                                                                                                                        |            |      4,311 |        702 |        829 |      5,842 |
++------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

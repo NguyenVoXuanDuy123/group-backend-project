@@ -9,6 +9,7 @@ import {
   UpdatePostRequestType,
 } from "@src/types/post.types";
 import { UserSessionType } from "@src/types/user.types";
+import { PaginationQueryType } from "@src/types/util.types";
 
 class PostController {
   public createPost = async (
@@ -123,18 +124,21 @@ class PostController {
     });
   };
 
-  // public getCommentsFromPost = async (req: APIRequest, res: APIResponse) => {
-  //   const { _id, role } = req.user as UserSessionType;
-  //   const comments = await postService.getCommentsFromPost(
-  //     req.params.postId,
-  //     _id,
-  //     role
-  //   );
-  //   res.status(HttpStatusCodes.OK).json({
-  //     message: "Get comments successfully",
-  //     result: comments.map(camelCaseifyWithDateConversion),
-  //   });
-  // };
+  public getCommentsFromPost = async (req: APIRequest, res: APIResponse) => {
+    const { _id, role } = req.user as UserSessionType;
+    const paginationQuery = req.query as PaginationQueryType;
+
+    const comments = await postService.getCommentsFromPost(
+      req.params.postId,
+      _id,
+      role,
+      paginationQuery
+    );
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get comments successfully",
+      result: comments.map(camelCaseifyWithDateConversion),
+    });
+  };
 }
 
 export default new PostController();

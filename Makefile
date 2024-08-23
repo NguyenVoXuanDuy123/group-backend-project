@@ -1,9 +1,6 @@
 docker-run:
-	@if docker compose up -d; then \
-		: ; \
-	else \
-		docker-compose up -d; \
-	fi
+	docker compose up -d
+	
 
 docker-down:
 	@if docker compose down ; then \
