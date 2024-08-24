@@ -14,20 +14,9 @@ class AuthController {
     });
   };
 
-  public login = async (req: APIRequest, res: APIResponse) => {
-    const { _id } = req.user as UserSessionType;
-    const user = await userRepository.getUserById(_id, {
-      username: 1,
-      first_name: 1,
-      last_name: 1,
-      role: 1,
-      status: 1,
-      avatar: 1,
-    });
-
+  public login = (req: APIRequest, res: APIResponse) => {
     res.status(HttpStatusCodes.OK).json({
       message: "Login successfully",
-      result: camelCaseifyWithDateConversion(user),
     });
   };
 
@@ -38,7 +27,17 @@ class AuthController {
   };
 
   public introspect = async (req: APIRequest, res: APIResponse) => {
+    if (!req.isAuthenticated()) {
+      return res.status(HttpStatusCodes.OK).json({
+        message: "Introspect successfully",
+        result: {
+          isAuthenticated: req.isAuthenticated(),
+          user: null,
+        },
+      });
+    }
     const { _id } = req.user as UserSessionType;
+
     const user = await userRepository.getUserById(_id, {
       username: 1,
       first_name: 1,
@@ -47,11 +46,12 @@ class AuthController {
       status: 1,
       avatar: 1,
     });
-    res.json({
+
+    res.status(HttpStatusCodes.OK).json({
       message: "Introspect successfully",
       result: {
         isAuthenticated: req.isAuthenticated(),
-        user: camelCaseifyWithDateConversion(user),
+        user: camelCaseifyWithDateConversion(user || {}),
       },
     });
   };
