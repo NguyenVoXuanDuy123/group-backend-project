@@ -4,6 +4,7 @@ import {
   GroupVisibilityLevel,
   UserGroupRelation,
 } from "@src/enums/group.enum";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { UserRole } from "@src/enums/user.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
@@ -11,14 +12,17 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
+import postRepository from "@src/repositories/post.repository";
 import userRepository from "@src/repositories/user.repository";
 import { IGroup } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
+import postService from "@src/services/post.service";
 import {
   CreateGroupRequestType,
   UpdateGroupRequestType,
 } from "@src/types/group.types";
+import { PaginationQueryType } from "@src/types/util.types";
 import { Types } from "mongoose";
 
 class GroupService {
@@ -94,7 +98,7 @@ class GroupService {
       userGroupRelation = UserGroupRelation.INCOMING_REQUEST;
     }
 
-    const adminObject = await userRepository.findById(admin, {
+    const adminObject = await userRepository.getUserById(admin, {
       _id: 1,
       last_name: 1,
       first_name: 1,
@@ -247,6 +251,61 @@ class GroupService {
     }
 
     await groupRepository.updateGroupById(groupId, { status });
+  }
+
+  public async getGroupPosts(
+    groupId: string,
+    senderId: string,
+    senderRole: UserRole,
+    paginationQuery: PaginationQueryType
+  ) {
+    const group = await groupRepository.findGroupById(groupId, {
+      status: 1,
+      visibility_level: 1,
+      members: 1,
+    });
+
+    if (!group) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
+
+    if (group.status !== GroupStatus.APPROVED) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
+    }
+
+    const canViewPosts =
+      senderRole === UserRole.ADMIN ||
+      group.visibility_level === GroupVisibilityLevel.PUBLIC ||
+      group.members.some((member) => member.equals(senderId));
+
+    if (!canViewPosts) {
+      throw new ApiError(ApiErrorCodes.GROUP_POSTS_NOT_VISIBLE);
+    }
+
+    const { beforeDate, limit } = paginationQuery;
+
+    const posts = await postRepository.getPostsByUserIdOrGroupId(
+      // this method require user id, so we pass undefined meaning we are not filtering by user
+      undefined,
+      groupId,
+      [PostVisibilityLevel.GROUP],
+      beforeDate,
+      Number(limit)
+    );
+    return await Promise.all(
+      posts.map(async (post) => {
+        const { reactionCount, reactionSummary, userReaction, commentCount } =
+          await postService.getPostOrCommentInfo(post._id, senderId);
+
+        return {
+          ...post,
+          reactionCount,
+          reactionSummary,
+          commentCount,
+          userReaction,
+        };
+      })
+    );
   }
 }
 

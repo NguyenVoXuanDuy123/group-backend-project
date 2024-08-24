@@ -114,7 +114,7 @@ class PostService {
     }
 
     // check when visibility level is friends
-    const author = await userRepository.findById(authorId, {
+    const author = await userRepository.getUserById(authorId, {
       _id: 1,
       first_name: 1,
       last_name: 1,
@@ -150,16 +150,15 @@ class PostService {
       }
     }
 
+    const { reactionCount, reactionSummary, userReaction, commentCount } =
+      await this.getPostOrCommentInfo(rest._id, senderId);
+
     // if the post is public, no need to check anything
     return {
       ...rest,
-      reactionCount: await reactionRepository.getReactionCountByTargetId(
-        rest._id
-      ),
-      reactionSummary: await reactionRepository.getReactionSummaryByTargetId(
-        rest._id
-      ),
-      commentCount: await commentRepository.getCommentCountByPostId(rest._id),
+      reactionCount,
+      reactionSummary,
+      commentCount,
       group: group && {
         id: group._id,
         name: group.name,
@@ -171,14 +170,7 @@ class PostService {
         username: author.username,
         avatar: author.avatar,
       },
-      userReaction: await reactionRepository.getReactionsByTargetIdAndUserId(
-        rest._id,
-        senderId,
-        {
-          _id: 0,
-          type: 1,
-        }
-      ),
+      userReaction,
     };
   }
 
@@ -380,21 +372,8 @@ class PostService {
 
     return await Promise.all(
       comments.map(async (comment) => {
-        const reactionCount =
-          await reactionRepository.getReactionCountByTargetId(comment._id);
-
-        const reactionSummary =
-          await reactionRepository.getReactionSummaryByTargetId(comment._id);
-
-        const userReaction =
-          await reactionRepository.getReactionsByTargetIdAndUserId(
-            comment._id,
-            senderId,
-            {
-              _id: 0,
-              type: 1,
-            }
-          );
+        const { reactionCount, reactionSummary, userReaction } =
+          await this.getPostOrCommentInfo(comment._id, senderId);
 
         return {
           ...comment,
@@ -405,6 +384,24 @@ class PostService {
       })
     );
   }
+
+  public getPostOrCommentInfo = async (
+    targetId: string | Types.ObjectId,
+    senderId: string | Types.ObjectId
+  ) => {
+    const [reactionCount, reactionSummary, userReaction, commentCount] =
+      await Promise.all([
+        reactionRepository.getReactionCountByTargetId(targetId),
+        reactionRepository.getReactionSummaryByTargetId(targetId),
+        reactionRepository.getReactionsByTargetIdAndUserId(targetId, senderId, {
+          _id: 0,
+          type: 1,
+        }),
+        commentRepository.getCommentCountByPostId(targetId),
+      ]);
+
+    return { reactionCount, reactionSummary, userReaction, commentCount };
+  };
 }
 
 export default new PostService();

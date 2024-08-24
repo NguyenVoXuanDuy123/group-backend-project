@@ -71,10 +71,10 @@ userRouter.get("/me/feeds", wrapRequestHandler(userController.getFeeds));
 
 // userRouter.get("/me/posts", wrapRequestHandler(userController.getMyPosts));
 
-// userRouter.get(
-//   "/:userId/posts",
-//   wrapRequestHandler(userController.getUserPosts)
-// );
+userRouter.get(
+  "/:userId/posts",
+  wrapRequestHandler(userController.getUserPosts)
+);
 
 userRouter.patch(
   "/:userId/status",

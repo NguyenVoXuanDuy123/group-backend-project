@@ -4,7 +4,7 @@ import { FriendDetailType, GroupDetailType } from "@src/types/user.types";
 import { ProjectionType, Types } from "mongoose";
 
 class UserRepository {
-  public async findById(
+  public async getUserById(
     _id: string | Types.ObjectId,
     projection: ProjectionType<IUser> = {}
   ) {
@@ -12,7 +12,7 @@ class UserRepository {
   }
 
   public async checkUserExistsById(_id: string) {
-    return !!(await this.findById(_id, { _id: 1 }));
+    return !!(await this.getUserById(_id, { _id: 1 }));
   }
 
   public async checkUserExistsByUsername(username: string) {

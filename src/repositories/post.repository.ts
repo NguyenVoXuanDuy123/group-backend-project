@@ -1,3 +1,4 @@
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateDate } from "@src/helpers/validation";
@@ -169,6 +170,100 @@ class PostRepository {
       },
     ]);
     return feeds;
+  }
+
+  public async getPostsByUserIdOrGroupId(
+    userId: string | undefined,
+    groupId: string | undefined,
+    visibility_level: PostVisibilityLevel[],
+    beforeDate: string | undefined,
+    limit: number | undefined
+  ) {
+    if (beforeDate) {
+      //if date is not valid, method below will throw an error
+      validateDate(beforeDate);
+    }
+
+    // Default limit is 10
+    if (!limit) {
+      limit = 10;
+    }
+
+    const posts = await PostModel.aggregate<Record<string, never>>([
+      {
+        $match: {
+          $or: [
+            {
+              author: new Types.ObjectId(userId),
+            },
+            {
+              group: new Types.ObjectId(groupId),
+            },
+          ],
+          visibility_level: {
+            $in: visibility_level,
+          },
+        },
+      },
+      {
+        $match: {
+          created_at: {
+            $lt: new Date(beforeDate ? beforeDate : new Date()),
+          },
+        },
+      },
+      {
+        $sort: {
+          created_at: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+        },
+      },
+      {
+        $unwind: {
+          path: "$author",
+        },
+      },
+      {
+        $project: {
+          group: {
+            $cond: {
+              if: {
+                $eq: ["$group", null],
+              },
+              then: null,
+              else: {
+                name: "$group.name",
+                _id: "$group._id",
+              },
+            },
+          },
+          author: {
+            _id: 1,
+            first_name: 1,
+            last_name: 1,
+            avatar: 1,
+            username: 1,
+          },
+          content: 1,
+          images: 1,
+          visibility_level: 1,
+          created_at: 1,
+          updated_at: 1,
+          edit_history: 1,
+        },
+      },
+    ]);
+    return posts;
   }
 }
 

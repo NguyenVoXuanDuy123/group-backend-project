@@ -57,10 +57,10 @@ groupRouter.delete(
   wrapRequestHandler(groupController.removeMemberFromGroup)
 );
 
-// groupRouter.get(
-//   "/:groupId/posts",
-//   wrapRequestHandler(groupController.getGroupPosts)
-// );
+groupRouter.get(
+  "/:groupId/posts",
+  wrapRequestHandler(groupController.getGroupPosts)
+);
 
 //Only admin can change group status
 

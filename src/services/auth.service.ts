@@ -26,13 +26,19 @@ class AuthService {
   }
 
   public async login(loginRequest: LoginRequestType) {
-    const user = await userRepository.findByUsername(loginRequest.username);
-
+    const { username, password } = loginRequest;
+    if (!username) {
+      throw new ApiError(ApiErrorCodes.INVALID_USERNAME);
+    }
+    if (!password) {
+      throw new ApiError(ApiErrorCodes.INVALID_PASSWORD_LENGTH);
+    }
+    const user = await userRepository.findByUsername(username);
     if (!user) {
       throw new ApiError(ApiErrorCodes.INVALID_CREDENTIALS);
     }
 
-    if (!(await this.comparePassword(loginRequest.password, user.password))) {
+    if (!(await this.comparePassword(password, user.password))) {
       throw new ApiError(ApiErrorCodes.INVALID_CREDENTIALS);
     }
 

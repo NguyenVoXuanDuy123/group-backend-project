@@ -16,12 +16,12 @@ import {
 import groupRepository from "@src/repositories/group.repository";
 import { PaginationQueryType } from "@src/types/util.types";
 import postRepository from "@src/repositories/post.repository";
-import reactionRepository from "@src/repositories/reaction.repository";
-import commentRepository from "@src/repositories/comment.repository";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
+import postService from "@src/services/post.service";
 
 class UserService {
-  public async getUser(userId: string, senderId: string) {
-    const user = await userRepository.findById(userId, {
+  public async getUserById(userId: string, senderId: string) {
+    const user = await userRepository.getUserById(userId, {
       password: 0,
       notifications: 0,
       __v: 0,
@@ -103,7 +103,7 @@ class UserService {
     if (senderId === receiverId) {
       throw new ApiError(ApiErrorCodes.CANNOT_SEND_FRIEND_REQUEST_TO_SELF);
     }
-    const user = await userRepository.findById(senderId);
+    const user = await userRepository.getUserById(senderId);
 
     if (!(await userRepository.checkUserExistsById(receiverId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
@@ -136,7 +136,7 @@ class UserService {
   }
 
   public async removeFriend(senderId: string, friendId: string) {
-    const friend = await userRepository.findById(friendId, { friends: 1 });
+    const friend = await userRepository.getUserById(friendId, { friends: 1 });
     if (!friend) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
@@ -200,7 +200,7 @@ class UserService {
       throw new ApiError(ApiErrorCodes.ADMIN_ROLE_REQUIRED);
     }
 
-    const user = await userRepository.findById(userId, { role: 1 });
+    const user = await userRepository.getUserById(userId, { role: 1 });
 
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
@@ -212,6 +212,61 @@ class UserService {
     await userRepository.updateUserById(userId, {
       status,
     });
+  }
+
+  public async getPostsByUserId(
+    userId: string,
+    senderId: string,
+    senderRole: UserRole,
+    paginationQuery: PaginationQueryType
+  ) {
+    const { beforeDate, limit } = paginationQuery;
+    const visibilityLevel = [PostVisibilityLevel.PUBLIC];
+
+    // if the sender is an admin, they can see all posts
+    if (senderRole === UserRole.ADMIN) {
+      visibilityLevel.push(PostVisibilityLevel.FRIEND);
+    }
+
+    const user = await userRepository.getUserById(userId, { friends: 1 });
+
+    if (!user) {
+      throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
+    }
+
+    // if the sender is friends with the user, they can see the user's friends-only posts
+    console.log("user.friends", user.friends);
+    if (user.friends.some((friend) => friend.equals(senderId))) {
+      visibilityLevel.push(PostVisibilityLevel.FRIEND);
+    }
+
+    if (senderId === userId) {
+      visibilityLevel.push(PostVisibilityLevel.FRIEND);
+    }
+
+    console.log("visibilityLevel", visibilityLevel);
+    const posts = await postRepository.getPostsByUserIdOrGroupId(
+      userId,
+      // this method require group id, so we pass undefined meaning we are not filtering by group
+      undefined,
+      visibilityLevel,
+      beforeDate,
+      Number(limit)
+    );
+
+    return await Promise.all(
+      posts.map(async (post) => {
+        const { reactionCount, reactionSummary, userReaction, commentCount } =
+          await postService.getPostOrCommentInfo(post._id, senderId);
+        return {
+          ...post,
+          reactionCount,
+          reactionSummary,
+          commentCount,
+          userReaction,
+        };
+      })
+    );
   }
 
   public async getFeeds(
@@ -227,23 +282,8 @@ class UserService {
 
     return await Promise.all(
       feeds.map(async (feed) => {
-        const reactionCount =
-          await reactionRepository.getReactionCountByTargetId(feed._id);
-
-        const reactionSummary =
-          await reactionRepository.getReactionSummaryByTargetId(feed._id);
-        const commentCount = await commentRepository.getCommentCountByPostId(
-          feed._id
-        );
-        const userReaction =
-          await reactionRepository.getReactionsByTargetIdAndUserId(
-            feed._id,
-            senderId,
-            {
-              _id: 0,
-              type: 1,
-            }
-          );
+        const { reactionCount, reactionSummary, userReaction, commentCount } =
+          await postService.getPostOrCommentInfo(feed._id, senderId);
         return {
           ...feed,
           reactionCount,

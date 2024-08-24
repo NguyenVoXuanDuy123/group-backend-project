@@ -378,6 +378,12 @@ class ApiErrorCodes {
       "If the post is in a group, the visibility level cannot be changed. If the post is on the wall, the visibility level can only be changed to 'public' or 'friend'."
     );
 
+  public static readonly GROUP_POSTS_NOT_VISIBLE = new ApiErrorCodes(
+    8009,
+    HttpStatusCodes.FORBIDDEN,
+    "If the group is private, only the members of the group can view the posts."
+  );
+
   /** Comment errors 9001 - 10000*/
   public static readonly COMMENT_NOT_FOUND = new ApiErrorCodes(
     9001,

@@ -19,7 +19,7 @@ class UserController {
     const { _id } = req.user as UserSessionType;
     //getUser requires 2 parameters, userId and senderId
     //userId and senderId are the same in this case
-    const user = await userService.getUser(_id, _id);
+    const user = await userService.getUserById(_id, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get me successfully",
       result: camelCaseifyWithDateConversion(user),
@@ -28,7 +28,7 @@ class UserController {
 
   public getUser = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const user = await userService.getUser(req.params.userId, _id);
+    const user = await userService.getUserById(req.params.userId, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get user successfully",
       result: camelCaseifyWithDateConversion(user),
@@ -169,6 +169,21 @@ class UserController {
     await userService.leaveGroup(_id, groupId);
     res.status(HttpStatusCodes.OK).json({
       message: "Leave group successfully",
+    });
+  };
+
+  public getUserPosts = async (req: APIRequest, res: APIResponse) => {
+    const { _id, role } = req.user as UserSessionType;
+    const posts = await userService.getPostsByUserId(
+      req.params.userId,
+      _id,
+      role,
+      req.query as PaginationQueryType
+    );
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get user posts successfully",
+      result: posts.map(camelCaseifyWithDateConversion),
     });
   };
 

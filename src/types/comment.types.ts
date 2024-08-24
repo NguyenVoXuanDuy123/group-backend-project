@@ -23,7 +23,7 @@ export type CommentDetailType = {
     username: string;
     avatar: string;
   };
-  reaction_count: number;
+  reactionCount: number;
   created_at: Date;
   updated_at: Date;
 };

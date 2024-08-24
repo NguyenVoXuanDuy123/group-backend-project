@@ -4,8 +4,6 @@ import userRepository from "@src/repositories/user.repository";
 
 import { UserSessionType } from "@src/types/user.types";
 import authService from "@src/services/auth.service";
-import ApiError from "@src/error/ApiError";
-import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 passport.use(
   new passportStrategy.Strategy(
@@ -26,7 +24,7 @@ passport.serializeUser((_id, done) => {
 });
 
 passport.deserializeUser((id: string, done) => {
-  userRepository.findById(id).then((user) => {
+  userRepository.getUserById(id).then((user) => {
     if (user) {
       const { _id: idObject, role, status } = user;
       const _id = idObject.toHexString();
@@ -36,7 +34,7 @@ passport.deserializeUser((id: string, done) => {
         status,
       } as UserSessionType);
     } else {
-      done(new ApiError(ApiErrorCodes.USER_NOT_FOUND));
+      done(undefined);
     }
   });
 });

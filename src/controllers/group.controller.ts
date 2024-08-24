@@ -13,6 +13,7 @@ import {
   UpdateGroupRequestType,
 } from "@src/types/group.types";
 import { UserSessionType } from "@src/types/user.types";
+import { PaginationQueryType } from "@src/types/util.types";
 
 class GroupController {
   public createGroup = async (
@@ -136,6 +137,23 @@ class GroupController {
     await groupService.changeGroupStatus(groupId, status, role);
     res.status(HttpStatusCodes.OK).json({
       message: "Group status changed successfully",
+    });
+  };
+
+  public getGroupPosts = async (req: APIRequest, res: APIResponse) => {
+    const { _id, role } = req.user as UserSessionType;
+    const { groupId } = req.params;
+    const paginationQuery = req.query as PaginationQueryType;
+    const posts = await groupService.getGroupPosts(
+      groupId,
+      _id,
+      role,
+      paginationQuery
+    );
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Group posts fetched successfully",
+      result: posts.map(camelCaseifyWithDateConversion),
     });
   };
 }

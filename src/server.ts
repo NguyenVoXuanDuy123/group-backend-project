@@ -27,13 +27,12 @@ const app = express();
 databaseConfig.connectDB();
 
 // Basic middleware
-
-/*
- * For some reason, the types for cors is not working properly
- * So I have to disable the eslint rule for this line
- */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-app.use(cors<Request>());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend's URL
+    credentials: true, // This allows the server to accept cookies from the frontend
+  })
+);
 app.use(express.json());
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 app.use(express.urlencoded({ extended: true }));
@@ -94,6 +93,7 @@ app.use(
         message: apiError.message,
       });
     }
+    console.error(err);
 
     res.status(status).json({
       errorCode: errCode,

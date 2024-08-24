@@ -38,7 +38,7 @@ export const registerValidator: RequestHandler = (
     throw new ApiError(ApiErrorCodes.INVALID_PASSWORD_LENGTH);
   }
 
-  if (username.length < 6 && username.length > 20) {
+  if (username.length < 6 || username.length > 20) {
     throw new ApiError(ApiErrorCodes.INVALID_USERNAME_LENGTH);
   }
 

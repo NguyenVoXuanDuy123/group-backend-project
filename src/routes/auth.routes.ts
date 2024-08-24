@@ -24,8 +24,6 @@ authRouter.post(
 
 authRouter.post("/logout", wrapRequestHandler(authController.logout));
 
-authRouter.get("/introspect", (req, res) => {
-  res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
-});
+authRouter.get("/introspect", wrapRequestHandler(authController.introspect));
 
 export default authRouter;

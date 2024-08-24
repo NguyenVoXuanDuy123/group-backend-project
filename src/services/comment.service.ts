@@ -37,7 +37,7 @@ class CommentService {
 
     const { _id } = await commentRepository.createComment(comment);
 
-    return this.getCommentById(_id, senderId);
+    return await this.getCommentById(_id, senderId);
   }
 
   public async getCommentById(
@@ -48,7 +48,7 @@ class CommentService {
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    const author = await userRepository.findById(comment.author, {
+    const author = await userRepository.getUserById(comment.author, {
       first_name: 1,
       last_name: 1,
       username: 1,
@@ -57,6 +57,10 @@ class CommentService {
     if (!author) {
       throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
     }
+
+    const { reactionCount, reactionSummary, userReaction } =
+      await postService.getPostOrCommentInfo(comment.post, senderId);
+
     return {
       _id: comment._id.toHexString(),
       content: comment.content,
@@ -68,20 +72,9 @@ class CommentService {
         username: author.username,
         avatar: author.avatar,
       },
-      reaction_count: await reactionRepository.getReactionCountByTargetId(
-        comment._id
-      ),
-      reactionSummary: await reactionRepository.getReactionSummaryByTargetId(
-        comment._id
-      ),
-      userReaction: await reactionRepository.getReactionsByTargetIdAndUserId(
-        commentId,
-        senderId,
-        {
-          _id: 0,
-          type: 1,
-        }
-      ),
+      reactionCount,
+      reactionSummary,
+      userReaction,
       created_at: comment.created_at,
       updated_at: comment.updated_at,
     };
