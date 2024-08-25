@@ -20,17 +20,35 @@ import { PostVisibilityLevel } from "@src/enums/post.enum";
 import postService from "@src/services/post.service";
 
 class UserService {
-  public async getUserById(userId: string, senderId: string) {
-    const user = await userRepository.getUserById(userId, {
-      password: 0,
-      notifications: 0,
-      __v: 0,
-      created_at: 0,
-      updated_at: 0,
-    });
+  public async getUserByIdOrUsername(
+    userId: string,
+    senderId: string,
+    username?: string
+  ) {
+    let user = null;
+    console.log("asd", username, userId);
+    if (username) {
+      console.log("asad", username);
+      user = await userRepository.findByUsername(username, {
+        password: 0,
+        notifications: 0,
+        __v: 0,
+        created_at: 0,
+        updated_at: 0,
+      });
+    } else {
+      user = await userRepository.getUserById(userId, {
+        password: 0,
+        notifications: 0,
+        __v: 0,
+        created_at: 0,
+        updated_at: 0,
+      });
+    }
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
+
     const { friends, groups, ...rest } = user;
 
     let userFriendRelation: UserFriendRelation = UserFriendRelation.NOT_FRIEND;
@@ -50,7 +68,7 @@ class UserService {
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
           senderId,
-          userId,
+          user._id,
           {
             __v: 0,
             updated_at: 0,
@@ -65,7 +83,7 @@ class UserService {
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
-          userId,
+          user._id,
           senderId
         ))
     ) {
@@ -149,11 +167,15 @@ class UserService {
     await userRepository.removeFriend(senderId, friendId);
   }
 
-  public async getFriendsByUserId(userId: string) {
+  public async getFriendsByUserId(userId: string, query: PaginationQueryType) {
     if (!(await userRepository.checkUserExistsById(userId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
-    return await userRepository.getFriends(userId);
+    return await userRepository.getFriends(
+      userId,
+      query.afterId,
+      Number(query.limit)
+    );
   }
 
   public async getMyPendingReceivedFriendRequests(senderId: string) {

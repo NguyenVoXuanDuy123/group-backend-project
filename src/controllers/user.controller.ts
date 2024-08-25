@@ -19,7 +19,7 @@ class UserController {
     const { _id } = req.user as UserSessionType;
     //getUser requires 2 parameters, userId and senderId
     //userId and senderId are the same in this case
-    const user = await userService.getUserById(_id, _id);
+    const user = await userService.getUserByIdOrUsername(_id, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get me successfully",
       result: camelCaseifyWithDateConversion(user),
@@ -28,7 +28,10 @@ class UserController {
 
   public getUser = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const user = await userService.getUserById(req.params.userId, _id);
+    const user = await userService.getUserByIdOrUsername(
+      req.params.userId,
+      _id
+    );
     res.status(HttpStatusCodes.OK).json({
       message: "Get user successfully",
       result: camelCaseifyWithDateConversion(user),
@@ -114,7 +117,10 @@ class UserController {
 
   public getMyFriends = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const friends = await userService.getFriendsByUserId(_id);
+    const friends = await userService.getFriendsByUserId(
+      _id,
+      req.query as PaginationQueryType
+    );
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successfully",
@@ -123,7 +129,10 @@ class UserController {
   };
 
   public getFriends = async (req: APIRequest, res: APIResponse) => {
-    const friends = await userService.getFriendsByUserId(req.params.userId);
+    const friends = await userService.getFriendsByUserId(
+      req.params.userId,
+      req.query as PaginationQueryType
+    );
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successfully",
       result: friends.map(camelCaseifyWithDateConversion),
@@ -210,6 +219,23 @@ class UserController {
     res.status(HttpStatusCodes.OK).json({
       message: "Get feeds successfully",
       result: feeds.map(camelCaseifyWithDateConversion),
+    });
+  };
+
+  public getUserByUsername = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+
+    //getUserByIdOrUsername requires 3 parameters, userId, _id, and username
+    //userId in this case is an empty string
+    //because we only need to get user by username
+    //username is the username in the request parameter
+
+    const { username } = req.params;
+
+    const user = await userService.getUserByIdOrUsername("", _id, username);
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get user by username successfully",
+      result: camelCaseifyWithDateConversion(user),
     });
   };
 }

@@ -27,7 +27,10 @@ userRouter.delete(
   wrapRequestHandler(userController.removeAvatar)
 );
 
-userRouter.get("/profile/:userId", wrapRequestHandler(userController.getUser));
+userRouter.get(
+  "/profile/:username",
+  wrapRequestHandler(userController.getUserByUsername)
+);
 
 // Friends
 userRouter.get("/me/friends", wrapRequestHandler(userController.getMyFriends));

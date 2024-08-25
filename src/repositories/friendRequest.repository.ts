@@ -38,8 +38,8 @@ class FriendRequestRepository {
   }
 
   public async getPendingFriendRequestBySenderIdAndReceiverId(
-    senderId: string,
-    receiverId: string,
+    senderId: string | Types.ObjectId,
+    receiverId: string | Types.ObjectId,
     projection: ProjectionType<IFriendRequest> = {}
   ) {
     return await FriendRequestModel.findOne(

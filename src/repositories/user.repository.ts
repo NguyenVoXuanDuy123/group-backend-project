@@ -16,7 +16,7 @@ class UserRepository {
   }
 
   public async checkUserExistsByUsername(username: string) {
-    return !!(await this.findByUsername(username));
+    return !!(await this.findByUsername(username, { _id: 1 }));
   }
   public async findByUsername(username: string, projection = {}) {
     return await UserModel.findOne({ username }, projection).lean();
@@ -46,10 +46,22 @@ class UserRepository {
     await UserModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
   }
 
-  public async getFriends(_id: string) {
+  public async getFriends(_id: string, afterId?: string, limit?: number) {
     const friendDetails = await UserModel.aggregate<FriendDetailType>([
       { $match: { _id: new Types.ObjectId(_id) } },
       { $unwind: "$friends" },
+      { $sort: { friends: 1 } },
+      {
+        $match: {
+          friends: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : // if afterId is not provided, set it to a dummy ObjectId
+                new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
+      { $limit: limit || 10 },
       {
         $lookup: {
           from: "users",
@@ -60,17 +72,18 @@ class UserRepository {
       },
 
       { $unwind: "$friendDetails" },
-
       {
         $project: {
           _id: "$friendDetails._id",
+
+          username: "$friendDetails.username",
           first_name: "$friendDetails.first_name",
           last_name: "$friendDetails.last_name",
           avatar: "$friendDetails.avatar",
-          username: "$friendDetails.username",
         },
       },
     ]);
+
     return friendDetails;
   }
 
