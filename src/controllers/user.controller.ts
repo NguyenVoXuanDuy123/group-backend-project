@@ -11,8 +11,8 @@ import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDat
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import ApiError from "@src/error/ApiError";
-import EnvVars from "@src/constant/EnvVars";
 import { PaginationQueryType } from "@src/types/util.types";
+import { generateImageUrl } from "@src/helpers/generateImageUrl";
 
 class UserController {
   public getMe = async (req: Request, res: APIResponse) => {
@@ -55,7 +55,7 @@ class UserController {
       throw new ApiError(ApiErrorCodes.NO_IMAGE_ATTACHED);
     }
     const fileName = req.file.filename;
-    const imageUrl = `http://localhost:` + EnvVars.Port + `/images/${fileName}`;
+    const imageUrl = generateImageUrl(fileName);
     const { _id } = req.user as UserSessionType;
     await userService.updateAvatar(_id, imageUrl);
     res.status(HttpStatusCodes.OK).json({
