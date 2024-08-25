@@ -55,7 +55,8 @@ class UserController {
       throw new ApiError(ApiErrorCodes.NO_IMAGE_ATTACHED);
     }
     const fileName = req.file.filename;
-    const imageUrl = `localhost:` + EnvVars.Port + `/images/${fileName}`;
+    const imageUrl =
+      `https://localhost:` + EnvVars.Port + `/images/${fileName}`;
     const { _id } = req.user as UserSessionType;
     await userService.updateAvatar(_id, imageUrl);
     res.status(HttpStatusCodes.OK).json({
