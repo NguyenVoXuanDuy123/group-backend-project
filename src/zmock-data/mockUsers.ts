@@ -1,27 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { faker } from "@faker-js/faker";
+import { MOCK_AVATAR_DIR, SEED } from "@src/constant/dir";
 import { UserRole, UserStatus } from "@src/enums/user.enum";
 import UserModel from "@src/schema/user.schema";
 import authService from "@src/services/auth.service";
-import {
-  downloadAndSaveImage,
-  randomDate,
-  sanitizeUsername,
-} from "@src/zmock-data/helper";
+import { randomDate, sanitizeUsername } from "@src/zmock-data/helper";
+import fs from "fs";
 
 export const mockUsers = async (userCount: number) => {
   console.log(`start creating ${userCount} users`);
-
+  faker.seed(SEED);
+  const data = fs.readFileSync(MOCK_AVATAR_DIR, "utf-8");
+  const jsonObject = JSON.parse(data);
+  const mockAvatars: Array<string> = jsonObject?.avatars;
   for (let i = 0; i < userCount; i++) {
     const isMale = faker.datatype.boolean();
     const date = randomDate(new Date("2023-01-01"));
-    let avatar: string | null = null;
-
-    // this loop is to ensure that we have an avatar for the user
-    while (avatar === null) {
-      const avatarUrl =
-        "https://avatar.iran.liara.run/public/" + ((i % 100) + 1);
-      avatar = await downloadAndSaveImage(avatarUrl);
-    }
+    const avatar = mockAvatars[i % mockAvatars.length];
 
     await new UserModel({
       //sanitizing the username to avoid any special characters, ensure that friendly for the URL

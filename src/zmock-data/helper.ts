@@ -60,9 +60,9 @@ export const downloadAndSaveImage = async (
 };
 
 export const downloadAndSaveImagesAsJson = async (numberOfImages: number) => {
+  console.log("start downloading images");
   const images = [];
   const imageUrl = "https://random.imagecdn.app/1920/1080";
-  console.log("start downloading images");
   for (let i = 0; i < numberOfImages; i++) {
     const imagePath = await downloadAndSaveImage(imageUrl);
     if (imagePath) {
@@ -80,11 +80,12 @@ export const downloadAndSaveImagesAsJson = async (numberOfImages: number) => {
 };
 
 export const downloadAndSaveAvatarsAsJson = async (numberOfAvatars: number) => {
+  console.log("start downloading avatars");
   const avatars = [];
   const avatarUrl = "https://avatar.iran.liara.run/public/";
   console.log("start downloading avatars");
   for (let i = 0; i < numberOfAvatars; i++) {
-    const avatarPath = await downloadAndSaveImage(avatarUrl);
+    const avatarPath = await downloadAndSaveImage(avatarUrl + ((i % 100) + 1));
     if (avatarPath) {
       avatars.push(avatarPath);
     }

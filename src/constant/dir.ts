@@ -8,3 +8,6 @@ export const MOCK_IMAGE_DIR = path.resolve("src/zmock-data/images.json");
 
 // Path to the directory where the avatars.json (mock avatars data) will be saved
 export const MOCK_AVATAR_DIR = path.resolve("src/zmock-data/avatars.json");
+
+// seed number for random data
+export const SEED = 123456789;

@@ -1,11 +1,14 @@
 import { faker } from "@faker-js/faker";
+import { SEED } from "@src/constant/dir";
 import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enum";
 import GroupModel from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";
 import { randomDate } from "@src/zmock-data/helper";
 
 export const mockGroups = async (groupCount: number) => {
+  console.log(`start creating ${groupCount} groups`);
   const groups = [];
+  faker.seed(SEED);
   const users = await UserModel.find();
   for (let i = 0; i < groupCount; i++) {
     const memberCount = faker.number.int({ min: 30, max: 50 });
@@ -44,5 +47,6 @@ export const mockGroups = async (groupCount: number) => {
   }
 
   return groups;
+  console.log(`created ${groupCount} groups`);
   //   return await GroupModel.insertMany(groups);
 };

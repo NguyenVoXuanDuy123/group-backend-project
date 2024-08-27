@@ -8,6 +8,7 @@ import { randomDate } from "@src/zmock-data/helper";
 import { Document, Types } from "mongoose";
 
 export const mockComments = async () => {
+  console.log("Mocking comments...");
   const users = await UserModel.find();
   const comments: (Document<unknown, object, IComment> &
     IComment & { _id: Types.ObjectId })[] = [];
@@ -68,4 +69,6 @@ export const mockComments = async () => {
   for (const comment of comments) {
     await comment.save();
   }
+
+  console.log("End mocking comments");
 };

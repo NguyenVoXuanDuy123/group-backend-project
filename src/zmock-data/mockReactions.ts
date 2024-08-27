@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { faker } from "@faker-js/faker";
+import { SEED } from "@src/constant/dir";
 import {
   PostVisibilityLevel,
   ReactionTargetType,
@@ -16,6 +17,7 @@ import { Document, Types } from "mongoose";
 
 export const mockReactions = async () => {
   console.log("Mocking reactions...");
+  faker.seed(SEED);
   const users = await UserModel.find();
   const reactions: (Document<unknown, object, IReaction> &
     IReaction &
