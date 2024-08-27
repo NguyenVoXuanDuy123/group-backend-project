@@ -32,15 +32,15 @@ export const mockGroups = async (groupCount: number) => {
       ),
     });
     for (const member of members) {
-      member.groups = [...(member.groups || []), group._id];
+      await UserModel.updateOne(
+        { _id: member._id },
+        { $addToSet: { groups: group._id } }
+      );
     }
     groups.push(group);
   }
   for (const group of groups) {
     await group.save();
-  }
-  for (const user of users) {
-    await user.save();
   }
 
   return groups;

@@ -34,6 +34,9 @@ const ReactionSchema: Schema<IReaction> = new Schema(
   }
 );
 
+ReactionSchema.index({ user: 1, target: 1 }, { unique: true });
+ReactionSchema.index({ target: 1 });
+
 // Create the Reaction model
 const ReactionModel: Model<IReaction> = model<IReaction>(
   "reactions",

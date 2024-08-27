@@ -75,11 +75,11 @@ class UserRepository {
       {
         $project: {
           _id: "$friendDetails._id",
-
           username: "$friendDetails.username",
           first_name: "$friendDetails.first_name",
           last_name: "$friendDetails.last_name",
           avatar: "$friendDetails.avatar",
+          friends: "$friendDetails.friends",
         },
       },
     ]);
@@ -87,10 +87,22 @@ class UserRepository {
     return friendDetails;
   }
 
-  public async getUserGroups(_id: string) {
+  public async getUserGroups(_id: string, afterId?: string, limit?: number) {
     const groups = await UserModel.aggregate<GroupDetailType>([
       { $match: { _id: new Types.ObjectId(_id) } },
       { $unwind: "$groups" },
+      { $sort: { groups: 1 } },
+      {
+        $match: {
+          groups: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : // if afterId is not provided, set it to a dummy ObjectId
+                new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
+      { $limit: limit || 10 },
       {
         $lookup: {
           from: "groups",
@@ -106,9 +118,12 @@ class UserRepository {
           name: "$groupDetails.name",
           description: "$groupDetails.description",
           avatar: "$groupDetails.avatar",
+          visibility_level: "$groupDetails.visibility_level",
+          memberCount: { $size: "$groupDetails.members" },
         },
       },
     ]);
+
     return groups;
   }
 }

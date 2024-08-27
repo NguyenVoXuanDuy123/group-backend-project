@@ -156,7 +156,10 @@ class UserController {
 
   public getMyGroups = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
-    const groups = await userService.getGroupsByUserId(_id);
+    const groups = await userService.getGroupsByUserId(
+      _id,
+      req.query as PaginationQueryType
+    );
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successfully",
@@ -165,7 +168,10 @@ class UserController {
   };
 
   public getUserGroups = async (req: APIRequest, res: APIResponse) => {
-    const groups = await userService.getGroupsByUserId(req.params.userId);
+    const groups = await userService.getGroupsByUserId(
+      req.params.userId,
+      req.query as PaginationQueryType
+    );
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successfully",
       result: groups.map(camelCaseifyWithDateConversion),

@@ -18,6 +18,8 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import trimRequestBody from "@src/helpers/sanitation";
 import "./zmock-data/fake-data";
+import fs from "fs";
+
 // **** Variables **** //
 
 const app = express();
@@ -25,6 +27,11 @@ const app = express();
 // **** Setup **** //
 
 databaseConfig.connectDB();
+
+// Create the uploads directory if it doesn't exist
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 // Basic middleware
 app.use(

@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { faker } from "@faker-js/faker";
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
+import {
+  PostVisibilityLevel,
+  ReactionTargetType,
+  ReactionType,
+} from "@src/enums/post.enum";
 import CommentModel from "@src/schema/comment.schema";
 import PostModel from "@src/schema/post.schema";
 import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
@@ -11,17 +15,30 @@ import { randomDate } from "@src/zmock-data/helper";
 import { Document, Types } from "mongoose";
 
 export const mockReactions = async () => {
+  console.log("Mocking reactions...");
   const users = await UserModel.find();
   const reactions: (Document<unknown, object, IReaction> &
     IReaction &
     Required<{ _id: Types.ObjectId }>)[] = [];
-  const reactionTypes = Object.values(ReactionType);
+  const reactionTypes = [
+    ...Array(40).fill(ReactionType.LIKE), // 40% like
+    ...Array(40).fill(ReactionType.LOVE), // 40% love
+    ...Array(10).fill(ReactionType.HAHA), // 10% haha
+    ...Array(10).fill(ReactionType.ANGRY), // 10% angry
+  ];
 
   for (const user of users) {
     // Fetch posts from friends and groups
-    const friendPosts = await PostModel.find({ author: { $in: user.friends } });
+    const friendPosts = await PostModel.find({
+      author: { $in: user.friends },
+      visibility_level: { $ne: PostVisibilityLevel.GROUP }, // Exclude posts with visibility level 'group'
+    });
+    // Get all posts from groups the user is a member of
     const groupPosts = await PostModel.find({ group: { $in: user.groups } });
-    const postsToReactOn = [...friendPosts, ...groupPosts];
+
+    const userPosts = await PostModel.find({ author: user._id });
+
+    const postsToReactOn = [...friendPosts, ...groupPosts, ...userPosts];
 
     for (const post of postsToReactOn) {
       // Check if the user has already reacted to the post
@@ -32,6 +49,7 @@ export const mockReactions = async () => {
       });
 
       if (!existingReaction) {
+        // 80% that user will react to the post
         if (faker.number.float({ min: 0, max: 1 }) < 0.8) {
           const randomReaction = faker.helpers.arrayElement(reactionTypes);
           const date = randomDate(post.created_at);
@@ -116,4 +134,5 @@ export const mockReactions = async () => {
       }
     }
   }
+  console.log("Reactions have been mocked!");
 };

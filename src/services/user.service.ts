@@ -18,6 +18,7 @@ import { PaginationQueryType } from "@src/types/util.types";
 import postRepository from "@src/repositories/post.repository";
 import { PostVisibilityLevel } from "@src/enums/post.enum";
 import postService from "@src/services/post.service";
+import { Types } from "mongoose";
 
 class UserService {
   public async getUserByIdOrUsername(
@@ -26,9 +27,9 @@ class UserService {
     username?: string
   ) {
     let user = null;
-    console.log("asd", username, userId);
+
+    // if the username is provided, get the user by username
     if (username) {
-      console.log("asad", username);
       user = await userRepository.findByUsername(username, {
         password: 0,
         notifications: 0,
@@ -36,6 +37,7 @@ class UserService {
         created_at: 0,
         updated_at: 0,
       });
+      // if the username is not provided, get the user by userId
     } else {
       user = await userRepository.getUserById(userId, {
         password: 0,
@@ -56,7 +58,7 @@ class UserService {
     let friendRequest = null;
 
     // if the sender is the same as the user, then the user is the sender
-    if (senderId === userId) {
+    if (user._id.equals(senderId)) {
       userFriendRelation = UserFriendRelation.SELF;
 
       // if the sender is the friend of the user
@@ -77,9 +79,9 @@ class UserService {
           }
         ))
     ) {
-      userFriendRelation = UserFriendRelation.INCOMING_REQUEST;
+      userFriendRelation = UserFriendRelation.OUTGOING_REQUEST;
 
-      // if the user has sent a friend request to the sender
+      // if the sender has received a friend request from the user
     } else if (
       (friendRequest =
         await friendRequestRepository.getPendingFriendRequestBySenderIdAndReceiverId(
@@ -87,8 +89,17 @@ class UserService {
           senderId
         ))
     ) {
-      userFriendRelation = UserFriendRelation.OUTGOING_REQUEST;
+      userFriendRelation = UserFriendRelation.INCOMING_REQUEST;
     }
+
+    const senderUser = await userRepository.getUserById(senderId, {
+      friends: 1,
+    });
+
+    const mutualFriendCount = await this.countMutualFriends(
+      friends,
+      senderUser?.friends || []
+    );
 
     return {
       ...rest,
@@ -96,6 +107,7 @@ class UserService {
       groupCount: groups?.length || 0,
       userFriendRelation,
       friendRequest,
+      mutualFriendCount,
     };
   }
 
@@ -168,13 +180,29 @@ class UserService {
   }
 
   public async getFriendsByUserId(userId: string, query: PaginationQueryType) {
-    if (!(await userRepository.checkUserExistsById(userId))) {
+    const user = await userRepository.getUserById(userId, { friends: 1 });
+
+    if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
-    return await userRepository.getFriends(
+
+    const friends = await userRepository.getFriends(
       userId,
       query.afterId,
       Number(query.limit)
+    );
+
+    return await Promise.all(
+      friends.map(async (friend) => {
+        const { friends, ...rest } = friend;
+        return {
+          ...rest,
+          mutualFriendCount: await this.countMutualFriends(
+            user.friends,
+            friends
+          ),
+        };
+      })
     );
   }
 
@@ -183,11 +211,19 @@ class UserService {
       senderId
     );
   }
-  public async getGroupsByUserId(userId: string) {
+  public async getGroupsByUserId(
+    userId: string,
+    paginationQuery: PaginationQueryType
+  ) {
     if (!(await userRepository.checkUserExistsById(userId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
-    return await userRepository.getUserGroups(userId);
+    const group = await userRepository.getUserGroups(
+      userId,
+      paginationQuery.afterId,
+      Number(paginationQuery.limit)
+    );
+    return group;
   }
 
   public async leaveGroup(senderId: string, groupId: string) {
@@ -315,6 +351,29 @@ class UserService {
         };
       })
     );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  private async countMutualFriends(
+    friends1: Types.ObjectId[],
+    friends2: Types.ObjectId[]
+  ) {
+    // this function is async to utilize the promise.all method to improve performance
+
+    // use literal object to store friends1
+    let mutualFriendCount = 0;
+    const friendsMap: { [key: string]: boolean } = {};
+    friends1.forEach((friend) => {
+      friendsMap[friend.toHexString()] = true;
+    });
+    // loop through friends2, if the friend is in friends1, then increment the mutualFriendCount
+    friends2.forEach((friend) => {
+      if (friendsMap[friend.toHexString()]) {
+        mutualFriendCount++;
+      }
+    });
+
+    return mutualFriendCount;
   }
 }
 

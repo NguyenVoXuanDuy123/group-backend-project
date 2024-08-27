@@ -19,8 +19,9 @@ export enum UserFriendRelation {
   FRIEND = "friend",
   NOT_FRIEND = "not_friend",
   SELF = "self",
-  // When the sender has sent a friend request to the user.
+  // when the sender has received a friend request from the user.
   INCOMING_REQUEST = "incoming_request",
-  // When the user has sent a friend request to the sender.
+
+  // When the sender has sent a friend request to the user.
   OUTGOING_REQUEST = "outgoing_request",
 }

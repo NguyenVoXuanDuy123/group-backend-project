@@ -14,9 +14,9 @@ class ReactionRepository {
       {
         target: targetId,
         user: userId,
-        target_type,
       },
       {
+        target_type: target_type,
         type: type,
       },
       {

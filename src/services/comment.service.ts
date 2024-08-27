@@ -55,6 +55,7 @@ class CommentService {
       avatar: 1,
     });
     if (!author) {
+      /** there is no way when a comment exists, but the author cannot be found */
       throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
     }
 
@@ -95,9 +96,12 @@ class CommentService {
     if (!comment.author.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.UPDATE_COMMENT_FORBIDDEN);
     }
+    // if the content is not changed, return the comment without updating
     if (comment.content === updateCommentRequest.content) {
       return await this.getCommentById(commentId, senderId);
     }
+
+    // if the content is changed, push the current content to the edit history
     if (updateCommentRequest.content) {
       await commentRepository.pushCommentEditHistory(commentId, {
         content: comment.content,
@@ -126,6 +130,7 @@ class CommentService {
      * 2. sender is the author of the post
      * 3. sender is the admin of the group where the comment is posted
      * 4. sender is an site admin
+     *
      */
 
     // site admin and author of the comment can delete the comment

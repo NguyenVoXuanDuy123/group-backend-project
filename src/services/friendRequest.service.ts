@@ -38,6 +38,7 @@ class FriendRequestService {
     return friendRequestRepository.getFriendRequestById(friendRequest._id, {
       _id: 1,
       status: 1,
+      created_at: 1,
     });
   }
 

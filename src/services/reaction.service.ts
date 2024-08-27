@@ -1,6 +1,4 @@
 import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
-import ApiError from "@src/error/ApiError";
-import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 import reactionRepository from "@src/repositories/reaction.repository";
 
@@ -11,6 +9,7 @@ class ReactionService {
     target_type: ReactionTargetType,
     type: ReactionType
   ) {
+    console.log(type);
     return await reactionRepository.upsertReaction(
       postID,
       userID,
@@ -24,14 +23,6 @@ class ReactionService {
     userID: string,
     type: ReactionTargetType
   ) {
-    if (
-      !(await reactionRepository.checkReactionExistsByTargetIdAndUserId(
-        postID,
-        userID
-      ))
-    ) {
-      throw new ApiError(ApiErrorCodes.USER_NOT_REACTED);
-    }
     await reactionRepository.removeReaction(postID, userID, type);
   }
 }

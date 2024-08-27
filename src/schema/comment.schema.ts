@@ -46,6 +46,12 @@ const commentSchema = new Schema<IComment>(
   }
 );
 
+// this is a compound index that improves the performance of queries getting comments by post id
+commentSchema.index({ post: 1, created_at: -1 });
+
+// this is a compound index that improves the performance of queries getting comments by post id
+commentSchema.index({ post: 1 });
+
 // Create a model based on the schema.
 const CommentModel = model<IComment>("comments", commentSchema);
 

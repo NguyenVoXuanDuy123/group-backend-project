@@ -1,5 +1,7 @@
+import { GroupVisibilityLevel } from "@src/enums/group.enum";
 import { UserRole, UserStatus } from "@src/enums/user.enum";
 import { FriendRequestStatus } from "@src/enums/user.enum";
+import { Types } from "mongoose";
 
 export type UserSessionType = {
   _id: string;
@@ -31,6 +33,7 @@ export type FriendDetailType = {
   first_name: string;
   username: string;
   avatar?: string;
+  friends: Types.ObjectId[];
 };
 /**
  * When users fetch groups which they are members of,
@@ -41,6 +44,8 @@ export type GroupDetailType = {
   name: string;
   description: string;
   avatar?: string;
+  visiblity_level: GroupVisibilityLevel;
+  members: Types.ObjectId[];
 };
 
 /**

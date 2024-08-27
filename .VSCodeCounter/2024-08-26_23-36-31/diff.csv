@@ -1,0 +1,13 @@
+"filename", "language", "TypeScript", "comment", "blank", "total"
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\auth.controller.ts", "TypeScript", -1, 0, 1, 0
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\controllers\user.controller.ts", "TypeScript", 24, 4, 4, 32
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\enums\user.enum.ts", "TypeScript", 0, 0, 1, 1
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\helpers\generateImageUrl.ts", "TypeScript", 4, 0, 2, 6
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\repositories\user.repository.ts", "TypeScript", 27, 0, 1, 28
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\routes\user.routes.ts", "TypeScript", 3, 0, 0, 3
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\friendRequest.service.ts", "TypeScript", 1, 0, 0, 1
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\reaction.service.ts", "TypeScript", -9, 0, 0, -9
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\services\user.service.ts", "TypeScript", 65, 6, 10, 81
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\user.types.ts", "TypeScript", 5, 0, 0, 5
+"c:\Serious Project\Full Stack Development\social-media\group-backend-project\src\types\util.types.ts", "TypeScript", 1, 0, 0, 1
+"Total", "-", 120, 10, 19, 149
