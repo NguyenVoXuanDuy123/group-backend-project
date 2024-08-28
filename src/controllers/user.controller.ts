@@ -11,7 +11,7 @@ import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDat
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import ApiError from "@src/error/ApiError";
-import { PaginationQueryType } from "@src/types/util.types";
+import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
 import { generateImageUrl } from "@src/helpers/generateImageUrl";
 
 class UserController {
@@ -117,7 +117,11 @@ class UserController {
 
   public getMyFriends = async (req: Request, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
+
+    // getFriendsByUserId requires 3 parameters, userId, senderId, and query
+    // userId and senderId are the same in this case
     const friends = await userService.getFriendsByUserId(
+      _id,
       _id,
       req.query as PaginationQueryType
     );
@@ -129,7 +133,10 @@ class UserController {
   };
 
   public getFriends = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+
     const friends = await userService.getFriendsByUserId(
+      _id,
       req.params.userId,
       req.query as PaginationQueryType
     );
@@ -156,7 +163,11 @@ class UserController {
 
   public getMyGroups = async (req: APIRequest, res: APIResponse) => {
     const { _id } = req.user as UserSessionType;
+
+    //getGroupsByUserId requires 3 parameters, userId, senderId, and query
+    //userId and senderId are the same in this case
     const groups = await userService.getGroupsByUserId(
+      _id,
       _id,
       req.query as PaginationQueryType
     );
@@ -168,10 +179,13 @@ class UserController {
   };
 
   public getUserGroups = async (req: APIRequest, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
     const groups = await userService.getGroupsByUserId(
+      _id,
       req.params.userId,
-      req.query as PaginationQueryType
+      req.query as PaginationQueryType & GroupsQueryType
     );
+
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successfully",
       result: groups.map(camelCaseifyWithDateConversion),

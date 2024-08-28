@@ -4,6 +4,7 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
 import userRepository from "@src/repositories/user.repository";
+import userService from "@src/services/user.service";
 
 class FriendRequestService {
   public async createFriendRequest(senderId: string, receiverId: string) {
@@ -104,8 +105,30 @@ class FriendRequestService {
   }
 
   public async getMyPendingReceivedFriendRequests(senderId: string) {
-    return await friendRequestRepository.getMyPendingReceivedFriendRequests(
-      senderId
+    const friendRequests =
+      await friendRequestRepository.getMyPendingReceivedFriendRequests(
+        senderId
+      );
+
+    // Get the sender's detail and count the mutual friends
+    return Promise.all(
+      friendRequests.map(async (friendRequest) => {
+        const { friends, ...rest } = friendRequest.senderDetail;
+        const sender = await userRepository.getUserById(senderId, {
+          friends: 1,
+        });
+        const mutualFriendCount = await userService.countMutualFriends(
+          friends,
+          sender?.friends
+        );
+        return {
+          ...friendRequest,
+          senderDetail: {
+            ...rest,
+            mutualFriendCount,
+          },
+        };
+      })
     );
   }
 }

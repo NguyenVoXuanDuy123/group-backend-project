@@ -75,13 +75,15 @@ class FriendRequestRepository {
         $project: {
           _id: "$_id",
           status: "$status",
-          senderDetails: {
+          senderDetail: {
             _id: "$senderDetails._id",
             first_name: "$senderDetails.first_name",
             last_name: "$senderDetails.last_name",
             avatar: "$senderDetails.avatar",
             username: "$senderDetails.username",
+            friends: "$senderDetails.friends",
           },
+          created_at: "$created_at",
         },
       },
     ]);

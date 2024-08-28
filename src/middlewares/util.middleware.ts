@@ -47,7 +47,6 @@ export const IsUserActiveValidator = (
 //   next: NextFunction
 // ) => {
 //   const invalidIds = [];
-//   console.log(req.params.groupId);
 //   for (const key in req.params) {
 //     if (!Types.ObjectId.isValid(req.params[key])) {
 //       invalidIds.push(key);

@@ -32,7 +32,6 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
-    console.log(group.admin, senderId, groupId);
     if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }

@@ -58,7 +58,6 @@ export const camelCaseifyWithDateConversion = (
     // if the key is an ObjectId just convert it to camelCase and add it to the result
     if (obj[key] instanceof Types.ObjectId) {
       result[snakeToCamel(key)] = obj[key];
-      console.log(result[key]);
       continue;
     }
 

@@ -14,11 +14,12 @@ import {
   UserStatus,
 } from "@src/enums/user.enum";
 import groupRepository from "@src/repositories/group.repository";
-import { PaginationQueryType } from "@src/types/util.types";
+import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
 import postRepository from "@src/repositories/post.repository";
 import { PostVisibilityLevel } from "@src/enums/post.enum";
 import postService from "@src/services/post.service";
 import { Types } from "mongoose";
+import { GroupRole } from "@src/enums/group.enum";
 
 class UserService {
   public async getUserByIdOrUsername(
@@ -92,13 +93,13 @@ class UserService {
       userFriendRelation = UserFriendRelation.INCOMING_REQUEST;
     }
 
-    const senderUser = await userRepository.getUserById(senderId, {
+    const sender = await userRepository.getUserById(senderId, {
       friends: 1,
     });
 
     const mutualFriendCount = await this.countMutualFriends(
       friends,
-      senderUser?.friends || []
+      sender?.friends
     );
 
     return {
@@ -147,9 +148,6 @@ class UserService {
       throw new ApiError(ApiErrorCodes.BOTH_USER_ALREADY_FRIENDS);
     }
 
-    console.log("senderId", senderId);
-    console.log("receiverId", receiverId);
-
     return await friendRequestService.createFriendRequest(senderId, receiverId);
   }
 
@@ -171,15 +169,17 @@ class UserService {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
 
-    console.log(friend);
-
     if (!friend.friends.some((friend) => friend.equals(senderId))) {
       throw new ApiError(ApiErrorCodes.BOTH_USERS_NOT_FRIENDS);
     }
     await userRepository.removeFriend(senderId, friendId);
   }
 
-  public async getFriendsByUserId(userId: string, query: PaginationQueryType) {
+  public async getFriendsByUserId(
+    senderId: string,
+    userId: string,
+    query: PaginationQueryType
+  ) {
     const user = await userRepository.getUserById(userId, { friends: 1 });
 
     if (!user) {
@@ -192,13 +192,14 @@ class UserService {
       Number(query.limit)
     );
 
+    const sender = await userRepository.getUserById(senderId, { friends: 1 });
     return await Promise.all(
       friends.map(async (friend) => {
         const { friends, ...rest } = friend;
         return {
           ...rest,
           mutualFriendCount: await this.countMutualFriends(
-            user.friends,
+            sender?.friends,
             friends
           ),
         };
@@ -212,16 +213,28 @@ class UserService {
     );
   }
   public async getGroupsByUserId(
+    senderId: string,
     userId: string,
-    paginationQuery: PaginationQueryType
+    query: PaginationQueryType & GroupsQueryType
   ) {
     if (!(await userRepository.checkUserExistsById(userId))) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
-    const group = await userRepository.getUserGroups(
+
+    if (query.groupRole && query.groupRole === GroupRole.ADMIN) {
+      // User just can only see there own groups that they are admin
+      // If they try to see other user's groups that they are admin, throw forbidden error
+      if (senderId !== userId) {
+        throw new ApiError(ApiErrorCodes.FORBIDDEN);
+      }
+    }
+
+    const group = await groupRepository.getUserGroups(
       userId,
-      paginationQuery.afterId,
-      Number(paginationQuery.limit)
+      query.afterId,
+      Number(query.limit),
+      query.groupRole,
+      query.status
     );
     return group;
   }
@@ -293,7 +306,6 @@ class UserService {
     }
 
     // if the sender is friends with the user, they can see the user's friends-only posts
-    console.log("user.friends", user.friends);
     if (user.friends.some((friend) => friend.equals(senderId))) {
       visibilityLevel.push(PostVisibilityLevel.FRIEND);
     }
@@ -302,7 +314,6 @@ class UserService {
       visibilityLevel.push(PostVisibilityLevel.FRIEND);
     }
 
-    console.log("visibilityLevel", visibilityLevel);
     const posts = await postRepository.getPostsByUserIdOrGroupId(
       userId,
       // this method require group id, so we pass undefined meaning we are not filtering by group
@@ -353,13 +364,17 @@ class UserService {
     );
   }
 
+  // this function is async to utilize the promise.all method to improve performance
   // eslint-disable-next-line @typescript-eslint/require-await
-  private async countMutualFriends(
-    friends1: Types.ObjectId[],
-    friends2: Types.ObjectId[]
+  public async countMutualFriends(
+    friends1: Types.ObjectId[] | undefined,
+    friends2: Types.ObjectId[] | undefined
   ) {
-    // this function is async to utilize the promise.all method to improve performance
-
+    // if either friends1 or friends2 is undefined, return 0
+    if (!friends1) return 0;
+    if (!friends2) return 0;
+    // console.log("friends1", friends1);
+    // console.log("friends2", friends2);
     // use literal object to store friends1
     let mutualFriendCount = 0;
     const friendsMap: { [key: string]: boolean } = {};

@@ -237,7 +237,7 @@ class ApiErrorCodes {
   public static readonly GROUP_MEMBERS_NOT_VISIBLE = new ApiErrorCodes(
     6005,
     HttpStatusCodes.FORBIDDEN,
-    "Only the members of the group can view the members of the group."
+    "If the group is private, only the members, site-admin, and group-admin can view the members."
   );
 
   public static readonly CANNOT_REMOVE_GROUP_ADMIN = new ApiErrorCodes(
@@ -274,6 +274,18 @@ class ApiErrorCodes {
     6011,
     HttpStatusCodes.BAD_REQUEST,
     "Group status must be either 'approved' or 'rejected'."
+  );
+
+  public static readonly INVALID_QUERY_GROUP_STATUS = new ApiErrorCodes(
+    6012,
+    HttpStatusCodes.BAD_REQUEST,
+    "Group status must be either 'approved', 'pending' or 'rejected'."
+  );
+
+  public static readonly INVALID_GROUP_ROLE = new ApiErrorCodes(
+    6013,
+    HttpStatusCodes.BAD_REQUEST,
+    "Group role must be either 'admin' or 'member'."
   );
 
   /** Group join request errors 7001 - 8000*/
@@ -381,7 +393,7 @@ class ApiErrorCodes {
   public static readonly GROUP_POSTS_NOT_VISIBLE = new ApiErrorCodes(
     8009,
     HttpStatusCodes.FORBIDDEN,
-    "If the group is private, only the members of the group can view the posts."
+    "If the group is private, only the members, site-admin, and group-admin can view the posts."
   );
 
   /** Comment errors 9001 - 10000*/

@@ -1,5 +1,5 @@
 import UserModel, { IUser } from "@src/schema/user.schema";
-import { FriendDetailType, GroupDetailType } from "@src/types/user.types";
+import { FriendDetailType } from "@src/types/user.types";
 
 import { ProjectionType, Types } from "mongoose";
 
@@ -46,9 +46,9 @@ class UserRepository {
     await UserModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
   }
 
-  public async getFriends(_id: string, afterId?: string, limit?: number) {
+  public async getFriends(userId: string, afterId?: string, limit?: number) {
     const friendDetails = await UserModel.aggregate<FriendDetailType>([
-      { $match: { _id: new Types.ObjectId(_id) } },
+      { $match: { _id: new Types.ObjectId(userId) } },
       { $unwind: "$friends" },
       { $sort: { friends: 1 } },
       {
@@ -85,46 +85,6 @@ class UserRepository {
     ]);
 
     return friendDetails;
-  }
-
-  public async getUserGroups(_id: string, afterId?: string, limit?: number) {
-    const groups = await UserModel.aggregate<GroupDetailType>([
-      { $match: { _id: new Types.ObjectId(_id) } },
-      { $unwind: "$groups" },
-      { $sort: { groups: 1 } },
-      {
-        $match: {
-          groups: {
-            $gt: afterId
-              ? new Types.ObjectId(afterId)
-              : // if afterId is not provided, set it to a dummy ObjectId
-                new Types.ObjectId("000000000000000000000000"),
-          },
-        },
-      },
-      { $limit: limit || 10 },
-      {
-        $lookup: {
-          from: "groups",
-          localField: "groups",
-          foreignField: "_id",
-          as: "groupDetails",
-        },
-      },
-      { $unwind: "$groupDetails" },
-      {
-        $project: {
-          _id: "$groupDetails._id",
-          name: "$groupDetails.name",
-          description: "$groupDetails.description",
-          avatar: "$groupDetails.avatar",
-          visibility_level: "$groupDetails.visibility_level",
-          memberCount: { $size: "$groupDetails.members" },
-        },
-      },
-    ]);
-
-    return groups;
   }
 }
 

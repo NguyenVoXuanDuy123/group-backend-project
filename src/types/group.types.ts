@@ -4,6 +4,7 @@ import {
   GroupStatus,
   GroupVisibilityLevel,
 } from "@src/enums/group.enum";
+import { Types } from "mongoose";
 
 export type CreateGroupRequestType = {
   name: string;
@@ -55,6 +56,7 @@ export type GroupMemberDetailType = {
   username: string;
   groupRole: GroupRole;
   avatar: string;
+  friends: Types.ObjectId[];
 };
 
 //Only admin can change user status

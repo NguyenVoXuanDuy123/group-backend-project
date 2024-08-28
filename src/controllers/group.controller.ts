@@ -65,8 +65,13 @@ class GroupController {
 
   public getGroupMembers = async (req: APIRequest, res: APIResponse) => {
     const { groupId } = req.params;
-    const { _id } = req.user as UserSessionType;
-    const groupMembers = await groupService.getGroupMembers(_id, groupId);
+    const { _id, role } = req.user as UserSessionType;
+    const groupMembers = await groupService.getGroupMembers(
+      _id,
+      groupId,
+      role,
+      req.query as PaginationQueryType
+    );
     res.status(HttpStatusCodes.OK).json({
       message: "Group members fetched successfully",
       result: groupMembers.map(camelCaseifyWithDateConversion),

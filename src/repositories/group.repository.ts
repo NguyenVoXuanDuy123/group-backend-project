@@ -1,7 +1,9 @@
+import { GroupRole, GroupStatus } from "@src/enums/group.enum";
 import GroupModel, { IGroup } from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";
 import { GroupMemberDetailType } from "@src/types/group.types";
-import { ProjectionType, Types } from "mongoose";
+import { GroupDetailType } from "@src/types/user.types";
+import { ProjectionType, QueryOptions, Types } from "mongoose";
 
 class GroupRepository {
   public async createGroup(group: Partial<IGroup>) {
@@ -34,10 +36,76 @@ class GroupRepository {
     await UserModel.findByIdAndUpdate(userId, { $pull: { groups: groupId } });
   }
 
-  public async getGroupMembers(groupId: string) {
+  public async getUserGroups(
+    userId: string,
+    afterId?: string,
+    limit?: number,
+    groupRole?: GroupRole,
+    status?: GroupStatus
+  ) {
+    let query: QueryOptions<IGroup> = {
+      members: new Types.ObjectId(userId),
+      status: GroupStatus.APPROVED,
+    };
+    if (groupRole === GroupRole.ADMIN) {
+      query = {
+        admin: new Types.ObjectId(userId),
+        status: status || GroupStatus.APPROVED,
+      };
+    }
+
+    const groups = await GroupModel.aggregate<GroupDetailType>([
+      { $match: query },
+      { $sort: { _id: 1 } },
+      {
+        $match: {
+          _id: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : // if afterId is not provided, set it to a dummy ObjectId
+                new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
+      { $limit: limit || 10 },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          visibility_level: 1,
+          status: 1,
+          memberCount: { $size: "$members" },
+        },
+      },
+    ]);
+
+    return groups;
+  }
+
+  public async getGroupMembers(
+    groupId: string,
+    limit?: number,
+    afterId?: string
+  ) {
     return await GroupModel.aggregate<GroupMemberDetailType>([
       { $match: { _id: new Types.ObjectId(groupId) } },
-      { $unwind: "$members" },
+      { $unwind: { path: "$members", includeArrayIndex: "index" } },
+      { $sort: { members: 1 } },
+      { $limit: limit || 10 },
+      {
+        $match: {
+          // exclude admin from the list, admin always has index 0
+          index: {
+            $ne: 0,
+          },
+          members: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : // if afterId is not provided, set it to a dummy ObjectId
+                new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
       {
         $lookup: {
           from: "users",
@@ -48,24 +116,13 @@ class GroupRepository {
       },
       { $unwind: "$memberDetails" },
       {
-        // if member is admin then groupRole is admin else member
-        $addFields: {
-          groupRole: {
-            $cond: {
-              if: { $eq: ["$memberDetails._id", "$admin"] },
-              then: "admin",
-              else: "member",
-            },
-          },
-        },
-      },
-      {
         $project: {
           _id: "$memberDetails._id",
           first_name: "$memberDetails.first_name",
           last_name: "$memberDetails.last_name",
           avatar: "$memberDetails.avatar",
           username: "$memberDetails.username",
+          friends: "$memberDetails.friends",
           groupRole: 1,
         },
       },

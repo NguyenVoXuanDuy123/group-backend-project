@@ -25,6 +25,6 @@ export enum UserGroupRelation {
   ADMIN = "admin",
   MEMBER = "member",
   NOT_MEMBER = "not_member",
-  // When the sender has sent a group request to the user.
-  INCOMING_REQUEST = "incoming_request",
+  // When user is not a member of the group and has sent a request to join the group
+  OUTGOING_REQUEST = "outgoing_request",
 }

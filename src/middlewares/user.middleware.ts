@@ -11,6 +11,8 @@ import {
   SendFriendRequestType,
 } from "@src/types/user.types";
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
+import { GroupRole, GroupStatus } from "@src/enums/group.enum";
 
 export const getMeValidator: RequestHandler = (
   req: Request,
@@ -65,6 +67,26 @@ export const changeUserStatusValidator: RequestHandler = (
   validateNotNull({ status });
   if (!Object.values(UserStatus).includes(status)) {
     throw new ApiError(ApiErrorCodes.INVALID_USER_STATUS);
+  }
+  next();
+};
+
+export const getUserGroupsValidator: RequestHandler = (
+  req: APIRequest,
+  _: Response,
+  next: NextFunction
+) => {
+  const query = req.query as PaginationQueryType & GroupsQueryType;
+  if (query.status) {
+    if (!Object.values(GroupStatus).includes(query.status)) {
+      throw new ApiError(ApiErrorCodes.INVALID_QUERY_GROUP_STATUS);
+    }
+  }
+
+  if (query.groupRole) {
+    if (!Object.values(GroupRole).includes(query.groupRole)) {
+      throw new ApiError(ApiErrorCodes.INVALID_GROUP_ROLE);
+    }
   }
   next();
 };

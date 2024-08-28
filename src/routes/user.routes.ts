@@ -4,6 +4,7 @@ import { wrapRequestHandler } from "@src/helpers/handlers";
 import {
   changeFriendRequestStatusValidator,
   changeUserStatusValidator,
+  getUserGroupsValidator,
   removeFriendRequestValidator,
 } from "@src/middlewares/user.middleware";
 import upload from "@src/configs/multer.config";
@@ -58,9 +59,14 @@ userRouter.patch(
 );
 
 // Groups
-userRouter.get("/me/groups", wrapRequestHandler(userController.getMyGroups));
+userRouter.get(
+  "/me/groups",
+  wrapRequestHandler(getUserGroupsValidator),
+  wrapRequestHandler(userController.getMyGroups)
+);
 userRouter.get(
   "/:userId/groups",
+  wrapRequestHandler(getUserGroupsValidator),
   wrapRequestHandler(userController.getUserGroups)
 );
 userRouter.delete(

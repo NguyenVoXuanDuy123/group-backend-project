@@ -56,13 +56,16 @@ export type GroupDetailType = {
 export type FriendRequestDetailType = {
   _id: string;
   status: FriendRequestStatus;
-  sender: {
+
+  senderDetail: {
     _id: string;
     first_name: string;
     last_name: string;
     username: string;
     avatar: string;
+    friends: Types.ObjectId[];
   };
+  created_at: Date;
 };
 
 //Only admin can change user status

@@ -18,6 +18,7 @@ import { IGroup } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 import postService from "@src/services/post.service";
+import userService from "@src/services/user.service";
 import {
   CreateGroupRequestType,
   UpdateGroupRequestType,
@@ -95,7 +96,7 @@ class GroupService {
           }
         ))
     ) {
-      userGroupRelation = UserGroupRelation.INCOMING_REQUEST;
+      userGroupRelation = UserGroupRelation.OUTGOING_REQUEST;
     }
 
     const adminObject = await userRepository.getUserById(admin, {
@@ -104,11 +105,25 @@ class GroupService {
       first_name: 1,
       username: 1,
       avatar: 1,
+      friends: 1,
     });
+
+    const sender = await userRepository.getUserById(senderId, { friends: 1 });
+    const mutualFriendCount = await userService.countMutualFriends(
+      adminObject?.friends,
+      sender?.friends
+    );
 
     return {
       ...rest,
-      admin: adminObject,
+      admin: {
+        _id: adminObject?._id,
+        last_name: adminObject?.last_name,
+        first_name: adminObject?.first_name,
+        username: adminObject?.username,
+        avatar: adminObject?.avatar,
+        mutualFriendCount,
+      },
       memberCount: members.length,
       userGroupRelation,
       groupJoinRequest: groupJoinRequest,
@@ -126,7 +141,12 @@ class GroupService {
   //   await groupRepository.removeGroupById(groupId);
   // }
 
-  public async getGroupMembers(senderId: string, groupId: string) {
+  public async getGroupMembers(
+    senderId: string,
+    groupId: string,
+    role: UserRole,
+    paginationQuery: PaginationQueryType
+  ) {
     const group = await groupRepository.findGroupById(groupId, {
       members: 1,
       visibility_level: 1,
@@ -146,17 +166,36 @@ class GroupService {
      * user can view the members of the group if
      * 1. the group is public
      * 2. the group is private but the user is a member of the group (admin is also a member)
+     * 3. The user is the site admin
      */
 
     const canViewMembers =
       group.visibility_level === GroupVisibilityLevel.PUBLIC ||
-      group.members.some((member) => member.equals(senderId));
+      group.members.some((member) => member.equals(senderId)) ||
+      role === UserRole.ADMIN;
 
     if (!canViewMembers) {
       throw new ApiError(ApiErrorCodes.GROUP_MEMBERS_NOT_VISIBLE);
     }
-    const groupMembers = await groupRepository.getGroupMembers(groupId);
-    return groupMembers;
+    const groupMembers = await groupRepository.getGroupMembers(
+      groupId,
+      Number(paginationQuery.limit),
+      paginationQuery.afterId
+    );
+    const sender = await userRepository.getUserById(senderId, { friends: 1 });
+    return await Promise.all(
+      groupMembers.map(async (member) => {
+        const { friends, ...rest } = member;
+        const mutualFriendCount = await userService.countMutualFriends(
+          sender?.friends,
+          friends
+        );
+        return {
+          ...rest,
+          mutualFriendCount,
+        };
+      })
+    );
   }
 
   public async sendGroupJoinRequest(senderId: string, groupId: string) {

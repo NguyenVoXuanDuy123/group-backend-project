@@ -235,6 +235,7 @@ class PostRepository {
       },
       {
         $project: {
+          // if visibility level is group, we need to populate group details
           group: {
             $cond: {
               if: {
