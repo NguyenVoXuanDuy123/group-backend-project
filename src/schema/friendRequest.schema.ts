@@ -3,8 +3,8 @@ import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Request interface
 export interface IFriendRequest {
-  sender_id: Types.ObjectId;
-  receiver_id: Types.ObjectId;
+  sender: Types.ObjectId;
+  receiver: Types.ObjectId;
   status: FriendRequestStatus;
   created_at: Date;
   updated_at: Date;
@@ -15,8 +15,8 @@ export interface IFriendRequest {
 // Define the Request Schema
 const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
   {
-    sender_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
-    receiver_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    sender: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    receiver: { type: Schema.Types.ObjectId, ref: "users", required: true },
     status: {
       type: String,
       enum: FriendRequestStatus,
@@ -34,10 +34,10 @@ const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
 );
 
 // Create a compound index that improves the performance of queries getting friend requests by sender id and receiver id
-FriendRequestSchema.index({ sender_id: 1, receiver_id: 1 });
+FriendRequestSchema.index({ sender: 1, receiver: 1 });
 
 // Create a compound index that improves the performance of queries getting pending friend requests by receiver id
-FriendRequestSchema.index({ receiver_id: 1, status: 1 });
+FriendRequestSchema.index({ receiver: 1, status: 1 });
 
 // Create the Request model
 const FriendRequestModel: Model<IFriendRequest> = model<IFriendRequest>(

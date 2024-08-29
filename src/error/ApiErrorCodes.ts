@@ -352,7 +352,7 @@ class ApiErrorCodes {
     "Visibility level must be 'group' when creating a post in a group (when group ID is provided)."
   );
 
-  public static readonly GROUP_ID_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
+  public static readonly group_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
     new ApiErrorCodes(
       8003,
       HttpStatusCodes.BAD_REQUEST,

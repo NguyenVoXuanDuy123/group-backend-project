@@ -3,8 +3,8 @@ import { model, Model, Schema, Types } from "mongoose";
 
 // Define the GroupJoinRequest interface
 interface IGroupJoinRequest {
-  user_id: Types.ObjectId;
-  group_id: Types.ObjectId;
+  user: Types.ObjectId;
+  group: Types.ObjectId;
   status: GroupJoinRequestStatus;
   created_at: Date;
   updated_at: Date;
@@ -13,8 +13,8 @@ interface IGroupJoinRequest {
 // Define the GroupJoinRequest Schema
 const GroupJoinRequestSchema: Schema<IGroupJoinRequest> = new Schema(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: "users" },
-    group_id: { type: Schema.Types.ObjectId, ref: "groups" },
+    user: { type: Schema.Types.ObjectId, ref: "users" },
+    group: { type: Schema.Types.ObjectId, ref: "groups" },
     status: {
       type: String,
       enum: GroupJoinRequestStatus,

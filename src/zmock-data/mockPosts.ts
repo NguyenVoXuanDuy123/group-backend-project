@@ -11,7 +11,8 @@ import { MOCK_IMAGE_DIR, SEED } from "@src/constant/dir";
 
 export const mockPosts = async (minPost: number, maxPost: number) => {
   console.log("start mockPosts");
-  faker.seed(SEED);
+
+  faker.seed(SEED + 3);
   const posts = [];
   const users = await UserModel.find();
   const data = fs.readFileSync(MOCK_IMAGE_DIR, "utf-8");
@@ -59,6 +60,7 @@ export const mockPosts = async (minPost: number, maxPost: number) => {
 
       posts.push(
         new PostModel({
+          _id: faker.database.mongodbObjectId(),
           content: faker.lorem.paragraph(),
           author: user._id,
           images: images,

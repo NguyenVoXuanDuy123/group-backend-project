@@ -13,7 +13,7 @@ import { mockUsers } from "@src/zmock-data/mockUsers";
 const mockData = async () => {
   // await downloadAndSaveImagesAsJson(100);
   // await downloadAndSaveAvatarsAsJson(100);
-  //create 100 users
+  // create 100 users
   await mockUsers(100);
   //create 50 groups, each group has 30-50 members
   await mockGroups(50);

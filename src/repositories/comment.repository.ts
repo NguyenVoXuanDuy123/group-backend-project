@@ -3,6 +3,7 @@ import CommentModel, {
   IComment,
   ICommentEditHistory,
 } from "@src/schema/comment.schema";
+import ReactionModel from "@src/schema/reaction.schema";
 
 import { ProjectionType, Types } from "mongoose";
 
@@ -39,6 +40,7 @@ class CommentRepository {
   }
 
   public async deleteCommentById(commentId: string | Types.ObjectId) {
+    await ReactionModel.deleteMany({ target: commentId });
     return await CommentModel.findByIdAndDelete(commentId).lean();
   }
 

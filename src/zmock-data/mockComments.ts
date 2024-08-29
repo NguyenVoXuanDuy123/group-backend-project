@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { SEED } from "@src/constant/dir";
 import { PostVisibilityLevel } from "@src/enums/post.enum";
 import CommentModel, { IComment } from "@src/schema/comment.schema";
 
@@ -12,7 +13,7 @@ export const mockComments = async () => {
   const users = await UserModel.find();
   const comments: (Document<unknown, object, IComment> &
     IComment & { _id: Types.ObjectId })[] = [];
-
+  faker.seed(SEED + 4);
   for (const user of users) {
     // Get all friends' posts
     const friendPosts = await PostModel.find({
@@ -33,6 +34,7 @@ export const mockComments = async () => {
 
         comments.push(
           new CommentModel({
+            _id: faker.database.mongodbObjectId(),
             content: faker.lorem.sentence(),
             author: user._id,
             post: post._id,
@@ -55,6 +57,7 @@ export const mockComments = async () => {
 
       comments.push(
         new CommentModel({
+          _id: faker.database.mongodbObjectId(),
           content: faker.lorem.sentence(),
           author: user._id,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access

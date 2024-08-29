@@ -4,6 +4,7 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateDate } from "@src/helpers/validation";
 import CommentModel from "@src/schema/comment.schema";
 import PostModel, { IPostEditHistory, IPost } from "@src/schema/post.schema";
+import ReactionModel from "@src/schema/reaction.schema";
 import UserModel from "@src/schema/user.schema";
 import { ProjectionType, Types } from "mongoose";
 
@@ -42,6 +43,9 @@ class PostRepository {
   public async deletePostById(postId: string | Types.ObjectId) {
     // Delete all comments on the post
     await CommentModel.deleteMany({ post: postId });
+
+    // Delete all reactions on the post
+    await ReactionModel.deleteMany({ target: postId });
 
     // Delete the post
     return await PostModel.findByIdAndDelete(postId);

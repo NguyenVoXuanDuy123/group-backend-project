@@ -15,8 +15,8 @@ class FriendRequestRepository {
 
   public async createFriendRequest(senderId: string, receiverId: string) {
     return await FriendRequestModel.create({
-      sender_id: senderId,
-      receiver_id: receiverId,
+      sender: senderId,
+      receiver: receiverId,
     });
   }
 
@@ -44,8 +44,8 @@ class FriendRequestRepository {
   ) {
     return await FriendRequestModel.findOne(
       {
-        sender_id: senderId,
-        receiver_id: receiverId,
+        sender: senderId,
+        receiver: receiverId,
         status: FriendRequestStatus.PENDING,
       },
       projection
@@ -56,14 +56,14 @@ class FriendRequestRepository {
     return await FriendRequestModel.aggregate<FriendRequestDetailType>([
       {
         $match: {
-          receiver_id: new Types.ObjectId(receiverId),
+          receiver: new Types.ObjectId(receiverId),
           status: FriendRequestStatus.PENDING,
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "sender_id",
+          localField: "sender",
           foreignField: "_id",
           as: "senderDetails",
         },

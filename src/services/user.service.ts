@@ -75,8 +75,8 @@ class UserService {
           {
             __v: 0,
             updated_at: 0,
-            receiver_id: 0,
-            sender_id: 0,
+            receiver: 0,
+            sender: 0,
           }
         ))
     ) {
@@ -373,8 +373,7 @@ class UserService {
     // if either friends1 or friends2 is undefined, return 0
     if (!friends1) return 0;
     if (!friends2) return 0;
-    // console.log("friends1", friends1);
-    // console.log("friends2", friends2);
+
     // use literal object to store friends1
     let mutualFriendCount = 0;
     const friendsMap: { [key: string]: boolean } = {};

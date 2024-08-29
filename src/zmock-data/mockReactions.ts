@@ -17,7 +17,7 @@ import { Document, Types } from "mongoose";
 
 export const mockReactions = async () => {
   console.log("Mocking reactions...");
-  faker.seed(SEED);
+  faker.seed(SEED + 5);
   const users = await UserModel.find();
   const reactions: (Document<unknown, object, IReaction> &
     IReaction &
@@ -25,8 +25,8 @@ export const mockReactions = async () => {
   const reactionTypes = [
     ...Array(40).fill(ReactionType.LIKE), // 40% like
     ...Array(40).fill(ReactionType.LOVE), // 40% love
-    ...Array(10).fill(ReactionType.HAHA), // 10% haha
-    ...Array(10).fill(ReactionType.ANGRY), // 10% angry
+    ...Array(15).fill(ReactionType.HAHA), // 15% haha
+    ...Array(5).fill(ReactionType.ANGRY), // 5% angry
   ];
 
   for (const user of users) {
@@ -51,12 +51,13 @@ export const mockReactions = async () => {
       });
 
       if (!existingReaction) {
-        // 80% that user will react to the post
-        if (faker.number.float({ min: 0, max: 1 }) < 0.8) {
+        // 70% that user will react to the post
+        if (faker.number.float({ min: 0, max: 1 }) < 0.7) {
           const randomReaction = faker.helpers.arrayElement(reactionTypes);
           const date = randomDate(post.created_at);
 
           const reaction = new ReactionModel({
+            _id: faker.database.mongodbObjectId(),
             type: randomReaction,
             user: user._id,
             target: post._id,
@@ -88,6 +89,7 @@ export const mockReactions = async () => {
                 const date = randomDate(comment.created_at);
 
                 const commentReaction = new ReactionModel({
+                  _id: faker.database.mongodbObjectId(),
                   type: randomReaction,
                   user: user._id,
                   target: comment._id,
@@ -123,6 +125,7 @@ export const mockReactions = async () => {
         const date = randomDate(post.created_at);
 
         const reaction = new ReactionModel({
+          _id: faker.database.mongodbObjectId(),
           type: randomReaction,
           user: user._id,
           target: post._id,

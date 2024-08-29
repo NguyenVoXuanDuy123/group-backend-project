@@ -13,31 +13,31 @@ class GroupJoinRequestRepository {
     return await GroupJoinRequestModel.findById(requestId, projection).lean();
   }
   public async createGroupJoinRequest(
-    sender_id: string | Types.ObjectId,
-    group_id: string | Types.ObjectId
+    sender: string | Types.ObjectId,
+    group: string | Types.ObjectId
   ) {
-    return await GroupJoinRequestModel.create({ user_id: sender_id, group_id });
+    return await GroupJoinRequestModel.create({ user: sender, group });
   }
 
   public async checkPendingGroupJoinRequestExists(
-    sender_id: string | Types.ObjectId,
-    group_id: string | Types.ObjectId
+    sender: string | Types.ObjectId,
+    group: string | Types.ObjectId
   ) {
     return !!(await this.getPendingGroupJoinRequestBySenderIdAndGroupId(
-      sender_id,
-      group_id
+      sender,
+      group
     ));
   }
 
   public async getPendingGroupJoinRequestBySenderIdAndGroupId(
-    sender_id: string | Types.ObjectId,
-    group_id: string | Types.ObjectId,
+    sender: string | Types.ObjectId,
+    group: string | Types.ObjectId,
     projection: ProjectionType<IGroup> = {}
   ) {
     return await GroupJoinRequestModel.findOne(
       {
-        user_id: sender_id,
-        group_id,
+        user: sender,
+        group,
         status: GroupJoinRequestStatus.PENDING,
       },
       projection
@@ -58,31 +58,32 @@ class GroupJoinRequestRepository {
     return await GroupJoinRequestModel.aggregate<GroupJoinRequestDetailType>([
       {
         $match: {
-          group_id: new Types.ObjectId(groupId),
+          group: new Types.ObjectId(groupId),
           status: GroupJoinRequestStatus.PENDING,
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "user_id",
+          localField: "user",
           foreignField: "_id",
-          as: "user",
+          as: "senderDetail",
         },
       },
       {
-        $unwind: "$user",
+        $unwind: "$senderDetail",
       },
       {
         $project: {
-          _id: 1,
-          status: 1,
-          user: {
-            _id: 1,
-            first_name: 1,
-            last_name: 1,
-            username: 1,
-            avatar: 1,
+          _id: "$_id",
+          status: "$status",
+          created_at: "$created_at",
+          senderDetail: {
+            _id: "$senderDetail._id",
+            first_name: "$senderDetail.first_name",
+            last_name: "$senderDetail.last_name",
+            username: "$senderDetail.username",
+            avatar: "$senderDetail.avatar",
           },
         },
       },

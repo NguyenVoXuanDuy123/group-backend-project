@@ -9,7 +9,6 @@ class ReactionService {
     target_type: ReactionTargetType,
     type: ReactionType
   ) {
-    console.log(type);
     return await reactionRepository.upsertReaction(
       postID,
       userID,

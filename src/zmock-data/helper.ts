@@ -30,7 +30,8 @@ export const sanitizeUsername = (username: string): string => {
 const writeFile = promisify(fs.writeFile);
 
 export const downloadAndSaveImage = async (
-  imageUrl: string
+  imageUrl: string,
+  fileName: string
 ): Promise<string | null> => {
   try {
     const savePath = UPLOAD_DIR;
@@ -47,7 +48,7 @@ export const downloadAndSaveImage = async (
     const extension = contentType?.split("/")[1] || "jpg"; // Default to jpg if type is unknown
     // Create a complete path to save the image
 
-    const fileName = `image_${Date.now()}.${extension}`;
+    fileName = `${fileName}.${extension}`;
     const fullPath = path.join(savePath, fileName);
 
     // Save the image to the specified path
@@ -64,7 +65,7 @@ export const downloadAndSaveImagesAsJson = async (numberOfImages: number) => {
   const images = [];
   const imageUrl = "https://random.imagecdn.app/1920/1080";
   for (let i = 0; i < numberOfImages; i++) {
-    const imagePath = await downloadAndSaveImage(imageUrl);
+    const imagePath = await downloadAndSaveImage(imageUrl, `image-${i}`);
     if (imagePath) {
       images.push(imagePath);
     }
@@ -85,7 +86,10 @@ export const downloadAndSaveAvatarsAsJson = async (numberOfAvatars: number) => {
   const avatarUrl = "https://avatar.iran.liara.run/public/";
   console.log("start downloading avatars");
   for (let i = 0; i < numberOfAvatars; i++) {
-    const avatarPath = await downloadAndSaveImage(avatarUrl + ((i % 100) + 1));
+    const avatarPath = await downloadAndSaveImage(
+      avatarUrl + ((i % 100) + 1),
+      `avatar-${i}`
+    );
     if (avatarPath) {
       avatars.push(avatarPath);
     }

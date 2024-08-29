@@ -8,7 +8,7 @@ import { randomDate } from "@src/zmock-data/helper";
 export const mockGroups = async (groupCount: number) => {
   console.log(`start creating ${groupCount} groups`);
   const groups = [];
-  faker.seed(SEED);
+  faker.seed(SEED + 2);
   const users = await UserModel.find();
   for (let i = 0; i < groupCount; i++) {
     const memberCount = faker.number.int({ min: 30, max: 50 });
@@ -22,6 +22,7 @@ export const mockGroups = async (groupCount: number) => {
     const groupMembers = members.map((member) => member._id);
 
     const group = new GroupModel({
+      _id: faker.database.mongodbObjectId(),
       name: faker.company.name(),
       description: faker.lorem.sentence(),
       created_at: date,
@@ -46,7 +47,7 @@ export const mockGroups = async (groupCount: number) => {
     await group.save();
   }
 
-  return groups;
   console.log(`created ${groupCount} groups`);
+  return groups;
   //   return await GroupModel.insertMany(groups);
 };

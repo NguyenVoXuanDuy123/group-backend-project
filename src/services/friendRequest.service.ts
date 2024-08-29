@@ -58,15 +58,15 @@ class FriendRequestService {
 
     // check if someone outside the friend request is trying to change the status
     if (
-      !friendRequest.sender_id.equals(senderId) &&
-      !friendRequest.receiver_id.equals(senderId)
+      !friendRequest.sender.equals(senderId) &&
+      !friendRequest.receiver.equals(senderId)
     ) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
     //check if the user is the sender of the friend request and they are not trying to cancel the request
     if (
-      friendRequest.sender_id.equals(senderId) &&
+      friendRequest.sender.equals(senderId) &&
       status !== FriendRequestStatus.CANCELLED
     ) {
       throw new ApiError(ApiErrorCodes.CHANGE_STATUS_FRIEND_REQUEST_FORBIDDEN);
@@ -74,7 +74,7 @@ class FriendRequestService {
 
     //check if the user is the receiver of the friend request and they are not trying to accept or reject the request
     if (
-      friendRequest.receiver_id.equals(senderId) &&
+      friendRequest.receiver.equals(senderId) &&
       status !== FriendRequestStatus.ACCEPTED &&
       status !== FriendRequestStatus.REJECTED
     ) {
@@ -93,8 +93,8 @@ class FriendRequestService {
 
     //If the status is accepted, add the sender to the receiver's friend list and vice versa
     if (status === FriendRequestStatus.ACCEPTED) {
-      const senderId = friendRequest.sender_id;
-      const receiverId = friendRequest.receiver_id;
+      const senderId = friendRequest.sender;
+      const receiverId = friendRequest.receiver;
 
       userRepository.addFriend(senderId, receiverId);
     }

@@ -9,6 +9,14 @@ import groupService from "@src/services/group.service";
 
 class GroupJoinRequestService {
   public async createGroupJoinRequest(senderId: string, groupId: string) {
+    const group = await groupRepository.findGroupById(groupId, {
+      admin: 1,
+      members: 1,
+      status: 1,
+    });
+    if (!group) {
+      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
+    }
     // Check if the sender is trying to send a group request which is already sent and pending
     if (
       await groupJoinRequestRepository.checkPendingGroupJoinRequestExists(
@@ -19,23 +27,17 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_ALREADY_SENT);
     }
 
-    const group = await groupRepository.findGroupById(groupId, {
-      admin: 1,
-      members: 1,
-      status: 1,
-    });
-    if (!group) {
-      throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
-    }
-
+    // Check if the group is not approved, then the user cannot send a group request
     if (group.status !== GroupStatus.APPROVED) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_APPROVED);
     }
 
+    // Check if the sender is the admin of the group, then they cannot send a group request
     if (group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_ADMIN_CANNOT_SEND_GROUP_REQUEST);
     }
 
+    // Check if the sender is already a member of the group, then they cannot send a group request
     if (group.members.some((member) => member.equals(senderId))) {
       throw new ApiError(ApiErrorCodes.ALREADY_GROUP_MEMBER);
     }
@@ -66,13 +68,10 @@ class GroupJoinRequestService {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_REQUEST_STATUS);
     }
 
-    const group = await groupRepository.findGroupById(
-      groupJoinRequest.group_id,
-      {
-        admin: 1,
-        status: 1,
-      }
-    );
+    const group = await groupRepository.findGroupById(groupJoinRequest.group, {
+      admin: 1,
+      status: 1,
+    });
 
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
@@ -84,7 +83,7 @@ class GroupJoinRequestService {
 
     // Check if someone outside this request is trying to change the status
     if (
-      !groupJoinRequest.user_id.equals(senderId) &&
+      !groupJoinRequest.user.equals(senderId) &&
       !group.admin.equals(senderId)
     ) {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
@@ -92,7 +91,7 @@ class GroupJoinRequestService {
 
     // Check if the sender is the user who sent the request and they want to accept or reject the request
     if (
-      groupJoinRequest.user_id.equals(senderId) &&
+      groupJoinRequest.user.equals(senderId) &&
       status !== GroupJoinRequestStatus.CANCELLED
     ) {
       throw new ApiError(
@@ -112,8 +111,8 @@ class GroupJoinRequestService {
 
     if (status === GroupJoinRequestStatus.ACCEPTED) {
       await groupService.addMemberToGroup(
-        groupJoinRequest.group_id,
-        groupJoinRequest.user_id
+        groupJoinRequest.group,
+        groupJoinRequest.user
       );
     }
 
