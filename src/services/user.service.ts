@@ -116,6 +116,7 @@ class UserService {
     await userRepository.updateUserById(
       _id,
       removeNullValues({
+        avatar: updateMeRequest.avatar,
         first_name: updateMeRequest.firstName,
         last_name: updateMeRequest.lastName,
         bio: updateMeRequest.bio,

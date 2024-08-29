@@ -13,6 +13,7 @@ export type UpdateMeRequestType = {
   firstName?: string;
   lastName?: string;
   bio?: string;
+  avatar?: string;
 };
 
 export type SendFriendRequestType = {

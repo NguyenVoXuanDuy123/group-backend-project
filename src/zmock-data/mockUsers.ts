@@ -106,16 +106,21 @@ export const mockUsers = async (userCount: number) => {
     const userToSentRequests = await UserModel.find({
       _id: { $nin: user.friends },
     });
+
     await Promise.all(
-      userToSentRequests.slice(0, friendRequestNumber).map(async (friend) =>
-        new FriendRequestModel({
+      userToSentRequests.slice(0, friendRequestNumber).map(async (friend) => {
+        if (friend._id.equals(user._id)) {
+          return;
+        }
+
+        return new FriendRequestModel({
           id: faker.database.mongodbObjectId(),
           sender: user._id,
           receiver: friend._id,
           status: FriendRequestStatus.PENDING,
           created_at: randomDate(maxDate(user.created_at, friend.created_at)),
-        }).save()
-      )
+        }).save();
+      })
     );
   }
   console.log(`finished sending friend requests`);
