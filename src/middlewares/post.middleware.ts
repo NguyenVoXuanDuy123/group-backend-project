@@ -31,7 +31,7 @@ export const createPostValidator = (
   if (visibilityLevel === PostVisibilityLevel.GROUP) {
     if (!groupId) {
       throw new ApiError(
-        ApiErrorCodes.group_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP
+        ApiErrorCodes.GROUP_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP
       );
     }
   }

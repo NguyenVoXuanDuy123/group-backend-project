@@ -57,9 +57,16 @@ class GroupService {
       // if the sender is not the admin of the group, they cannot update the group
       throw new ApiError(ApiErrorCodes.UPDATE_GROUP_FORBIDDEN);
     }
+
+    const updatedGroup: Partial<IGroup> = {
+      description: updateGroupJoinRequest.description,
+      name: updateGroupJoinRequest.name,
+      visibility_level: updateGroupJoinRequest.visibilityLevel,
+    };
+
     await groupRepository.updateGroupById(
       groupId,
-      removeNullValues(updateGroupJoinRequest)
+      removeNullValues(updatedGroup)
     );
   }
 

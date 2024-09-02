@@ -125,12 +125,11 @@ class CommentService {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     /**
-     * sender can only delete comment if:
-     * 1. sender is the author of the comment
-     * 2. sender is the author of the post
-     * 3. sender is the admin of the group where the comment is posted
-     * 4. sender is an site admin
-     *
+     * A user (sender) can only delete a comment if:
+     * 1. The sender is the author of the comment.
+     * 2. The sender is the author of the post containing the comment.
+     * 3. The sender is an admin of the group where the comment is posted.
+     * 4. The sender is a site admin.
      */
 
     // site admin and author of the comment can delete the comment

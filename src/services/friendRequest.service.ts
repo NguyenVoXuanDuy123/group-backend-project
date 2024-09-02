@@ -64,19 +64,19 @@ class FriendRequestService {
       throw new ApiError(ApiErrorCodes.FORBIDDEN);
     }
 
-    //check if the user is the sender of the friend request and they are not trying to cancel the request
-    if (
-      friendRequest.sender.equals(senderId) &&
-      status !== FriendRequestStatus.CANCELLED
-    ) {
-      throw new ApiError(ApiErrorCodes.CHANGE_STATUS_FRIEND_REQUEST_FORBIDDEN);
-    }
-
     //check if the user is the receiver of the friend request and they are not trying to accept or reject the request
     if (
       friendRequest.receiver.equals(senderId) &&
       status !== FriendRequestStatus.ACCEPTED &&
       status !== FriendRequestStatus.REJECTED
+    ) {
+      throw new ApiError(ApiErrorCodes.CHANGE_STATUS_FRIEND_REQUEST_FORBIDDEN);
+    }
+
+    //check if the user is the sender of the friend request and they are not trying to cancel the request
+    if (
+      friendRequest.sender.equals(senderId) &&
+      status !== FriendRequestStatus.CANCELLED
     ) {
       throw new ApiError(ApiErrorCodes.CHANGE_STATUS_FRIEND_REQUEST_FORBIDDEN);
     }

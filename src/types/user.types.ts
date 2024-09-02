@@ -44,8 +44,7 @@ export type GroupDetailType = {
   _id: string;
   name: string;
   description: string;
-  avatar?: string;
-  visiblity_level: GroupVisibilityLevel;
+  visibility_level: GroupVisibilityLevel;
   members: Types.ObjectId[];
 };
 

@@ -33,10 +33,10 @@ class PostRepository {
 
   public async pushPostHistory(
     postId: string | Types.ObjectId,
-    edit_history: Partial<IPostEditHistory>
+    editHistory: Partial<IPostEditHistory>
   ) {
     return await PostModel.findByIdAndUpdate(postId, {
-      $push: { edit_history },
+      $push: { edit_history: editHistory },
     });
   }
 
@@ -85,7 +85,7 @@ class PostRepository {
               $and: [
                 {
                   author: {
-                    $in: [friendIds, user._id],
+                    $in: [...friendIds, user._id],
                   },
                   visibility_level: {
                     $ne: "group",
@@ -154,6 +154,7 @@ class PostRepository {
               else: {
                 name: "$group.name",
                 _id: "$group._id",
+                admin: "$group.admin",
               },
             },
           },
@@ -188,11 +189,6 @@ class PostRepository {
       validateDate(beforeDate);
     }
 
-    // Default limit is 10
-    if (!limit) {
-      limit = 10;
-    }
-
     const posts = await PostModel.aggregate<Record<string, never>>([
       {
         $match: {
@@ -222,7 +218,7 @@ class PostRepository {
         },
       },
       {
-        $limit: limit,
+        $limit: limit || 10,
       },
       {
         $lookup: {
@@ -239,19 +235,6 @@ class PostRepository {
       },
       {
         $project: {
-          // if visibility level is group, we need to populate group details
-          group: {
-            $cond: {
-              if: {
-                $eq: ["$group", null],
-              },
-              then: null,
-              else: {
-                name: "$group.name",
-                _id: "$group._id",
-              },
-            },
-          },
           author: {
             _id: 1,
             first_name: 1,

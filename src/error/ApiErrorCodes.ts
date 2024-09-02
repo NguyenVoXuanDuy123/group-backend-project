@@ -95,7 +95,7 @@ class ApiErrorCodes {
   public static readonly USER_BANNED = new ApiErrorCodes(
     2008,
     HttpStatusCodes.FORBIDDEN,
-    "User is banned"
+    "All actions are disabled for this user because the user is banned."
   );
 
   public static readonly ADMIN_ROLE_REQUIRED = new ApiErrorCodes(
@@ -352,7 +352,7 @@ class ApiErrorCodes {
     "Visibility level must be 'group' when creating a post in a group (when group ID is provided)."
   );
 
-  public static readonly group_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
+  public static readonly GROUP_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
     new ApiErrorCodes(
       8003,
       HttpStatusCodes.BAD_REQUEST,

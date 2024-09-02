@@ -47,12 +47,15 @@ class GroupRepository {
       members: new Types.ObjectId(userId),
       status: GroupStatus.APPROVED,
     };
+
     if (groupRole === GroupRole.ADMIN) {
       query = {
         admin: new Types.ObjectId(userId),
         status: status || GroupStatus.APPROVED,
       };
     }
+
+    console.log(query);
 
     const groups = await GroupModel.aggregate<GroupDetailType>([
       { $match: query },
@@ -87,17 +90,21 @@ class GroupRepository {
     limit?: number,
     afterId?: string
   ) {
+    console.log(limit);
     return await GroupModel.aggregate<GroupMemberDetailType>([
       { $match: { _id: new Types.ObjectId(groupId) } },
       { $unwind: { path: "$members", includeArrayIndex: "index" } },
-      { $sort: { members: 1 } },
-      { $limit: limit || 10 },
       {
         $match: {
           // exclude admin from the list, admin always has index 0
           index: {
             $ne: 0,
           },
+        },
+      },
+      { $sort: { members: 1 } },
+      {
+        $match: {
           members: {
             $gt: afterId
               ? new Types.ObjectId(afterId)
@@ -106,6 +113,7 @@ class GroupRepository {
           },
         },
       },
+      { $limit: limit || 10 },
       {
         $lookup: {
           from: "users",
