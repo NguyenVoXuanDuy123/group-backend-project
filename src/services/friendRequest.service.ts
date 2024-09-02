@@ -104,10 +104,16 @@ class FriendRequestService {
     return friendRequestRepository.getFriendRequestById(requestId);
   }
 
-  public async getMyPendingReceivedFriendRequests(senderId: string) {
+  public async getMyPendingReceivedFriendRequests(
+    senderId: string,
+    beforeDate?: string,
+    limit?: number
+  ) {
     const friendRequests =
       await friendRequestRepository.getMyPendingReceivedFriendRequests(
-        senderId
+        senderId,
+        beforeDate,
+        limit
       );
 
     // Get the sender's detail and count the mutual friends

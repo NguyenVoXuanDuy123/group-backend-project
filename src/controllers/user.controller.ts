@@ -152,7 +152,8 @@ class UserController {
   ) => {
     const { _id } = req.user as UserSessionType;
     const friendRequests = await userService.getMyPendingReceivedFriendRequests(
-      _id
+      _id,
+      req.query as PaginationQueryType
     );
 
     res.status(HttpStatusCodes.OK).json({

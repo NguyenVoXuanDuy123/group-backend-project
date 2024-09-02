@@ -1,4 +1,5 @@
 import { FriendRequestStatus } from "@src/enums/user.enum";
+import { validateDate } from "@src/helpers/validation";
 import FriendRequestModel, {
   IFriendRequest,
 } from "@src/schema/friendRequest.schema";
@@ -52,14 +53,26 @@ class FriendRequestRepository {
     ).lean();
   }
 
-  public async getMyPendingReceivedFriendRequests(receiverId: string) {
+  public async getMyPendingReceivedFriendRequests(
+    receiverId: string,
+    beforeDate?: string,
+    limit?: number
+  ) {
+    //if date is not valid, method below will throw an error
+    if (beforeDate) {
+      validateDate(beforeDate);
+    }
+
     return await FriendRequestModel.aggregate<FriendRequestDetailType>([
       {
         $match: {
           receiver: new Types.ObjectId(receiverId),
           status: FriendRequestStatus.PENDING,
+          created_at: { $lt: beforeDate ? new Date(beforeDate) : new Date() },
         },
       },
+      { $sort: { created_at: -1 } },
+      { $limit: limit || 10 },
       {
         $lookup: {
           from: "users",

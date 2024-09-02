@@ -208,9 +208,14 @@ class UserService {
     );
   }
 
-  public async getMyPendingReceivedFriendRequests(senderId: string) {
+  public async getMyPendingReceivedFriendRequests(
+    senderId: string,
+    paginationQuery: PaginationQueryType
+  ) {
     return await friendRequestService.getMyPendingReceivedFriendRequests(
-      senderId
+      senderId,
+      paginationQuery.beforeDate,
+      Number(paginationQuery.limit)
     );
   }
   public async getGroupsByUserId(
