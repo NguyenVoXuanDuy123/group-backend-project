@@ -1,3 +1,4 @@
+import { NotificationType } from "@src/enums/notification.enums";
 import {
   PostVisibilityLevel,
   ReactionTargetType,
@@ -14,6 +15,7 @@ import postRepository from "@src/repositories/post.repository";
 import reactionRepository from "@src/repositories/reaction.repository";
 import userRepository from "@src/repositories/user.repository";
 import { IComment } from "@src/schema/comment.schema";
+import notificationService from "@src/services/notification.service";
 import postService from "@src/services/post.service";
 import reactionService from "@src/services/reaction.service";
 import {
@@ -35,7 +37,17 @@ class CommentService {
       post: new Types.ObjectId(postId),
     };
 
+    const post = await postRepository.findPostById(postId, { author: 1 });
+
     const { _id } = await commentRepository.createComment(comment);
+
+    // send notification to the author of the post
+    await notificationService.pushNotification({
+      sender: new Types.ObjectId(senderId),
+      receiver: post!.author,
+      type: NotificationType.COMMENT,
+      relatedEntity: _id,
+    });
 
     return await this.getCommentById(_id, senderId);
   }
@@ -60,7 +72,7 @@ class CommentService {
     }
 
     const { reactionCount, reactionSummary, userReaction } =
-      await postService.getPostOrCommentInfo(comment.post, senderId);
+      await postService.getPostOrCommentInfo(comment._id, senderId);
 
     return {
       _id: comment._id.toHexString(),

@@ -1,4 +1,5 @@
 import { validateDate } from "@src/helpers/validation";
+import notificationRepository from "@src/repositories/notification.repository";
 import CommentModel, {
   IComment,
   ICommentEditHistory,
@@ -41,6 +42,8 @@ class CommentRepository {
 
   public async deleteCommentById(commentId: string | Types.ObjectId) {
     await ReactionModel.deleteMany({ target: commentId });
+    // Delete all notifications related to the comment
+    await notificationRepository.removeNotification(commentId);
     return await CommentModel.findByIdAndDelete(commentId).lean();
   }
 
