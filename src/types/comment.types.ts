@@ -15,15 +15,15 @@ export type UpdateCommentRequestType = {
 export type CommentDetailType = {
   _id: string;
   content: string;
-  edit_history: ICommentEditHistory[];
+  editHistory: ICommentEditHistory[];
   author: {
     _id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     avatar: string;
   };
   reactionCount: number;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 };

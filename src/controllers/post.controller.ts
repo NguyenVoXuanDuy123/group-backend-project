@@ -1,5 +1,4 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
-import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import postService from "@src/services/post.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import { CreateCommentRequestType } from "@src/types/comment.types";
@@ -20,7 +19,7 @@ class PostController {
     const post = await postService.createPost(_id, req.body);
     res.status(HttpStatusCodes.CREATED).json({
       message: "Create post successfully",
-      result: camelCaseifyWithDateConversion(post),
+      result: post,
     });
   };
 
@@ -30,7 +29,7 @@ class PostController {
     const post = await postService.getPostById(req.params.postId, _id, role);
     res.status(HttpStatusCodes.OK).json({
       message: "Get post successfully",
-      result: camelCaseifyWithDateConversion(post),
+      result: post,
     });
   };
 
@@ -49,7 +48,7 @@ class PostController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Update post successfully",
-      result: camelCaseifyWithDateConversion(post),
+      result: post,
     });
   };
 
@@ -73,7 +72,7 @@ class PostController {
       type
     );
 
-    if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
+    if (reaction.updatedAt.getTime() === reaction.createdAt.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
         message: "React " + type + " to post successfully",
       });
@@ -104,7 +103,7 @@ class PostController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get reactions from post successfully",
-      result: reactions.map(camelCaseifyWithDateConversion),
+      result: reactions,
     });
   };
 
@@ -120,7 +119,7 @@ class PostController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Create comment successfully",
-      result: camelCaseifyWithDateConversion(comment),
+      result: comment,
     });
   };
 
@@ -136,7 +135,7 @@ class PostController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get comments successfully",
-      result: comments.map(camelCaseifyWithDateConversion),
+      result: comments,
     });
   };
 }

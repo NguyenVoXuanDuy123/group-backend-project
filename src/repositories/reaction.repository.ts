@@ -7,7 +7,7 @@ class ReactionRepository {
   public async upsertReaction(
     targetId: string | Types.ObjectId,
     userId: string | Types.ObjectId,
-    target_type: ReactionTargetType,
+    targetType: ReactionTargetType,
     type: ReactionType
   ) {
     return await ReactionModel.findOneAndUpdate(
@@ -16,7 +16,7 @@ class ReactionRepository {
         user: userId,
       },
       {
-        target_type: target_type,
+        targetType: targetType,
         type: type,
       },
       {
@@ -36,7 +36,7 @@ class ReactionRepository {
     /**
      * We don't need to worry about the target type here
      * because the percentage of two targetId duplication is very low (almost 0)
-     * it is not worth to add target_type to the query, it will slow down the query
+     * it is not worth to add targetType to the query, it will slow down the query
      */
     const hahaCount = await ReactionModel.countDocuments({
       target: targetId,
@@ -66,12 +66,12 @@ class ReactionRepository {
   public async removeReaction(
     targetId: string | Types.ObjectId,
     userId: string | Types.ObjectId,
-    target_type: ReactionTargetType
+    targetType: ReactionTargetType
   ) {
     return await ReactionModel.findOneAndDelete({
       target: targetId,
       user: userId,
-      target_type,
+      targetType,
     });
   }
 
@@ -92,7 +92,7 @@ class ReactionRepository {
     /**
      * We don't need to worry about the target type here
      * because the percentage of two targetId duplication is very low (almost 0)
-     * it is not worth to add target_type to the query, it will slow down the query
+     * it is not worth to add targetType to the query, it will slow down the query
      */
     return await ReactionModel.findOne(
       {
@@ -110,7 +110,7 @@ class ReactionRepository {
     /**
      * We don't need to worry about the target type here
      * because the percentage of two targetId duplication is very low (almost 0)
-     * it is not worth to add target_type to the query, it will slow down the query
+     * it is not worth to add targetType to the query, it will slow down the query
      */
 
     return await ReactionModel.aggregate<ReactionDetailType>([
@@ -135,11 +135,11 @@ class ReactionRepository {
         $project: {
           _id: "$_id",
           type: "$type",
-          target_type: "$target_type",
+          targetType: "$targetType",
           user: {
             _id: "$user._id",
-            first_name: "$user.first_name",
-            last_name: "$user.last_name",
+            firstName: "$user.firstName",
+            lastName: "$user.lastName",
             avatar: "$user.avatar",
             username: "$user.username",
           },

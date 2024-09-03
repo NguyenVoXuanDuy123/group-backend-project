@@ -46,13 +46,11 @@ export const mockPosts = async (minPost: number, maxPost: number) => {
       }
 
       // Randomly choose the date of the post
-      // The date of the post should be after the user's created_at date
-      // and after the group's created_at date if the post is in a group
+      // The date of the post should be after the user's createdAt date
+      // and after the group's createdAt date if the post is in a group
 
       const groupObject = await GroupModel.findById(group);
-      const date = randomDate(
-        maxDate(user.created_at, groupObject?.created_at)
-      );
+      const date = randomDate(maxDate(user.createdAt, groupObject?.createdAt));
 
       const imageNumber = faker.number.int({ min: 0, max: 5 });
 
@@ -64,10 +62,10 @@ export const mockPosts = async (minPost: number, maxPost: number) => {
           content: faker.lorem.paragraph(),
           author: user._id,
           images: images,
-          visibility_level: visibilityLevel, // 'group' if posted in a group
+          visibilityLevel: visibilityLevel, // 'group' if posted in a group
           group: group,
-          created_at: date,
-          updated_at: date,
+          createdAt: date,
+          updatedAt: date,
         })
       );
     }

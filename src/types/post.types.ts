@@ -28,11 +28,11 @@ export type ReactToRequestType = {
 export type ReactionDetailType = {
   _id: string;
   type: ReactionType;
-  target_type: ReactionTargetType;
+  targetType: ReactionTargetType;
   user: {
     _id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     avatar: string;
   };

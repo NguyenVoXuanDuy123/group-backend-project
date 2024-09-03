@@ -34,7 +34,7 @@ class GroupService {
     const group: Partial<IGroup> = {
       description: createGroupJoinRequest.description,
       name: createGroupJoinRequest.name,
-      visibility_level: createGroupJoinRequest.visibilityLevel,
+      visibilityLevel: createGroupJoinRequest.visibilityLevel,
       admin: new Types.ObjectId(userId),
       members: [new Types.ObjectId(userId)],
     };
@@ -61,7 +61,7 @@ class GroupService {
     const updatedGroup: Partial<IGroup> = {
       description: updateGroupJoinRequest.description,
       name: updateGroupJoinRequest.name,
-      visibility_level: updateGroupJoinRequest.visibilityLevel,
+      visibilityLevel: updateGroupJoinRequest.visibilityLevel,
     };
 
     await groupRepository.updateGroupById(
@@ -99,7 +99,7 @@ class GroupService {
           groupId,
           {
             _id: 1,
-            created_at: 1,
+            createdAt: 1,
           }
         ))
     ) {
@@ -108,8 +108,8 @@ class GroupService {
 
     const adminObject = await userRepository.getUserById(admin, {
       _id: 1,
-      last_name: 1,
-      first_name: 1,
+      lastName: 1,
+      firstName: 1,
       username: 1,
       avatar: 1,
       friends: 1,
@@ -125,8 +125,8 @@ class GroupService {
       ...rest,
       admin: {
         _id: adminObject?._id,
-        last_name: adminObject?.last_name,
-        first_name: adminObject?.first_name,
+        lastName: adminObject?.lastName,
+        firstName: adminObject?.firstName,
         username: adminObject?.username,
         avatar: adminObject?.avatar,
         mutualFriendCount,
@@ -156,7 +156,7 @@ class GroupService {
   ) {
     const group = await groupRepository.findGroupById(groupId, {
       members: 1,
-      visibility_level: 1,
+      visibilityLevel: 1,
       status: 1,
     });
 
@@ -177,7 +177,7 @@ class GroupService {
      */
 
     const canViewMembers =
-      group.visibility_level === GroupVisibilityLevel.PUBLIC ||
+      group.visibilityLevel === GroupVisibilityLevel.PUBLIC ||
       group.members.some((member) => member.equals(senderId)) ||
       role === UserRole.ADMIN;
 
@@ -307,7 +307,7 @@ class GroupService {
   ) {
     const group = await groupRepository.findGroupById(groupId, {
       status: 1,
-      visibility_level: 1,
+      visibilityLevel: 1,
       members: 1,
     });
 
@@ -321,7 +321,7 @@ class GroupService {
 
     const canViewPosts =
       senderRole === UserRole.ADMIN ||
-      group.visibility_level === GroupVisibilityLevel.PUBLIC ||
+      group.visibilityLevel === GroupVisibilityLevel.PUBLIC ||
       group.members.some((member) => member.equals(senderId));
 
     if (!canViewPosts) {

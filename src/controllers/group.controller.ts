@@ -1,8 +1,5 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
-import {
-  camelCaseifyWithDateConversion,
-  TransformKeysToCamelCaseType,
-} from "@src/helpers/camelCaseifyWithDateConversion";
+
 import groupService from "@src/services/group.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import {
@@ -24,9 +21,7 @@ class GroupController {
     const group = await groupService.createGroup(_id, req.body);
     res.status(HttpStatusCodes.CREATED).json({
       message: "Group created successfully, waiting for approval",
-      result: camelCaseifyWithDateConversion(
-        group as unknown as TransformKeysToCamelCaseType
-      ),
+      result: group,
     });
   };
 
@@ -50,7 +45,7 @@ class GroupController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Group fetched successfully",
-      result: camelCaseifyWithDateConversion(group),
+      result: group,
     });
   };
 
@@ -74,7 +69,7 @@ class GroupController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Group members fetched successfully",
-      result: groupMembers.map(camelCaseifyWithDateConversion),
+      result: groupMembers,
     });
   };
 
@@ -88,7 +83,7 @@ class GroupController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Group request sent successfully",
-      result: camelCaseifyWithDateConversion(groupRequest),
+      result: groupRequest,
     });
   };
 
@@ -105,7 +100,7 @@ class GroupController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Group join requests fetched successfully",
-      result: groupJoinRequests.map(camelCaseifyWithDateConversion),
+      result: groupJoinRequests,
     });
   };
 
@@ -158,7 +153,7 @@ class GroupController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Group posts fetched successfully",
-      result: posts.map(camelCaseifyWithDateConversion),
+      result: posts,
     });
   };
 }

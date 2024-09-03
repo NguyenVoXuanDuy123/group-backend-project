@@ -7,7 +7,6 @@ import {
   UserSessionType,
 } from "@src/types/user.types";
 import { APIRequest, APIResponse } from "@src/types/api.types";
-import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import ApiError from "@src/error/ApiError";
@@ -22,7 +21,7 @@ class UserController {
     const user = await userService.getUserByIdOrUsername(_id, _id);
     res.status(HttpStatusCodes.OK).json({
       message: "Get me successfully",
-      result: camelCaseifyWithDateConversion(user),
+      result: user,
     });
   };
 
@@ -34,7 +33,7 @@ class UserController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get user successfully",
-      result: camelCaseifyWithDateConversion(user),
+      result: user,
     });
   };
 
@@ -85,7 +84,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Send friend request successfully",
-      result: camelCaseifyWithDateConversion(friendRequest),
+      result: friendRequest,
     });
   };
 
@@ -128,7 +127,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successfully",
-      result: friends.map(camelCaseifyWithDateConversion),
+      result: friends,
     });
   };
 
@@ -142,7 +141,7 @@ class UserController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get friends successfully",
-      result: friends.map(camelCaseifyWithDateConversion),
+      result: friends,
     });
   };
 
@@ -158,7 +157,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get friend requests successfully",
-      result: friendRequests.map(camelCaseifyWithDateConversion),
+      result: friendRequests,
     });
   };
 
@@ -175,7 +174,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successfully",
-      result: groups.map(camelCaseifyWithDateConversion),
+      result: groups,
     });
   };
 
@@ -189,7 +188,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get groups successfully",
-      result: groups.map(camelCaseifyWithDateConversion),
+      result: groups,
     });
   };
 
@@ -213,7 +212,7 @@ class UserController {
 
     res.status(HttpStatusCodes.OK).json({
       message: "Get user posts successfully",
-      result: posts.map(camelCaseifyWithDateConversion),
+      result: posts,
     });
   };
 
@@ -239,7 +238,7 @@ class UserController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get feeds successfully",
-      result: feeds.map(camelCaseifyWithDateConversion),
+      result: feeds,
     });
   };
 
@@ -256,7 +255,7 @@ class UserController {
     const user = await userService.getUserByIdOrUsername("", _id, username);
     res.status(HttpStatusCodes.OK).json({
       message: "Get user by username successfully",
-      result: camelCaseifyWithDateConversion(user),
+      result: user,
     });
   };
 }

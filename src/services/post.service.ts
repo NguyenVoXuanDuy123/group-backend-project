@@ -48,7 +48,7 @@ class PostService {
       group: createPostRequest.groupId
         ? new Types.ObjectId(createPostRequest.groupId)
         : null,
-      visibility_level: createPostRequest.visibilityLevel,
+      visibilityLevel: createPostRequest.visibilityLevel,
       content: createPostRequest.content,
       images: createPostRequest.images || [],
     };
@@ -75,7 +75,7 @@ class PostService {
     const { author: authorId, group: groupId, ...rest } = post;
 
     // check when visibility level is group
-    if (post.visibility_level === PostVisibilityLevel.GROUP) {
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
       if (!groupId) {
         // there is no way when a post has a group visibility level,
         // but group is null
@@ -83,7 +83,7 @@ class PostService {
       }
       group = await groupRepository.findGroupById(groupId, {
         name: 1,
-        visibility_level: 1,
+        visibilityLevel: 1,
         members: 1,
       });
 
@@ -94,7 +94,7 @@ class PostService {
       }
       /**
        *
-       * in case visibility_level = 'group'
+       * in case visibilityLevel = 'group'
        * user only can see the post if one of the following conditions is met:
        * 1. user role is site-admin
        * 2. group is public
@@ -104,7 +104,7 @@ class PostService {
       if (!isInternalCall) {
         const canSeePost =
           senderRole === UserRole.ADMIN ||
-          group.visibility_level === GroupVisibilityLevel.PUBLIC ||
+          group.visibilityLevel === GroupVisibilityLevel.PUBLIC ||
           group.members.some((member) => member.equals(senderId));
 
         if (!canSeePost) {
@@ -116,14 +116,14 @@ class PostService {
     // check when visibility level is friends
     const author = await userRepository.getUserById(authorId, {
       _id: 1,
-      first_name: 1,
-      last_name: 1,
+      firstName: 1,
+      lastName: 1,
       friends: 1,
       username: 1,
       avatar: 1,
     });
 
-    if (post.visibility_level === PostVisibilityLevel.FRIEND) {
+    if (post.visibilityLevel === PostVisibilityLevel.FRIEND) {
       if (!author) {
         // there is no way the post exists without an author
         throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
@@ -132,7 +132,7 @@ class PostService {
       let canSeePost = false;
 
       /**
-       * In case visibility_level = friend
+       * In case visibilityLevel = friend
        * user only can see the post if one of the following conditions is met:
        * 1. user role is site-admin
        * 2. user is the author of the post
@@ -165,8 +165,8 @@ class PostService {
       },
       author: author && {
         id: author._id,
-        first_name: author.first_name,
-        last_name: author.last_name,
+        firstName: author.firstName,
+        lastName: author.lastName,
         username: author.username,
         avatar: author.avatar,
       },
@@ -189,12 +189,12 @@ class PostService {
       author: 1,
       content: 1,
       images: 1,
-      visibility_level: 1,
+      visibilityLevel: 1,
     })) as IPost;
 
     //if the post visibility level is group, the visibility level cannot be changed
-    if (post.visibility_level === PostVisibilityLevel.GROUP) {
-      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
+      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_visibilityLevel);
     }
 
     // only the author of the post can update the post
@@ -210,7 +210,7 @@ class PostService {
       const postHistory: Partial<IPostEditHistory> = {
         content: post.content,
         images: post.images,
-        edited_at: new Date(),
+        editedAt: new Date(),
       };
 
       await postRepository.pushPostHistory(postID, postHistory);
@@ -221,7 +221,7 @@ class PostService {
       removeNullValues({
         content: updatePostRequest.content,
         images: updatePostRequest.images,
-        visibility_level: updatePostRequest.visibilityLevel,
+        visibilityLevel: updatePostRequest.visibilityLevel,
       })
     );
 
@@ -235,7 +235,7 @@ class PostService {
   ) {
     const post = await postRepository.findPostById(postID, {
       group: 1,
-      visibility_level: 1,
+      visibilityLevel: 1,
       author: 1,
     });
 
@@ -255,7 +255,7 @@ class PostService {
     }
 
     // if the post visibility level is group, admin of the group can delete the post
-    if (post.visibility_level === PostVisibilityLevel.GROUP) {
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
       if (!post.group) {
         // there is no way when a post has a group visibility level,
         // but group is null

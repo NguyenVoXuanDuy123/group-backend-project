@@ -32,10 +32,10 @@ class CommentRepository {
 
   public async pushCommentEditHistory(
     commentId: string | Types.ObjectId,
-    edit_history: Partial<ICommentEditHistory>
+    editHistory: Partial<ICommentEditHistory>
   ) {
     return await CommentModel.findByIdAndUpdate(commentId, {
-      $push: { edit_history },
+      $push: { editHistory },
     }).lean();
   }
 
@@ -65,10 +65,10 @@ class CommentRepository {
       {
         $match: {
           post: new Types.ObjectId(postId),
-          ...(beforeDate && { created_at: { $lt: new Date(beforeDate) } }),
+          ...(beforeDate && { createdAt: { $lt: new Date(beforeDate) } }),
         },
       },
-      { $sort: { created_at: -1 } },
+      { $sort: { createdAt: -1 } },
       { $limit: limit },
       {
         $lookup: {
@@ -83,13 +83,13 @@ class CommentRepository {
         $project: {
           "author._id": 1,
           "author.username": 1,
-          "author.first_name": 1,
-          "author.last_name": 1,
+          "author.firstName": 1,
+          "author.lastName": 1,
           "author.avatar": 1,
           content: 1,
-          created_at: 1,
-          edit_history: 1,
-          updated_at: 1,
+          createdAt: 1,
+          editHistory: 1,
+          updatedAt: 1,
         },
       },
       { $project: { __v: 0 } },

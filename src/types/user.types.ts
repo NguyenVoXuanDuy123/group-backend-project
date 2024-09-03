@@ -30,8 +30,8 @@ export type ChangeFriendRequestStatusType = {
  */
 export type FriendDetailType = {
   _id: string;
-  last_name: string;
-  first_name: string;
+  lastName: string;
+  firstName: string;
   username: string;
   avatar?: string;
   friends: Types.ObjectId[];
@@ -44,7 +44,7 @@ export type GroupDetailType = {
   _id: string;
   name: string;
   description: string;
-  visibility_level: GroupVisibilityLevel;
+  visibilityLevel: GroupVisibilityLevel;
   members: Types.ObjectId[];
 };
 
@@ -59,13 +59,13 @@ export type FriendRequestDetailType = {
 
   senderDetail: {
     _id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     avatar: string;
     friends: Types.ObjectId[];
   };
-  created_at: Date;
+  createdAt: Date;
 };
 
 //Only admin can change user status

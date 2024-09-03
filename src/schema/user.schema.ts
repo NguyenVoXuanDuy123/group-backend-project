@@ -9,8 +9,8 @@ interface INotification {
 
 // Define the User interface extending Document
 export interface IUser {
-  last_name: string;
-  first_name: string;
+  lastName: string;
+  firstName: string;
   username: string;
   password: string;
   bio: string;
@@ -20,15 +20,15 @@ export interface IUser {
   role: UserRole;
   status: UserStatus;
   notifications: INotification[];
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define the User Schema
 const UserSchema: Schema<IUser> = new Schema(
   {
-    last_name: { type: String, required: true },
-    first_name: { type: String, required: true },
+    lastName: { type: String, required: true },
+    firstName: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     bio: { type: String, default: "" },
@@ -51,13 +51,13 @@ const UserSchema: Schema<IUser> = new Schema(
         date: { type: Date, default: Date.now },
       },
     ],
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );

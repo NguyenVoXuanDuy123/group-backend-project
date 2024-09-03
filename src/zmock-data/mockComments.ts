@@ -18,7 +18,7 @@ export const mockComments = async () => {
     // Get all friends' posts
     const friendPosts = await PostModel.find({
       author: { $in: user.friends },
-      visibility_level: { $ne: PostVisibilityLevel.GROUP }, // Exclude posts with visibility level 'group'
+      visibilityLevel: { $ne: PostVisibilityLevel.GROUP }, // Exclude posts with visibility level 'group'
     });
     // Get all posts from groups the user is a member of
     const groupPosts = await PostModel.find({ group: { $in: user.groups } });
@@ -30,7 +30,7 @@ export const mockComments = async () => {
     // 50% chance to comment on friends' or group posts
     postsToCommentOn.forEach((post) => {
       if (faker.datatype.boolean()) {
-        const date = randomDate(post.created_at);
+        const date = randomDate(post.createdAt);
 
         comments.push(
           new CommentModel({
@@ -38,8 +38,8 @@ export const mockComments = async () => {
             content: faker.lorem.sentence(),
             author: user._id,
             post: post._id,
-            created_at: date,
-            updated_at: date,
+            createdAt: date,
+            updatedAt: date,
           })
         );
       }
@@ -47,13 +47,13 @@ export const mockComments = async () => {
 
     // Randomly select 10 public posts and comment on them
     const publicPosts = await PostModel.aggregate([
-      { $match: { visibility_level: "public" } },
+      { $match: { visibilityLevel: "public" } },
       { $sample: { size: 10 } },
     ]);
 
     publicPosts.forEach((post) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      const date = randomDate(post.created_at);
+      const date = randomDate(post.createdAt);
 
       comments.push(
         new CommentModel({
@@ -62,8 +62,8 @@ export const mockComments = async () => {
           author: user._id,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           post: post._id,
-          created_at: date,
-          updated_at: date,
+          createdAt: date,
+          updatedAt: date,
         })
       );
     });

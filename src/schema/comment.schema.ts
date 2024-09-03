@@ -3,16 +3,16 @@ import { Schema, model, Types } from "mongoose";
 // Define an interface representing a document in MongoDB.
 export interface ICommentEditHistory {
   content: string;
-  edited_at: Date;
+  editedAt: Date;
 }
 
 export interface IComment {
   author: Types.ObjectId;
   post: Types.ObjectId;
   content: string;
-  edit_history: ICommentEditHistory[];
-  created_at: Date;
-  updated_at: Date;
+  editHistory: ICommentEditHistory[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Create a schema corresponding to the document interface.
@@ -29,25 +29,25 @@ const commentSchema = new Schema<IComment>(
       required: true,
     },
     content: { type: String, required: true },
-    edit_history: [
+    editHistory: [
       {
         content: { type: String, required: true },
-        edited_at: { type: Date, required: true, default: Date.now },
+        editedAt: { type: Date, required: true, default: Date.now },
       },
     ],
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
     },
   }
 );
 
 // this is a compound index that improves the performance of queries getting comments by post id
-commentSchema.index({ post: 1, created_at: -1 });
+commentSchema.index({ post: 1, createdAt: -1 });
 
 // this is a compound index that improves the performance of queries getting comments by post id
 commentSchema.index({ post: 1 });

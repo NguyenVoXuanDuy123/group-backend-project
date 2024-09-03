@@ -38,8 +38,8 @@ export type GroupJoinRequestDetailType = {
   status: GroupJoinRequestStatus;
   user: {
     _id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     avatar: string;
   };
@@ -51,8 +51,8 @@ export type GroupJoinRequestDetailType = {
  */
 export type GroupMemberDetailType = {
   _id: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
   groupRole: GroupRole;
   avatar: string;

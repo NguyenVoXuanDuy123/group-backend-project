@@ -5,18 +5,18 @@ import { Schema, model, Types } from "mongoose";
 export interface IPostEditHistory {
   content: string;
   images: string[];
-  edited_at: Date;
+  editedAt: Date;
 }
 
 export interface IPost {
   author: Types.ObjectId;
   content: string;
   images: string[];
-  visibility_level: PostVisibilityLevel;
+  visibilityLevel: PostVisibilityLevel;
   group: Types.ObjectId | null;
-  edit_history: IPostEditHistory[];
-  created_at: Date;
-  updated_at: Date;
+  editHistory: IPostEditHistory[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Create a schema corresponding to the document interface.
@@ -29,31 +29,31 @@ const postSchema = new Schema<IPost>(
     },
     content: { type: String, required: true },
     images: [{ type: String }, { default: [] }],
-    visibility_level: {
+    visibilityLevel: {
       type: String,
       enum: PostVisibilityLevel,
       required: true,
     },
     group: { type: Schema.Types.ObjectId, ref: "groups" },
-    edit_history: [
+    editHistory: [
       {
         content: { type: String, required: true },
         images: [{ type: String }, { default: [] }],
-        edited_at: { type: Date, required: true },
+        editedAt: { type: Date, required: true },
       },
       {
         timestamps: {
-          createdAt: "edited_at",
+          createdAt: "editedAt",
         },
       },
     ],
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );

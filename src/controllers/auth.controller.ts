@@ -1,5 +1,4 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
-import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import userRepository from "@src/repositories/user.repository";
 import authService from "@src/services/auth.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
@@ -40,8 +39,8 @@ class AuthController {
 
     const user = await userRepository.getUserById(_id, {
       username: 1,
-      first_name: 1,
-      last_name: 1,
+      firstName: 1,
+      lastName: 1,
       role: 1,
       status: 1,
       avatar: 1,
@@ -51,7 +50,7 @@ class AuthController {
       message: "Introspect successfully",
       result: {
         isAuthenticated: req.isAuthenticated(),
-        user: camelCaseifyWithDateConversion(user || {}),
+        user: user,
       },
     });
   };

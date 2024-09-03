@@ -17,8 +17,8 @@ class AuthService {
     }
     const user: Partial<IUser> = {
       avatar: "http://localhost:4000/images/avatar-0.png",
-      first_name: registerRequest.firstName,
-      last_name: registerRequest.lastName,
+      firstName: registerRequest.firstName,
+      lastName: registerRequest.lastName,
       username: registerRequest.username,
       password: await this.hashPassword(registerRequest.password),
     };

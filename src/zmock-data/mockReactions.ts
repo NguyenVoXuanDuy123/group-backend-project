@@ -33,7 +33,7 @@ export const mockReactions = async () => {
     // Fetch posts from friends and groups
     const friendPosts = await PostModel.find({
       author: { $in: user.friends },
-      visibility_level: { $ne: PostVisibilityLevel.GROUP }, // Exclude posts with visibility level 'group'
+      visibilityLevel: { $ne: PostVisibilityLevel.GROUP }, // Exclude posts with visibility level 'group'
     });
     // Get all posts from groups the user is a member of
     const groupPosts = await PostModel.find({ group: { $in: user.groups } });
@@ -47,23 +47,23 @@ export const mockReactions = async () => {
       const existingReaction = await ReactionModel.findOne({
         user: user._id,
         target: post._id,
-        target_type: ReactionTargetType.POST,
+        targetType: ReactionTargetType.POST,
       });
 
       if (!existingReaction) {
         // 70% that user will react to the post
         if (faker.number.float({ min: 0, max: 1 }) < 0.7) {
           const randomReaction = faker.helpers.arrayElement(reactionTypes);
-          const date = randomDate(post.created_at);
+          const date = randomDate(post.createdAt);
 
           const reaction = new ReactionModel({
             _id: faker.database.mongodbObjectId(),
             type: randomReaction,
             user: user._id,
             target: post._id,
-            target_type: ReactionTargetType.POST,
-            created_at: date,
-            updated_at: date,
+            targetType: ReactionTargetType.POST,
+            createdAt: date,
+            updatedAt: date,
           });
 
           await reaction.save(); // Save the reaction to the database
@@ -80,22 +80,22 @@ export const mockReactions = async () => {
               const existingCommentReaction = await ReactionModel.findOne({
                 user: user._id,
                 target: comment._id,
-                target_type: ReactionTargetType.COMMENT,
+                targetType: ReactionTargetType.COMMENT,
               });
 
               if (!existingCommentReaction) {
                 const randomReaction =
                   faker.helpers.arrayElement(reactionTypes);
-                const date = randomDate(comment.created_at);
+                const date = randomDate(comment.createdAt);
 
                 const commentReaction = new ReactionModel({
                   _id: faker.database.mongodbObjectId(),
                   type: randomReaction,
                   user: user._id,
                   target: comment._id,
-                  target_type: ReactionTargetType.COMMENT,
-                  created_at: date,
-                  updated_at: date,
+                  targetType: ReactionTargetType.COMMENT,
+                  createdAt: date,
+                  updatedAt: date,
                 });
 
                 await commentReaction.save(); // Save the comment reaction to the database
@@ -117,21 +117,21 @@ export const mockReactions = async () => {
       const existingReaction = await ReactionModel.findOne({
         user: user._id,
         target: post._id,
-        target_type: ReactionTargetType.POST,
+        targetType: ReactionTargetType.POST,
       });
 
       if (!existingReaction) {
         const randomReaction = faker.helpers.arrayElement(reactionTypes);
-        const date = randomDate(post.created_at);
+        const date = randomDate(post.createdAt);
 
         const reaction = new ReactionModel({
           _id: faker.database.mongodbObjectId(),
           type: randomReaction,
           user: user._id,
           target: post._id,
-          target_type: ReactionTargetType.POST,
-          created_at: date,
-          updated_at: date,
+          targetType: ReactionTargetType.POST,
+          createdAt: date,
+          updatedAt: date,
         });
 
         await reaction.save(); // Save the reaction to the database

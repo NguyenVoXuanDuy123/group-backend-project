@@ -5,31 +5,31 @@ import { model, Model, Schema, Types } from "mongoose";
 export interface IReaction {
   _id: Types.ObjectId;
   user: Types.ObjectId;
-  target_type: ReactionTargetType;
+  targetType: ReactionTargetType;
   target: Types.ObjectId;
   type: ReactionType;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define the Reaction Schema
 const ReactionSchema: Schema<IReaction> = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "users", required: true },
-    target_type: { type: String, enum: ReactionTargetType, required: true },
+    targetType: { type: String, enum: ReactionTargetType, required: true },
     target: {
       type: Schema.Types.ObjectId,
       ref: "comments" || "groups",
       required: true,
     },
     type: { type: String, enum: ReactionType, required: true },
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );

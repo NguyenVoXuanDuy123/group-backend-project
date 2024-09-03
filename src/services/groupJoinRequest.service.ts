@@ -47,7 +47,7 @@ class GroupJoinRequestService {
       groupId
     );
     return await groupJoinRequestRepository.getGroupJoinRequestById(_id, {
-      created_at: 1,
+      createdAt: 1,
     });
   }
 

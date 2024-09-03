@@ -210,7 +210,7 @@ class ApiErrorCodes {
     );
 
   /** Group errors 6001 - 7000*/
-  public static readonly INVALID_GROUP_VISIBILITY_LEVEL = new ApiErrorCodes(
+  public static readonly INVALID_GROUP_visibilityLevel = new ApiErrorCodes(
     6001,
     HttpStatusCodes.BAD_REQUEST,
     "Group visibility level must be either 'public' or 'private'."
@@ -340,19 +340,19 @@ class ApiErrorCodes {
     );
 
   /** Post errors 8001 - 9000*/
-  public static readonly INVALID_POST_VISIBILITY_LEVEL = new ApiErrorCodes(
+  public static readonly INVALID_POST_visibilityLevel = new ApiErrorCodes(
     8001,
     HttpStatusCodes.BAD_REQUEST,
     "Post visibility level must be either 'public' or 'friend' for posts on home (wall) , or 'group' for posts in a group."
   );
 
-  public static readonly VISIBILITY_LEVEL_MUST_BE_GROUP = new ApiErrorCodes(
+  public static readonly visibilityLevel_MUST_BE_GROUP = new ApiErrorCodes(
     8002,
     HttpStatusCodes.BAD_REQUEST,
     "Visibility level must be 'group' when creating a post in a group (when group ID is provided)."
   );
 
-  public static readonly GROUP_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP =
+  public static readonly GROUP_REQUIRED_WHEN_visibilityLevel_IS_GROUP =
     new ApiErrorCodes(
       8003,
       HttpStatusCodes.BAD_REQUEST,
@@ -383,7 +383,7 @@ class ApiErrorCodes {
     "Only the author of the post, the admin of the group or site-admin can delete the post."
   );
 
-  public static readonly INVALID_UPDATE_POST_VISIBILITY_LEVEL =
+  public static readonly INVALID_UPDATE_POST_visibilityLevel =
     new ApiErrorCodes(
       8008,
       HttpStatusCodes.FORBIDDEN,

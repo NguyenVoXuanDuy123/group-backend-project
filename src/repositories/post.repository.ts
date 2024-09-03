@@ -36,7 +36,7 @@ class PostRepository {
     editHistory: Partial<IPostEditHistory>
   ) {
     return await PostModel.findByIdAndUpdate(postId, {
-      $push: { edit_history: editHistory },
+      $push: { editHistory: editHistory },
     });
   }
 
@@ -87,7 +87,7 @@ class PostRepository {
                   author: {
                     $in: [...friendIds, user._id],
                   },
-                  visibility_level: {
+                  visibilityLevel: {
                     $ne: "group",
                   },
                 },
@@ -103,14 +103,14 @@ class PostRepository {
       },
       {
         $match: {
-          created_at: {
+          createdAt: {
             $lt: new Date(beforeDate ? beforeDate : new Date()),
           },
         },
       },
       {
         $sort: {
-          created_at: -1,
+          createdAt: -1,
         },
       },
       {
@@ -160,17 +160,17 @@ class PostRepository {
           },
           author: {
             _id: 1,
-            first_name: 1,
-            last_name: 1,
+            firstName: 1,
+            lastName: 1,
             avatar: 1,
             username: 1,
           },
           content: 1,
           images: 1,
-          visibility_level: 1,
-          created_at: 1,
-          updated_at: 1,
-          edit_history: 1,
+          visibilityLevel: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          editHistory: 1,
         },
       },
     ]);
@@ -180,7 +180,7 @@ class PostRepository {
   public async getPostsByUserIdOrGroupId(
     userId: string | undefined,
     groupId: string | undefined,
-    visibility_level: PostVisibilityLevel[],
+    visibilityLevel: PostVisibilityLevel[],
     beforeDate: string | undefined,
     limit: number | undefined
   ) {
@@ -200,21 +200,21 @@ class PostRepository {
               group: new Types.ObjectId(groupId),
             },
           ],
-          visibility_level: {
-            $in: visibility_level,
+          visibilityLevel: {
+            $in: visibilityLevel,
           },
         },
       },
       {
         $match: {
-          created_at: {
+          createdAt: {
             $lt: new Date(beforeDate ? beforeDate : new Date()),
           },
         },
       },
       {
         $sort: {
-          created_at: -1,
+          createdAt: -1,
         },
       },
       {
@@ -237,17 +237,17 @@ class PostRepository {
         $project: {
           author: {
             _id: 1,
-            first_name: 1,
-            last_name: 1,
+            firstName: 1,
+            lastName: 1,
             avatar: 1,
             username: 1,
           },
           content: 1,
           images: 1,
-          visibility_level: 1,
-          created_at: 1,
-          updated_at: 1,
-          edit_history: 1,
+          visibilityLevel: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          editHistory: 1,
         },
       },
     ]);

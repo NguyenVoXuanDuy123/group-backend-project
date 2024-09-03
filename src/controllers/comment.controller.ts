@@ -1,5 +1,4 @@
 import HttpStatusCodes from "@src/constant/HttpStatusCodes";
-import { camelCaseifyWithDateConversion } from "@src/helpers/camelCaseifyWithDateConversion";
 import commentService from "@src/services/comment.service";
 import { APIRequest, APIResponse } from "@src/types/api.types";
 import { UpdateCommentRequestType } from "@src/types/comment.types";
@@ -19,7 +18,7 @@ class CommentController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Update comment successfully",
-      result: camelCaseifyWithDateConversion(comment),
+      result: comment,
     });
   };
 
@@ -44,7 +43,7 @@ class CommentController {
     );
     // If the reaction is created at the same time as updated at, it means the reaction is new
     // Therefore, return 201 status code
-    if (reaction.updated_at.getTime() === reaction.created_at.getTime()) {
+    if (reaction.updatedAt.getTime() === reaction.createdAt.getTime()) {
       res.status(HttpStatusCodes.CREATED).json({
         message: "React " + type + " to comment successfully",
       });
@@ -78,7 +77,7 @@ class CommentController {
     );
     res.status(HttpStatusCodes.OK).json({
       message: "Get reactions of comment successfully",
-      result: reactions.map(camelCaseifyWithDateConversion),
+      result: reactions,
     });
   };
 }

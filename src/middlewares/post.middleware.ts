@@ -24,21 +24,21 @@ export const createPostValidator = (
   // when group id is provided, visibility level must be group
   if (groupId) {
     if (visibilityLevel !== PostVisibilityLevel.GROUP)
-      throw new ApiError(ApiErrorCodes.VISIBILITY_LEVEL_MUST_BE_GROUP);
+      throw new ApiError(ApiErrorCodes.visibilityLevel_MUST_BE_GROUP);
   }
 
   // when visibility level is group, group id must be provided
   if (visibilityLevel === PostVisibilityLevel.GROUP) {
     if (!groupId) {
       throw new ApiError(
-        ApiErrorCodes.GROUP_REQUIRED_WHEN_VISIBILITY_LEVEL_IS_GROUP
+        ApiErrorCodes.GROUP_REQUIRED_WHEN_visibilityLevel_IS_GROUP
       );
     }
   }
 
   // visibility level must be public or friends for post in personal timeline
   if (!Object.values(PostVisibilityLevel).includes(visibilityLevel)) {
-    throw new ApiError(ApiErrorCodes.INVALID_POST_VISIBILITY_LEVEL);
+    throw new ApiError(ApiErrorCodes.INVALID_POST_visibilityLevel);
   }
   next();
 };
@@ -55,7 +55,7 @@ export const updatePostValidator = (
       visibilityLevel !== PostVisibilityLevel.PUBLIC &&
       visibilityLevel !== PostVisibilityLevel.FRIEND
     ) {
-      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
+      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_visibilityLevel);
     }
   }
 

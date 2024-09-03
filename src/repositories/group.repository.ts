@@ -75,7 +75,7 @@ class GroupRepository {
         $project: {
           _id: 1,
           name: 1,
-          visibility_level: 1,
+          visibilityLevel: 1,
           status: 1,
           memberCount: { $size: "$members" },
         },
@@ -126,8 +126,8 @@ class GroupRepository {
       {
         $project: {
           _id: "$memberDetails._id",
-          first_name: "$memberDetails.first_name",
-          last_name: "$memberDetails.last_name",
+          firstName: "$memberDetails.firstName",
+          lastName: "$memberDetails.lastName",
           avatar: "$memberDetails.avatar",
           username: "$memberDetails.username",
           friends: "$memberDetails.friends",

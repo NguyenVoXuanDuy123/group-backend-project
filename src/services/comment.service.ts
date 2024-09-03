@@ -49,8 +49,8 @@ class CommentService {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     const author = await userRepository.getUserById(comment.author, {
-      first_name: 1,
-      last_name: 1,
+      firstName: 1,
+      lastName: 1,
       username: 1,
       avatar: 1,
     });
@@ -65,19 +65,19 @@ class CommentService {
     return {
       _id: comment._id.toHexString(),
       content: comment.content,
-      edit_history: comment.edit_history,
+      editHistory: comment.editHistory,
       author: {
         _id: author._id.toHexString(),
-        first_name: author.first_name,
-        last_name: author.last_name,
+        firstName: author.firstName,
+        lastName: author.lastName,
         username: author.username,
         avatar: author.avatar,
       },
       reactionCount,
       reactionSummary,
       userReaction,
-      created_at: comment.created_at,
-      updated_at: comment.updated_at,
+      createdAt: comment.createdAt,
+      updatedAt: comment.updatedAt,
     };
   }
 
@@ -154,7 +154,7 @@ class CommentService {
     }
 
     // if the post visibility level is group, admin of the group can delete the comment
-    if (post.visibility_level === PostVisibilityLevel.GROUP) {
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
       if (!post.group) {
         // there is no way when a post has a group visibility level,
         // but group is null

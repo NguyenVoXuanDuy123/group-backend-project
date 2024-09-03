@@ -68,10 +68,10 @@ class FriendRequestRepository {
         $match: {
           receiver: new Types.ObjectId(receiverId),
           status: FriendRequestStatus.PENDING,
-          created_at: { $lt: beforeDate ? new Date(beforeDate) : new Date() },
+          createdAt: { $lt: beforeDate ? new Date(beforeDate) : new Date() },
         },
       },
-      { $sort: { created_at: -1 } },
+      { $sort: { createdAt: -1 } },
       { $limit: limit || 10 },
       {
         $lookup: {
@@ -90,13 +90,13 @@ class FriendRequestRepository {
           status: "$status",
           senderDetail: {
             _id: "$senderDetails._id",
-            first_name: "$senderDetails.first_name",
-            last_name: "$senderDetails.last_name",
+            firstName: "$senderDetails.firstName",
+            lastName: "$senderDetails.lastName",
             avatar: "$senderDetails.avatar",
             username: "$senderDetails.username",
             friends: "$senderDetails.friends",
           },
-          created_at: "$created_at",
+          createdAt: "$createdAt",
         },
       },
     ]);

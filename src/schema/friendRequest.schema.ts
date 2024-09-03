@@ -6,8 +6,8 @@ export interface IFriendRequest {
   sender: Types.ObjectId;
   receiver: Types.ObjectId;
   status: FriendRequestStatus;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define enums for status
@@ -22,13 +22,13 @@ const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
       enum: FriendRequestStatus,
       default: FriendRequestStatus.PENDING,
     },
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
     },
   }
 );

@@ -5,14 +5,14 @@ import { ProjectionType, Types } from "mongoose";
 
 class UserRepository {
   public async getUserById(
-    _id: string | Types.ObjectId,
+    id: string | Types.ObjectId,
     projection: ProjectionType<IUser> = {}
   ) {
-    return await UserModel.findById(_id, projection).lean();
+    return await UserModel.findById(id, projection).lean();
   }
 
-  public async checkUserExistsById(_id: string) {
-    return !!(await this.getUserById(_id, { _id: 1 }));
+  public async checkUserExistsById(id: string) {
+    return !!(await this.getUserById(id, { _id: 1 }));
   }
 
   public async checkUserExistsByUsername(username: string) {
@@ -26,8 +26,8 @@ class UserRepository {
     await UserModel.create(user);
   }
 
-  public async updateUserById(_id: string, user: Partial<IUser>) {
-    await UserModel.findByIdAndUpdate<IUser>(_id, { $set: user });
+  public async updateUserById(id: string, user: Partial<IUser>) {
+    await UserModel.findByIdAndUpdate<IUser>(id, { $set: user });
   }
 
   public async addFriend(
@@ -76,8 +76,8 @@ class UserRepository {
         $project: {
           _id: "$friendDetails._id",
           username: "$friendDetails.username",
-          first_name: "$friendDetails.first_name",
-          last_name: "$friendDetails.last_name",
+          firstName: "$friendDetails.firstName",
+          lastName: "$friendDetails.lastName",
           avatar: "$friendDetails.avatar",
           friends: "$friendDetails.friends",
         },

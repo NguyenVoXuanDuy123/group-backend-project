@@ -6,13 +6,13 @@ class ReactionService {
   public async createReaction(
     postID: string,
     userID: string,
-    target_type: ReactionTargetType,
+    targetType: ReactionTargetType,
     type: ReactionType
   ) {
     return await reactionRepository.upsertReaction(
       postID,
       userID,
-      target_type,
+      targetType,
       type
     );
   }

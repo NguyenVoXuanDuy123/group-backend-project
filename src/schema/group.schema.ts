@@ -6,11 +6,11 @@ export interface IGroup {
   admin: Types.ObjectId;
   name: string;
   description: string;
-  visibility_level: GroupVisibilityLevel;
+  visibilityLevel: GroupVisibilityLevel;
   members: Types.ObjectId[];
   status: GroupStatus;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define the Group Schema
@@ -20,7 +20,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
     description: { type: String, required: true },
     admin: { type: Schema.Types.ObjectId, ref: "users", required: true },
     members: [{ type: Schema.Types.ObjectId, ref: "users", default: [] }],
-    visibility_level: {
+    visibilityLevel: {
       type: String,
       enum: GroupVisibilityLevel,
       required: true,
@@ -30,13 +30,13 @@ const GroupSchema: Schema<IGroup> = new Schema(
       enum: GroupStatus,
       default: GroupStatus.PENDING,
     },
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
     },
   }
 );

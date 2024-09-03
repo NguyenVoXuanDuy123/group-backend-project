@@ -77,11 +77,11 @@ class GroupJoinRequestRepository {
         $project: {
           _id: "$_id",
           status: "$status",
-          created_at: "$created_at",
+          createdAt: "$createdAt",
           senderDetail: {
             _id: "$senderDetail._id",
-            first_name: "$senderDetail.first_name",
-            last_name: "$senderDetail.last_name",
+            firstName: "$senderDetail.firstName",
+            lastName: "$senderDetail.lastName",
             username: "$senderDetail.username",
             avatar: "$senderDetail.avatar",
           },

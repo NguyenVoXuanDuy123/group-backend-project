@@ -35,8 +35,8 @@ class UserService {
         password: 0,
         notifications: 0,
         __v: 0,
-        created_at: 0,
-        updated_at: 0,
+        createdAt: 0,
+        updatedAt: 0,
       });
       // if the username is not provided, get the user by userId
     } else {
@@ -44,10 +44,11 @@ class UserService {
         password: 0,
         notifications: 0,
         __v: 0,
-        created_at: 0,
-        updated_at: 0,
+        createdAt: 0,
+        updatedAt: 0,
       });
     }
+    console.log(user);
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
@@ -74,7 +75,7 @@ class UserService {
           user._id,
           {
             __v: 0,
-            updated_at: 0,
+            updatedAt: 0,
             receiver: 0,
             sender: 0,
           }
@@ -117,8 +118,8 @@ class UserService {
       _id,
       removeNullValues({
         avatar: updateMeRequest.avatar,
-        first_name: updateMeRequest.firstName,
-        last_name: updateMeRequest.lastName,
+        firstName: updateMeRequest.firstName,
+        lastName: updateMeRequest.lastName,
         bio: updateMeRequest.bio,
       })
     );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { faker } from "@faker-js/faker";
@@ -34,15 +35,15 @@ export const mockUsers = async (userCount: number) => {
           lastName,
         }) + i // + i to ensure unique usernames
       ),
-      first_name: firstName,
-      last_name: lastName,
+      firstName: firstName,
+      lastName: lastName,
       password: await authService.hashPassword("123456"),
       bio: faker.lorem.sentence(),
       avatar: avatar,
       status: UserStatus.ACTIVE,
       role: UserRole.USER,
-      created_at: date,
-      updated_at: date,
+      createdAt: date,
+      updatedAt: date,
     }).save();
   }
 
@@ -99,31 +100,31 @@ export const mockUsers = async (userCount: number) => {
   console.log(`finished creating friendships`);
 
   //send friend requests
-  console.log(`start sending friend requests`);
-  const updatedUsers2 = await UserModel.find();
-  for (const user of updatedUsers2) {
-    const friendRequestNumber = faker.number.int({ min: 5, max: 10 });
-    const userToSentRequests = await UserModel.find({
-      _id: { $nin: user.friends },
-    });
+  // console.log(`start sending friend requests`);
+  // const updatedUsers2 = await UserModel.find();
+  // for (const user of updatedUsers2) {
+  //   const friendRequestNumber = faker.number.int({ min: 5, max: 10 });
+  //   const userToSentRequests = await UserModel.find({
+  //     _id: { $nin: user.friends },
+  //   });
 
-    await Promise.all(
-      userToSentRequests.slice(0, friendRequestNumber).map(async (friend) => {
-        if (friend._id.equals(user._id)) {
-          return;
-        }
+  //   await Promise.all(
+  //     userToSentRequests.slice(0, friendRequestNumber).map(async (friend) => {
+  //       if (friend._id.equals(user._id)) {
+  //         return;
+  //       }
 
-        return new FriendRequestModel({
-          id: faker.database.mongodbObjectId(),
-          sender: user._id,
-          receiver: friend._id,
-          status: FriendRequestStatus.PENDING,
-          created_at: randomDate(maxDate(user.created_at, friend.created_at)),
-        }).save();
-      })
-    );
-  }
-  console.log(`finished sending friend requests`);
+  //       return new FriendRequestModel({
+  //         id: faker.database.mongodbObjectId(),
+  //         sender: user._id,
+  //         receiver: friend._id,
+  //         status: FriendRequestStatus.PENDING,
+  //         createdAt: randomDate(maxDate(user.createdAt, friend.createdAt)),
+  //       }).save();
+  //     })
+  //   );
+  // }
+  // console.log(`finished sending friend requests`);
 
   console.log(`finished mockin ${userCount} users`);
 };

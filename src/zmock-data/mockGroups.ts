@@ -18,20 +18,20 @@ export const mockGroups = async (groupCount: number) => {
 
     // pick the first member as the admin
     const admin = members[0];
-    const date = randomDate(admin.created_at);
+    const date = randomDate(admin.createdAt);
     const groupMembers = members.map((member) => member._id);
 
     const group = new GroupModel({
       _id: faker.database.mongodbObjectId(),
       name: faker.company.name(),
       description: faker.lorem.sentence(),
-      created_at: date,
-      updated_at: date,
+      createdAt: date,
+      updatedAt: date,
       admin: admin._id,
       members: groupMembers,
       //Group status is approved to avoid the need for site-admin approval
       status: GroupStatus.APPROVED,
-      visibility_level: faker.helpers.arrayElement(
+      visibilityLevel: faker.helpers.arrayElement(
         Object.values(GroupVisibilityLevel)
       ),
     });

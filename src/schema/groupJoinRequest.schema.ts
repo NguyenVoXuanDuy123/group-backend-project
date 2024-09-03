@@ -6,8 +6,8 @@ interface IGroupJoinRequest {
   user: Types.ObjectId;
   group: Types.ObjectId;
   status: GroupJoinRequestStatus;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define the GroupJoinRequest Schema
@@ -20,13 +20,13 @@ const GroupJoinRequestSchema: Schema<IGroupJoinRequest> = new Schema(
       enum: GroupJoinRequestStatus,
       default: GroupJoinRequestStatus.PENDING,
     },
-    created_at: { type: Date },
-    updated_at: { type: Date },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );
