@@ -27,8 +27,8 @@ const FriendRequestSchema: Schema<IFriendRequest> = new Schema(
   },
   {
     timestamps: {
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );

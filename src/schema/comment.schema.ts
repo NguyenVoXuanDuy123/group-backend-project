@@ -40,8 +40,8 @@ const commentSchema = new Schema<IComment>(
   },
   {
     timestamps: {
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      createdAt: true,
+      updatedAt: true,
     },
   }
 );

@@ -115,7 +115,7 @@ export const mockUsers = async (userCount: number) => {
   //       }
 
   //       return new FriendRequestModel({
-  //         id: faker.database.mongodbObjectId(),
+  //         _id: faker.database.mongodbObjectId(),
   //         sender: user._id,
   //         receiver: friend._id,
   //         status: FriendRequestStatus.PENDING,

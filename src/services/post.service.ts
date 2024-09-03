@@ -160,11 +160,11 @@ class PostService {
       reactionSummary,
       commentCount,
       group: group && {
-        id: group._id,
+        _id: group._id,
         name: group.name,
       },
       author: author && {
-        id: author._id,
+        _id: author._id,
         firstName: author.firstName,
         lastName: author.lastName,
         username: author.username,
