@@ -1,4 +1,4 @@
-import { GroupJoinRequestStatus, GroupStatus } from "@src/enums/group.enum";
+import { GroupJoinRequestStatus, GroupStatus } from "@src/enums/group.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 

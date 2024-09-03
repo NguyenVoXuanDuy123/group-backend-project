@@ -1,4 +1,4 @@
-import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enum";
+import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Group interface extending Document

@@ -12,14 +12,14 @@ import {
   UserFriendRelation,
   UserRole,
   UserStatus,
-} from "@src/enums/user.enum";
+} from "@src/enums/user.enums";
 import groupRepository from "@src/repositories/group.repository";
 import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
 import postRepository from "@src/repositories/post.repository";
-import { PostVisibilityLevel } from "@src/enums/post.enum";
+import { PostVisibilityLevel } from "@src/enums/post.enums";
 import postService from "@src/services/post.service";
 import { Types } from "mongoose";
-import { GroupRole } from "@src/enums/group.enum";
+import { GroupRole } from "@src/enums/group.enums";
 
 class UserService {
   public async getUserByIdOrUsername(

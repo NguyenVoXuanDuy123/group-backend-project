@@ -1,10 +1,14 @@
-import { FriendRequestStatus } from "@src/enums/user.enum";
+import { NotificationType } from "@src/enums/notification.enums";
+import { FriendRequestStatus } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
+import notificationRepository from "@src/repositories/notification.repository";
 import userRepository from "@src/repositories/user.repository";
+import notificationService from "@src/services/notification.service";
 import userService from "@src/services/user.service";
+import { Types } from "mongoose";
 
 class FriendRequestService {
   public async createFriendRequest(senderId: string, receiverId: string) {
@@ -21,7 +25,7 @@ class FriendRequestService {
       throw new ApiError(ApiErrorCodes.FRIEND_REQUEST_ALREADY_SENT);
     }
 
-    // Check if the sender is trying to send a friend request to who  have already send a friend request to the sender
+    // Check if the sender is trying to send a friend request to who have already send a friend request to the sender
     if (
       await friendRequestRepository.checkPendingFriendRequestExists(
         receiverId,
@@ -35,6 +39,12 @@ class FriendRequestService {
       senderId,
       receiverId
     );
+    await notificationService.pushNotification({
+      receiver: new Types.ObjectId(receiverId),
+      type: NotificationType.FRIEND_REQUEST,
+      sender: new Types.ObjectId(senderId),
+      relatedEntity: new Types.ObjectId(friendRequest._id),
+    });
 
     return friendRequestRepository.getFriendRequestById(friendRequest._id, {
       _id: 1,
@@ -96,11 +106,20 @@ class FriendRequestService {
       const senderId = friendRequest.sender;
       const receiverId = friendRequest.receiver;
 
-      userRepository.addFriend(senderId, receiverId);
+      await userRepository.addFriend(senderId, receiverId);
+
+      // Send a notification to the sender that the friend request is accepted
+      await notificationService.pushNotification({
+        sender: new Types.ObjectId(receiverId),
+        receiver: new Types.ObjectId(senderId),
+        type: NotificationType.FRIEND_REQUEST_ACCEPTED,
+      });
     }
 
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
 
+    // Remove the notification if the status is changed to cancelled, accepted or rejected
+    await notificationRepository.removeNotification(requestId);
     return friendRequestRepository.getFriendRequestById(requestId);
   }
 

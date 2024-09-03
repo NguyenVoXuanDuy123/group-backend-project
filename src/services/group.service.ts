@@ -3,9 +3,9 @@ import {
   GroupStatus,
   GroupVisibilityLevel,
   UserGroupRelation,
-} from "@src/enums/group.enum";
-import { PostVisibilityLevel } from "@src/enums/post.enum";
-import { UserRole } from "@src/enums/user.enum";
+} from "@src/enums/group.enums";
+import { PostVisibilityLevel } from "@src/enums/post.enums";
+import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 

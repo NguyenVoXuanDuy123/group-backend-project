@@ -7,7 +7,7 @@ import {
   FriendRequestStatus,
   UserRole,
   UserStatus,
-} from "@src/enums/user.enum";
+} from "@src/enums/user.enums";
 import FriendRequestModel from "@src/schema/friendRequest.schema";
 import UserModel from "@src/schema/user.schema";
 import authService from "@src/services/auth.service";

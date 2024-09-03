@@ -2,7 +2,7 @@ import {
   GroupJoinRequestStatus,
   GroupStatus,
   GroupVisibilityLevel,
-} from "@src/enums/group.enum";
+} from "@src/enums/group.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotNull } from "@src/helpers/validation";

@@ -1,4 +1,4 @@
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
+import { ReactionTargetType, ReactionType } from "@src/enums/post.enums";
 import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
 import { ReactionDetailType } from "@src/types/post.types";
 import { ProjectionType, Types } from "mongoose";

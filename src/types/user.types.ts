@@ -1,6 +1,6 @@
-import { GroupVisibilityLevel } from "@src/enums/group.enum";
-import { UserRole, UserStatus } from "@src/enums/user.enum";
-import { FriendRequestStatus } from "@src/enums/user.enum";
+import { GroupVisibilityLevel } from "@src/enums/group.enums";
+import { UserRole, UserStatus } from "@src/enums/user.enums";
+import { FriendRequestStatus } from "@src/enums/user.enums";
 import { Types } from "mongoose";
 
 export type UserSessionType = {

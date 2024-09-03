@@ -3,7 +3,7 @@ import {
   GroupRole,
   GroupStatus,
   GroupVisibilityLevel,
-} from "@src/enums/group.enum";
+} from "@src/enums/group.enums";
 import { Types } from "mongoose";
 
 export type CreateGroupRequestType = {

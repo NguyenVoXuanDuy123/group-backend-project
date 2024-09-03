@@ -1,4 +1,4 @@
-import { FriendRequestStatus } from "@src/enums/user.enum";
+import { FriendRequestStatus } from "@src/enums/user.enums";
 import { validateDate } from "@src/helpers/validation";
 import FriendRequestModel, {
   IFriendRequest,

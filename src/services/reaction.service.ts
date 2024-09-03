@@ -1,4 +1,4 @@
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
+import { ReactionTargetType, ReactionType } from "@src/enums/post.enums";
 
 import reactionRepository from "@src/repositories/reaction.repository";
 

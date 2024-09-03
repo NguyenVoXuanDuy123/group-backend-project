@@ -1,4 +1,4 @@
-import { FriendRequestStatus } from "@src/enums/user.enum";
+import { FriendRequestStatus } from "@src/enums/user.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Request interface

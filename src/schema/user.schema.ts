@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from "@src/enums/user.enum";
+import { UserRole, UserStatus } from "@src/enums/user.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Notification interface

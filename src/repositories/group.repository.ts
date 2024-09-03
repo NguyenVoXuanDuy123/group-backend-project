@@ -1,4 +1,4 @@
-import { GroupRole, GroupStatus } from "@src/enums/group.enum";
+import { GroupRole, GroupStatus } from "@src/enums/group.enums";
 import GroupModel, { IGroup } from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";
 import { GroupMemberDetailType } from "@src/types/group.types";

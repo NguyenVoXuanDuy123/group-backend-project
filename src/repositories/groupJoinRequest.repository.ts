@@ -1,4 +1,4 @@
-import { GroupJoinRequestStatus } from "@src/enums/group.enum";
+import { GroupJoinRequestStatus } from "@src/enums/group.enums";
 import { IGroup } from "@src/schema/group.schema";
 
 import GroupJoinRequestModel from "@src/schema/groupJoinRequest.schema";

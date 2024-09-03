@@ -1,4 +1,4 @@
-import { PostVisibilityLevel, ReactionType } from "@src/enums/post.enum";
+import { PostVisibilityLevel, ReactionType } from "@src/enums/post.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotNull } from "@src/helpers/validation";

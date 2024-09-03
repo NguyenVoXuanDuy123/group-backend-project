@@ -2,7 +2,7 @@
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateNotEmpty, validateNotNull } from "@src/helpers/validation";
-import { FriendRequestStatus, UserStatus } from "@src/enums/user.enum";
+import { FriendRequestStatus, UserStatus } from "@src/enums/user.enums";
 import { APIRequest } from "@src/types/api.types";
 import { RemoveGroupMemberRequestType } from "@src/types/group.types";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@src/types/user.types";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
-import { GroupRole, GroupStatus } from "@src/enums/group.enum";
+import { GroupRole, GroupStatus } from "@src/enums/group.enums";
 
 export const getMeValidator: RequestHandler = (
   req: Request,

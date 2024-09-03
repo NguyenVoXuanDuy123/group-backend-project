@@ -2,8 +2,8 @@ import {
   PostVisibilityLevel,
   ReactionTargetType,
   ReactionType,
-} from "@src/enums/post.enum";
-import { UserRole } from "@src/enums/user.enum";
+} from "@src/enums/post.enums";
+import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 

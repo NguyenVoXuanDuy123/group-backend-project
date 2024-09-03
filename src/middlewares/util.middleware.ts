@@ -1,4 +1,4 @@
-import { UserStatus } from "@src/enums/user.enum";
+import { UserStatus } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, APIResponse } from "@src/types/api.types";

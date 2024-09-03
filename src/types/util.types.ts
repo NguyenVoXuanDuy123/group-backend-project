@@ -1,4 +1,4 @@
-import { GroupRole, GroupStatus } from "@src/enums/group.enum";
+import { GroupRole, GroupStatus } from "@src/enums/group.enums";
 
 export type PaginationQueryType = {
   afterId?: string;

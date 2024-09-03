@@ -1,4 +1,4 @@
-import { PostVisibilityLevel } from "@src/enums/post.enum";
+import { PostVisibilityLevel } from "@src/enums/post.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateDate } from "@src/helpers/validation";
