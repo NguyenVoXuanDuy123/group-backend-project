@@ -90,7 +90,6 @@ class GroupRepository {
     limit?: number,
     afterId?: string
   ) {
-    console.log(limit);
     return await GroupModel.aggregate<GroupMemberDetailType>([
       { $match: { _id: new Types.ObjectId(groupId) } },
       { $unwind: { path: "$members", includeArrayIndex: "index" } },

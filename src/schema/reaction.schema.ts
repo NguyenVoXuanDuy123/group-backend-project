@@ -1,4 +1,4 @@
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enums";
+import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
 import { model, Model, Schema, Types } from "mongoose";
 
 // Define the Reaction interface

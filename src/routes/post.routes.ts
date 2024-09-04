@@ -23,7 +23,7 @@ postRouter.patch(
   wrapRequestHandler(postController.updatePost)
 );
 
-postRouter.delete("/:postId", wrapRequestHandler(postController.deletePost));
+postRouter.delete("/:postId", wrapRequestHandler(postController.removePost));
 
 postRouter.get("/:postId", wrapRequestHandler(postController.getPostById));
 

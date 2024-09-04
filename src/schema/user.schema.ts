@@ -1,12 +1,6 @@
 import { UserRole, UserStatus } from "@src/enums/user.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
-// Define the Notification interface
-interface INotification {
-  message: string;
-  date: Date;
-}
-
 // Define the User interface extending Document
 export interface IUser {
   lastName: string;
@@ -19,7 +13,6 @@ export interface IUser {
   groups: Types.ObjectId[];
   role: UserRole;
   status: UserStatus;
-  notifications: INotification[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,12 +38,6 @@ const UserSchema: Schema<IUser> = new Schema(
       enum: UserStatus,
       default: UserStatus.ACTIVE,
     },
-    notifications: [
-      {
-        message: { type: String, required: true },
-        date: { type: Date, default: Date.now },
-      },
-    ],
     createdAt: { type: Date },
     updatedAt: { type: Date },
   },

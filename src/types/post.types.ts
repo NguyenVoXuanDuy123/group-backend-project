@@ -2,7 +2,7 @@ import {
   PostVisibilityLevel,
   ReactionTargetType,
   ReactionType,
-} from "@src/enums/post.enums";
+} from "@src/enums/post.enum";
 
 export type CreatePostRequestType = {
   content: string;

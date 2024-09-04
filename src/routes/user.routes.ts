@@ -91,4 +91,11 @@ userRouter.patch(
   wrapRequestHandler(userController.changeUserStatus)
 );
 
+// Notifications
+
+userRouter.get(
+  "/me/notifications",
+  wrapRequestHandler(userController.getMyNotifications)
+);
+
 export default userRouter;

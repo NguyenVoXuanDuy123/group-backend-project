@@ -258,6 +258,20 @@ class UserController {
       result: user,
     });
   };
+
+  public getMyNotifications = async (req: Request, res: APIResponse) => {
+    const { _id } = req.user as UserSessionType;
+
+    const notifications = await userService.getUserNotifications(
+      _id,
+      req.query as PaginationQueryType
+    );
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get notifications successfully",
+      result: notifications,
+    });
+  };
 }
 
 export default new UserController();

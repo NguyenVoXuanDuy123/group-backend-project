@@ -4,6 +4,6 @@ export enum NotificationType {
   COMMENT = "comment",
   REACTION = "reaction",
   GROUP_CREATION_APPROVAL = "group_creation_approval",
-  GROUP_MEMBER_REQUEST = "group_member_request",
-  GROUP_MEMBER_REQUEST_ACCEPTED = "group_member_request_accepted",
+  GROUP_JOIN_REQUEST = "group_join_request",
+  GROUP_JOIN_REQUEST_ACCEPTED = "group_join_request_accepted",
 }

@@ -22,11 +22,11 @@ class CommentController {
     });
   };
 
-  public deleteComment = async (req: APIRequest, res: APIResponse) => {
+  public removeComment = async (req: APIRequest, res: APIResponse) => {
     const { _id, role } = req.user as UserSessionType;
-    await commentService.deleteComment(_id, req.params.commentId, role);
+    await commentService.removeComment(_id, req.params.commentId, role);
     res.status(HttpStatusCodes.OK).json({
-      message: "Delete comment successfully",
+      message: "Remove comment successfully",
     });
   };
 

@@ -228,10 +228,10 @@ class ApiErrorCodes {
     "Only the admin of the group can update the group."
   );
 
-  public static readonly DELETE_GROUP_FORBIDDEN = new ApiErrorCodes(
+  public static readonly REMOVE_GROUP_FORBIDDEN = new ApiErrorCodes(
     6004,
     HttpStatusCodes.FORBIDDEN,
-    "Only the admin of the group or site-admin can delete the group."
+    "Only the admin of the group or site-admin can remove the group."
   );
 
   public static readonly GROUP_MEMBERS_NOT_VISIBLE = new ApiErrorCodes(
@@ -377,10 +377,10 @@ class ApiErrorCodes {
     "Only the author of the post can update the post."
   );
 
-  public static readonly DELETE_POST_FORBIDDEN = new ApiErrorCodes(
+  public static readonly REMOVE_POST_FORBIDDEN = new ApiErrorCodes(
     8007,
     HttpStatusCodes.FORBIDDEN,
-    "Only the author of the post, the admin of the group or site-admin can delete the post."
+    "Only the author of the post, the admin of the group or site-admin can remove the post."
   );
 
   public static readonly INVALID_UPDATE_POST_visibilityLevel =
@@ -409,10 +409,10 @@ class ApiErrorCodes {
     "Only the author of the comment can update the comment."
   );
 
-  public static readonly DELETE_COMMENT_FORBIDDEN = new ApiErrorCodes(
+  public static readonly REMOVE_COMMENT_FORBIDDEN = new ApiErrorCodes(
     9003,
     HttpStatusCodes.FORBIDDEN,
-    "Only the author of the comment, the author of the post, the admin of the group or site-admin can delete the comment."
+    "Only the author of the comment, the author of the post, the admin of the group or site-admin can remove the comment."
   );
 
   /** Reaction errors 10001 - 11000*/

@@ -1,10 +1,11 @@
 import { validateDate } from "@src/helpers/validation";
-import notificationRepository from "@src/repositories/notification.repository";
+import reactionRepository from "@src/repositories/reaction.repository";
 import CommentModel, {
   IComment,
   ICommentEditHistory,
 } from "@src/schema/comment.schema";
 import ReactionModel from "@src/schema/reaction.schema";
+import notificationService from "@src/services/notification.service";
 
 import { ProjectionType, Types } from "mongoose";
 
@@ -40,10 +41,10 @@ class CommentRepository {
     }).lean();
   }
 
-  public async deleteCommentById(commentId: string | Types.ObjectId) {
+  public async removeCommentById(commentId: string | Types.ObjectId) {
     await ReactionModel.deleteMany({ target: commentId });
-    // Delete all notifications related to the comment
-    await notificationRepository.removeNotification(commentId);
+    // Remove all notifications related to the comment
+    await notificationService.removeNotificationByEntityId(commentId);
     return await CommentModel.findByIdAndDelete(commentId).lean();
   }
 
@@ -97,6 +98,25 @@ class CommentRepository {
       },
       { $project: { __v: 0 } },
     ]);
+  }
+
+  public async removeCommentsByPostId(postId: string | Types.ObjectId) {
+    const comments = await CommentModel.find(
+      { post: postId },
+      {
+        _id: 1,
+      }
+    ).lean();
+    const commentIds = comments.map((comment) => comment._id);
+
+    // Remove all reactions related to the comments
+    await reactionRepository.removeReactionsByTargetIds(commentIds);
+
+    // Remove all notifications related to the comments
+    await notificationService.removeNotificationsByEntityIds(commentIds);
+
+    // Remove all comments related to the post
+    return await CommentModel.deleteMany({ post: postId }).lean();
   }
 }
 

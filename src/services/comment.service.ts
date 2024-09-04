@@ -3,7 +3,7 @@ import {
   PostVisibilityLevel,
   ReactionTargetType,
   ReactionType,
-} from "@src/enums/post.enums";
+} from "@src/enums/post.enum";
 import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
@@ -127,7 +127,7 @@ class CommentService {
     return await this.getCommentById(commentId, senderId);
   }
 
-  public async deleteComment(
+  public async removeComment(
     senderId: string,
     commentId: string,
     senderRole: UserRole
@@ -137,16 +137,16 @@ class CommentService {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
     /**
-     * A user (sender) can only delete a comment if:
+     * A user (sender) can only remove a comment if:
      * 1. The sender is the author of the comment.
      * 2. The sender is the author of the post containing the comment.
      * 3. The sender is an admin of the group where the comment is posted.
      * 4. The sender is a site admin.
      */
 
-    // site admin and author of the comment can delete the comment
+    // site admin and author of the comment can remove the comment
     if (comment.author.equals(senderId) || senderRole === UserRole.ADMIN) {
-      await commentRepository.deleteCommentById(commentId);
+      await commentRepository.removeCommentById(commentId);
       return;
     }
 
@@ -159,13 +159,13 @@ class CommentService {
       throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
     }
 
-    // author of the post can delete the comment
+    // author of the post can remove the comment
     if (post.author.equals(senderId)) {
-      await commentRepository.deleteCommentById(commentId);
+      await commentRepository.removeCommentById(commentId);
       return;
     }
 
-    // if the post visibility level is group, admin of the group can delete the comment
+    // if the post visibility level is group, admin of the group can remove the comment
     if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
       if (!post.group) {
         // there is no way when a post has a group visibility level,
@@ -184,12 +184,12 @@ class CommentService {
       }
 
       if (group.admin.equals(senderId)) {
-        commentRepository.deleteCommentById(commentId);
+        commentRepository.removeCommentById(commentId);
         return;
       }
     }
 
-    throw new ApiError(ApiErrorCodes.DELETE_COMMENT_FORBIDDEN);
+    throw new ApiError(ApiErrorCodes.REMOVE_COMMENT_FORBIDDEN);
   }
 
   public async reactToComment(

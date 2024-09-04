@@ -1,5 +1,6 @@
-import { ReactionTargetType, ReactionType } from "@src/enums/post.enums";
+import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
 import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
+import notificationService from "@src/services/notification.service";
 import { ReactionDetailType } from "@src/types/post.types";
 import { ProjectionType, Types } from "mongoose";
 
@@ -23,7 +24,7 @@ class ReactionRepository {
         new: true,
         // If the reaction does not exist, add a new reaction
         upsert: true,
-        projection: { __v: 0 },
+        projection: { _id: 1, createdAt: 1, updatedAt: 1 },
       }
     );
   }
@@ -68,11 +69,16 @@ class ReactionRepository {
     userId: string | Types.ObjectId,
     targetType: ReactionTargetType
   ) {
-    return await ReactionModel.findOneAndDelete({
+    const res = await ReactionModel.findOneAndDelete({
       target: targetId,
       user: userId,
       targetType,
     });
+
+    // Remove the notification related to the reaction
+    if (res) {
+      await notificationService.removeNotificationByEntityId(res._id);
+    }
   }
 
   public async checkReactionExistsByTargetIdAndUserId(
@@ -146,6 +152,35 @@ class ReactionRepository {
         },
       },
     ]);
+  }
+
+  public async removeReactionsByTargetIds(targetIds: Types.ObjectId[]) {
+    /**
+     * We don't need to worry about the target type here
+     * because the percentage of two targetId duplication is very low (almost 0)
+     * it is not worth to add targetType to the query, it will slow down the query
+     */
+    const reactions = await ReactionModel.find(
+      { target: { $in: targetIds } },
+      {
+        _id: 1,
+      }
+    ).lean();
+
+    const reactionIds = reactions.map((reaction) => reaction._id);
+
+    // remove notifications related to the reactions
+    await notificationService.removeNotificationsByEntityIds(reactionIds);
+
+    // remove the reactions
+    await ReactionModel.deleteMany({ _id: { $in: reactionIds } });
+  }
+
+  public async getReactionById(
+    reactionId: string | Types.ObjectId,
+    projection: ProjectionType<IReaction> = {}
+  ) {
+    return await ReactionModel.findById(reactionId, projection).lean();
   }
 }
 

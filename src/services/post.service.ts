@@ -3,7 +3,7 @@ import {
   PostVisibilityLevel,
   ReactionTargetType,
   ReactionType,
-} from "@src/enums/post.enums";
+} from "@src/enums/post.enum";
 import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
@@ -32,12 +32,13 @@ class PostService {
   ) {
     if (createPostRequest.visibilityLevel === PostVisibilityLevel.GROUP) {
       const group = await groupRepository.findGroupById(
-        createPostRequest.groupId as string
+        createPostRequest.groupId!
       );
       if (!group) {
         throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
       }
 
+      // only group members can create a post in the group
       if (!group.members.some((member) => member.equals(authorID))) {
         throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
       }
@@ -212,7 +213,6 @@ class PostService {
         images: post.images,
         editedAt: new Date(),
       };
-
       await postRepository.pushPostHistory(postID, postHistory);
     }
 
@@ -228,7 +228,7 @@ class PostService {
     return this.getPostById(postID, senderId, UserRole.USER, true);
   }
 
-  public async deletePost(
+  public async removePost(
     senderId: string,
     postID: string,
     senderRole: UserRole
@@ -243,18 +243,18 @@ class PostService {
       throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
     /**
-     * sender can only delete post if one of the following conditions is met:
+     * sender can only remove post if one of the following conditions is met:
      * 1. sender is the author of the post
      * 2. sender is an site admin
      * 3. sender is the admin of the group where the post is posted
      */
 
     if (post.author.equals(senderId) || senderRole === UserRole.ADMIN) {
-      await postRepository.deletePostById(postID);
+      await postRepository.removePostById(postID);
       return;
     }
 
-    // if the post visibility level is group, admin of the group can delete the post
+    // if the post visibility level is group, admin of the group can remove the post
     if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
       if (!post.group) {
         // there is no way when a post has a group visibility level,
@@ -273,12 +273,12 @@ class PostService {
       }
 
       if (group.admin.equals(senderId)) {
-        await postRepository.deletePostById(postID);
+        await postRepository.removePostById(postID);
         return;
       }
     }
 
-    throw new ApiError(ApiErrorCodes.DELETE_POST_FORBIDDEN);
+    throw new ApiError(ApiErrorCodes.REMOVE_POST_FORBIDDEN);
   }
 
   public async reactToPost(

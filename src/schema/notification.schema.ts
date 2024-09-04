@@ -1,15 +1,5 @@
+import { NotificationType } from "@src/enums/notification.enums";
 import { Schema, model, Types } from "mongoose";
-
-// Enum for notification types
-enum NotificationType {
-  FRIEND_REQUEST = "friend_request",
-  FRIEND_REQUEST_ACCEPTED = "friend_request_accepted",
-  COMMENT = "comment",
-  REACTION = "reaction",
-  GROUP_CREATION_APPROVAL = "group_creation_approval",
-  GROUP_MEMBER_REQUEST = "group_member_request",
-  GROUP_MEMBER_REQUEST_ACCEPTED = "group_member_request_accepted",
-}
 
 // Interface for the Notification document
 export interface INotification {
@@ -30,7 +20,7 @@ const NotificationSchema = new Schema<INotification>(
       ref: "users",
       required: true,
     },
-    sender: { type: Schema.Types.ObjectId, ref: "users", require: true },
+    sender: { type: Schema.Types.ObjectId, ref: "users" },
     type: {
       type: String,
       enum: Object.values(NotificationType),

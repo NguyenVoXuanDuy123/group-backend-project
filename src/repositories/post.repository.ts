@@ -1,10 +1,10 @@
-import { PostVisibilityLevel } from "@src/enums/post.enums";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateDate } from "@src/helpers/validation";
-import CommentModel from "@src/schema/comment.schema";
+import commentRepository from "@src/repositories/comment.repository";
+import reactionRepository from "@src/repositories/reaction.repository";
 import PostModel, { IPostEditHistory, IPost } from "@src/schema/post.schema";
-import ReactionModel from "@src/schema/reaction.schema";
 import UserModel from "@src/schema/user.schema";
 import { ProjectionType, Types } from "mongoose";
 
@@ -40,14 +40,16 @@ class PostRepository {
     });
   }
 
-  public async deletePostById(postId: string | Types.ObjectId) {
-    // Delete all comments on the post
-    await CommentModel.deleteMany({ post: postId });
+  public async removePostById(postId: string | Types.ObjectId) {
+    // Remove all comments on the post
+    await commentRepository.removeCommentsByPostId(postId);
 
-    // Delete all reactions on the post
-    await ReactionModel.deleteMany({ target: postId });
+    // Remove all reactions on the post
+    await reactionRepository.removeReactionsByTargetIds([
+      new Types.ObjectId(postId),
+    ]);
 
-    // Delete the post
+    // Remove the post
     return await PostModel.findByIdAndDelete(postId);
   }
 

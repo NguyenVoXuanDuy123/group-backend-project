@@ -4,7 +4,8 @@ import {
   GroupVisibilityLevel,
   UserGroupRelation,
 } from "@src/enums/group.enums";
-import { PostVisibilityLevel } from "@src/enums/post.enums";
+import { NotificationType } from "@src/enums/notification.enums";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
@@ -17,6 +18,7 @@ import userRepository from "@src/repositories/user.repository";
 import { IGroup } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
+import notificationService from "@src/services/notification.service";
 import postService from "@src/services/post.service";
 import userService from "@src/services/user.service";
 import {
@@ -283,7 +285,10 @@ class GroupService {
     status: GroupStatus,
     senderRole: UserRole
   ) {
-    const group = await groupRepository.findGroupById(groupId, { status: 1 });
+    const group = await groupRepository.findGroupById(groupId, {
+      status: 1,
+      admin: 1,
+    });
     if (!group) {
       throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
     }
@@ -295,6 +300,13 @@ class GroupService {
     if (group.status !== GroupStatus.PENDING) {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_STATUS);
     }
+
+    // notify the admin of the group when the group is approved
+    await notificationService.pushNotification({
+      receiver: group.admin,
+      relatedEntity: new Types.ObjectId(groupId),
+      type: NotificationType.GROUP_JOIN_REQUEST,
+    });
 
     await groupRepository.updateGroupById(groupId, { status });
   }

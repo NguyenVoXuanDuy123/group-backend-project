@@ -16,10 +16,11 @@ import {
 import groupRepository from "@src/repositories/group.repository";
 import { GroupsQueryType, PaginationQueryType } from "@src/types/util.types";
 import postRepository from "@src/repositories/post.repository";
-import { PostVisibilityLevel } from "@src/enums/post.enums";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import postService from "@src/services/post.service";
 import { Types } from "mongoose";
 import { GroupRole } from "@src/enums/group.enums";
+import notificationService from "@src/services/notification.service";
 
 class UserService {
   public async getUserByIdOrUsername(
@@ -395,6 +396,13 @@ class UserService {
     });
 
     return mutualFriendCount;
+  }
+
+  public async getUserNotifications(
+    senderId: string,
+    paginationQuery: PaginationQueryType
+  ) {
+    return notificationService.getUserNotifications(senderId, paginationQuery);
   }
 }
 

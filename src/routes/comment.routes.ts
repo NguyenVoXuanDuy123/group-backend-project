@@ -15,7 +15,7 @@ commentRouter.patch(
 
 commentRouter.delete(
   "/:commentId",
-  wrapRequestHandler(CommentController.deleteComment)
+  wrapRequestHandler(CommentController.removeComment)
 );
 
 commentRouter.put(

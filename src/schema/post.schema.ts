@@ -1,4 +1,4 @@
-import { PostVisibilityLevel } from "@src/enums/post.enums";
+import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { Schema, model, Types } from "mongoose";
 
 // Define an interface representing a document in MongoDB.

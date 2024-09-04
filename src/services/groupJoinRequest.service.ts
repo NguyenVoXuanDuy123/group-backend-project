@@ -1,4 +1,5 @@
 import { GroupJoinRequestStatus, GroupStatus } from "@src/enums/group.enums";
+import { NotificationType } from "@src/enums/notification.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
@@ -6,6 +7,8 @@ import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
 
 import groupService from "@src/services/group.service";
+import notificationService from "@src/services/notification.service";
+import { Types } from "mongoose";
 
 class GroupJoinRequestService {
   public async createGroupJoinRequest(senderId: string, groupId: string) {
@@ -46,6 +49,15 @@ class GroupJoinRequestService {
       senderId,
       groupId
     );
+
+    // notify the admin of the group when a user sends a group join request
+    await notificationService.pushNotification({
+      sender: new Types.ObjectId(senderId),
+      receiver: group.admin,
+      type: NotificationType.GROUP_JOIN_REQUEST,
+      relatedEntity: _id,
+    });
+
     return await groupJoinRequestRepository.getGroupJoinRequestById(_id, {
       createdAt: 1,
     });
@@ -114,7 +126,17 @@ class GroupJoinRequestService {
         groupJoinRequest.group,
         groupJoinRequest.user
       );
+
+      // notify the user when their group join request is accepted
+      await notificationService.pushNotification({
+        sender: group.admin,
+        receiver: groupJoinRequest.user,
+        type: NotificationType.GROUP_JOIN_REQUEST_ACCEPTED,
+        relatedEntity: groupJoinRequest.group,
+      });
     }
+
+    await notificationService.removeNotificationByEntityId(requestId);
 
     await groupJoinRequestRepository.changeStatusGroupJoinRequest(
       requestId,

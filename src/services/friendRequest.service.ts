@@ -4,7 +4,6 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 
 import friendRequestRepository from "@src/repositories/friendRequest.repository";
-import notificationRepository from "@src/repositories/notification.repository";
 import userRepository from "@src/repositories/user.repository";
 import notificationService from "@src/services/notification.service";
 import userService from "@src/services/user.service";
@@ -119,7 +118,7 @@ class FriendRequestService {
     await friendRequestRepository.changeStatusFriendRequest(requestId, status);
 
     // Remove the notification if the status is changed to cancelled, accepted or rejected
-    await notificationRepository.removeNotification(requestId);
+    await notificationService.removeNotificationByEntityId(requestId);
     return friendRequestRepository.getFriendRequestById(requestId);
   }
 

@@ -52,11 +52,11 @@ class PostController {
     });
   };
 
-  public deletePost = async (req: APIRequest, res: APIResponse) => {
+  public removePost = async (req: APIRequest, res: APIResponse) => {
     const { _id, role } = req.user as UserSessionType;
-    await postService.deletePost(_id, req.params.postId, role);
+    await postService.removePost(_id, req.params.postId, role);
     res.status(HttpStatusCodes.OK).json({
-      message: "Delete post successfully",
+      message: "remove post successfully",
     });
   };
 
