@@ -25,7 +25,7 @@ postRouter.get("/:postId", wrapRequestHandler(postController.getPostById));
 postRouter.post(
   "/:postId/comments",
   wrapRequestHandler(addCommentValidator),
-  wrapRequestHandler(postController.createCommentToPost)
+  wrapRequestHandler(postController.addCommentToPost)
 );
 
 postRouter.get(

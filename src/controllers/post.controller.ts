@@ -101,12 +101,13 @@ class PostController {
     });
   };
 
-  public createCommentToPost = async (
+  public addCommentToPost = async (
     req: APIRequest<CreateCommentRequestType>,
     res: APIResponse
   ) => {
     const { _id } = req.user as UserSessionType;
-    const comment = await postService.createCommentToPost(
+
+    const comment = await postService.addCommentToPost(
       _id,
       req.params.postId,
       req.body

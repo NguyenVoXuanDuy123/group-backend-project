@@ -400,7 +400,7 @@ class PostService {
     return await reactionRepository.getReactionsByTargetId(postID, type);
   }
 
-  public async createCommentToPost(
+  public async addCommentToPost(
     senderId: string,
     postID: string,
     createCommentRequest: CreateCommentRequestType
