@@ -8,6 +8,7 @@ import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repos
 
 import groupService from "@src/services/group.service";
 import notificationService from "@src/services/notification.service";
+import { PaginationQueryType } from "@src/types/util.types";
 import { Types } from "mongoose";
 
 class GroupJoinRequestService {
@@ -143,9 +144,14 @@ class GroupJoinRequestService {
       status
     );
   }
-  public async getPendingGroupJoinRequests(groupId: string) {
+  public async getPendingGroupJoinRequests(
+    groupId: string,
+    paginationQuery: PaginationQueryType
+  ) {
     return await groupJoinRequestRepository.getPendingGroupJoinRequests(
-      groupId
+      groupId,
+      paginationQuery.beforeDate,
+      Number(paginationQuery.limit)
     );
   }
 }

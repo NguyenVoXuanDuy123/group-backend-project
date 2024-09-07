@@ -1,8 +1,7 @@
 import { UserRole, UserStatus } from "@src/enums/user.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
-// Define the User interface extending Document
-export interface IUser {
+export type User = {
   lastName: string;
   firstName: string;
   username: string;
@@ -15,10 +14,10 @@ export interface IUser {
   status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Define the User Schema
-const UserSchema: Schema<IUser> = new Schema(
+const UserSchema: Schema<User> = new Schema(
   {
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -52,6 +51,6 @@ const UserSchema: Schema<IUser> = new Schema(
 UserSchema.index({ username: 1 });
 
 // Create the User model
-const UserModel: Model<IUser> = model<IUser>("User", UserSchema);
+const UserModel: Model<User> = model<User>("User", UserSchema);
 
 export default UserModel;

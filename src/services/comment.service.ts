@@ -14,7 +14,7 @@ import groupRepository from "@src/repositories/group.repository";
 import postRepository from "@src/repositories/post.repository";
 import reactionRepository from "@src/repositories/reaction.repository";
 import userRepository from "@src/repositories/user.repository";
-import { IComment } from "@src/schema/comment.schema";
+import { Comment } from "@src/schema/comment.schema";
 import notificationService from "@src/services/notification.service";
 import postService from "@src/services/post.service";
 import reactionService from "@src/services/reaction.service";
@@ -31,7 +31,7 @@ class CommentService {
     postId: string,
     createCommentRequest: CreateCommentRequestType
   ): Promise<CommentDetailType> {
-    const comment: Partial<IComment> = {
+    const comment: Partial<Comment> = {
       content: createCommentRequest.content,
       author: new Types.ObjectId(senderId),
       post: new Types.ObjectId(postId),
@@ -201,12 +201,14 @@ class CommentService {
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await postService.getPostById(comment.post, senderId);
+    const canSeePost = await postService.checkIfPostVisibleToUser(
+      comment.post,
+      senderId
+    );
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
     const reaction = await reactionService.createReaction(
       commentId,
       senderId,
@@ -224,12 +226,14 @@ class CommentService {
     if (!comment) {
       throw new ApiError(ApiErrorCodes.COMMENT_NOT_FOUND);
     }
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await postService.getPostById(comment.post, senderId);
+    const canSeePost = await postService.checkIfPostVisibleToUser(
+      comment.post,
+      senderId
+    );
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
     await reactionService.removeReactionFromPost(
       commentId,
       senderId,
@@ -253,12 +257,14 @@ class CommentService {
     if (Object.values(ReactionType).indexOf(type) === -1) {
       throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
     }
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await postService.getPostById(comment.post, senderId);
+    const canSeePost = await postService.checkIfPostVisibleToUser(
+      comment.post,
+      senderId
+    );
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
 
     return await reactionRepository.getReactionsByTargetId(commentId, type);
   }

@@ -98,4 +98,14 @@ userRouter.get(
   wrapRequestHandler(userController.getMyNotifications)
 );
 
+userRouter.get(
+  "/me/notifications/unread-count",
+  wrapRequestHandler(userController.getMyUnreadNotificationsCount)
+);
+
+userRouter.get(
+  "/me/notifications/unread",
+  wrapRequestHandler(userController.getMyUnreadNotifications)
+);
+
 export default userRouter;

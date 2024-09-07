@@ -4,7 +4,7 @@ import userRepository from "@src/repositories/user.repository";
 
 import bcrypt from "bcrypt";
 import { LoginRequestType, RegisterRequestType } from "@src/types/auth.types";
-import { IUser } from "@src/schema/user.schema";
+import { User } from "@src/schema/user.schema";
 import { APIRequest } from "@src/types/api.types";
 
 class AuthService {
@@ -15,7 +15,7 @@ class AuthService {
     ) {
       throw new ApiError(ApiErrorCodes.USERNAME_ALREADY_TAKEN);
     }
-    const user: Partial<IUser> = {
+    const user: Partial<User> = {
       avatar: "http://localhost:4000/images/avatar-0.png",
       firstName: registerRequest.firstName,
       lastName: registerRequest.lastName,

@@ -1,7 +1,7 @@
 import { FriendRequestStatus } from "@src/enums/user.enums";
 import { validateDate } from "@src/helpers/validation";
 import FriendRequestModel, {
-  IFriendRequest,
+  FriendRequest,
 } from "@src/schema/friendRequest.schema";
 import { FriendRequestDetailType } from "@src/types/user.types";
 import { ProjectionType, Types } from "mongoose";
@@ -9,7 +9,7 @@ import { ProjectionType, Types } from "mongoose";
 class FriendRequestRepository {
   public async getFriendRequestById(
     requestId: string | Types.ObjectId,
-    projection: ProjectionType<IFriendRequest> = {}
+    projection: ProjectionType<FriendRequest> = {}
   ) {
     return await FriendRequestModel.findById(requestId, projection).lean();
   }
@@ -41,7 +41,7 @@ class FriendRequestRepository {
   public async getPendingFriendRequestBySenderIdAndReceiverId(
     senderId: string | Types.ObjectId,
     receiverId: string | Types.ObjectId,
-    projection: ProjectionType<IFriendRequest> = {}
+    projection: ProjectionType<FriendRequest> = {}
   ) {
     return await FriendRequestModel.findOne(
       {

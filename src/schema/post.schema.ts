@@ -1,26 +1,32 @@
 import { PostVisibilityLevel } from "@src/enums/post.enum";
 import { Schema, model, Types } from "mongoose";
 
-// Define an interface representing a document in MongoDB.
-export interface IPostEditHistory {
+export type PostEditHistory = {
   content: string;
   images: string[];
   editedAt: Date;
-}
+};
 
-export interface IPost {
-  author: Types.ObjectId;
-  content: string;
-  images: string[];
-  visibilityLevel: PostVisibilityLevel;
-  group: Types.ObjectId | null;
-  editHistory: IPostEditHistory[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type Post =
+  | {
+      author: Types.ObjectId;
+      content: string;
+      images: string[];
+      editHistory: PostEditHistory[];
+      createdAt: Date;
+      updatedAt: Date;
+    } & (GroupPost | HomePost);
 
-// Create a schema corresponding to the document interface.
-const postSchema = new Schema<IPost>(
+type HomePost = {
+  visibilityLevel: PostVisibilityLevel.PUBLIC | PostVisibilityLevel.FRIEND;
+};
+
+type GroupPost = {
+  group: Types.ObjectId;
+  visibilityLevel: PostVisibilityLevel.GROUP;
+};
+
+const postSchema = new Schema<Post>(
   {
     author: {
       type: Schema.Types.ObjectId,
@@ -59,6 +65,6 @@ const postSchema = new Schema<IPost>(
 );
 
 // Create a model based on the schema.
-const PostModel = model<IPost>("posts", postSchema);
+const PostModel = model<Post>("posts", postSchema);
 
 export default PostModel;

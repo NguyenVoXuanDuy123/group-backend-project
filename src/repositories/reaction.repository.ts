@@ -1,5 +1,5 @@
 import { ReactionTargetType, ReactionType } from "@src/enums/post.enum";
-import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
+import ReactionModel, { Reaction } from "@src/schema/reaction.schema";
 import notificationService from "@src/services/notification.service";
 import { ReactionDetailType } from "@src/types/post.types";
 import { ProjectionType, Types } from "mongoose";
@@ -93,7 +93,7 @@ class ReactionRepository {
   public async getReactionsByTargetIdAndUserId(
     targetId: string | Types.ObjectId,
     userId: string | Types.ObjectId,
-    projection: ProjectionType<IReaction> = {}
+    projection: ProjectionType<Reaction> = {}
   ) {
     /**
      * We don't need to worry about the target type here
@@ -178,7 +178,7 @@ class ReactionRepository {
 
   public async getReactionById(
     reactionId: string | Types.ObjectId,
-    projection: ProjectionType<IReaction> = {}
+    projection: ProjectionType<Reaction> = {}
   ) {
     return await ReactionModel.findById(reactionId, projection).lean();
   }

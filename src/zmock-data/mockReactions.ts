@@ -10,7 +10,7 @@ import {
 } from "@src/enums/post.enum";
 import CommentModel from "@src/schema/comment.schema";
 import PostModel from "@src/schema/post.schema";
-import ReactionModel, { IReaction } from "@src/schema/reaction.schema";
+import ReactionModel, { Reaction } from "@src/schema/reaction.schema";
 import UserModel from "@src/schema/user.schema";
 import { randomDate } from "@src/zmock-data/helper";
 import { Document, Types } from "mongoose";
@@ -19,8 +19,8 @@ export const mockReactions = async () => {
   console.log("Mocking reactions...");
   faker.seed(SEED + 5);
   const users = await UserModel.find();
-  const reactions: (Document<unknown, object, IReaction> &
-    IReaction &
+  const reactions: (Document<unknown, object, Reaction> &
+    Reaction &
     Required<{ _id: Types.ObjectId }>)[] = [];
   const reactionTypes = [
     ...Array(40).fill(ReactionType.LIKE), // 40% like

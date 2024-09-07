@@ -1,8 +1,7 @@
 import { NotificationType } from "@src/enums/notification.enums";
 import { Schema, model, Types } from "mongoose";
 
-// Interface for the Notification document
-export interface INotification {
+export type Notification = {
   receiver: Types.ObjectId;
   sender: Types.ObjectId; // User who triggered the notification (if applicable)
   type: NotificationType;
@@ -10,10 +9,10 @@ export interface INotification {
   isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Notification Schema
-const NotificationSchema = new Schema<INotification>(
+const NotificationSchema = new Schema<Notification>(
   {
     receiver: {
       type: Schema.Types.ObjectId,
@@ -29,7 +28,6 @@ const NotificationSchema = new Schema<INotification>(
     relatedEntity: {
       type: Schema.Types.ObjectId,
       refPath: "type",
-      unique: true,
       sparse: true,
       index: true,
     }, // Dynamically refer to the entity based on the type
@@ -39,10 +37,9 @@ const NotificationSchema = new Schema<INotification>(
   { timestamps: { createdAt: true } }
 );
 
-// Indexes
 NotificationSchema.index({ recipient: 1, createdAt: -1 });
 
-const NotificationModel = model<INotification>(
+const NotificationModel = model<Notification>(
   "Notification",
   NotificationSchema
 );

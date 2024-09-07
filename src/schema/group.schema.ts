@@ -1,8 +1,7 @@
 import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
-// Define the Group interface extending Document
-export interface IGroup {
+export type Group = {
   admin: Types.ObjectId;
   name: string;
   description: string;
@@ -11,10 +10,13 @@ export interface IGroup {
   status: GroupStatus;
   createdAt: Date;
   updatedAt: Date;
-}
+
+  // This field is only required when the group status is rejected
+  rejectedReason?: string;
+};
 
 // Define the Group Schema
-const GroupSchema: Schema<IGroup> = new Schema(
+const GroupSchema: Schema<Group> = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -32,6 +34,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
     },
     createdAt: { type: Date },
     updatedAt: { type: Date },
+    rejectedReason: { type: String },
   },
   {
     timestamps: {
@@ -42,6 +45,6 @@ const GroupSchema: Schema<IGroup> = new Schema(
 );
 
 // Create the Group model
-const GroupModel: Model<IGroup> = model<IGroup>("groups", GroupSchema);
+const GroupModel: Model<Group> = model<Group>("groups", GroupSchema);
 
 export default GroupModel;

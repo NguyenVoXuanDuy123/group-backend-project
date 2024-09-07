@@ -1,12 +1,13 @@
-import UserModel, { IUser } from "@src/schema/user.schema";
-import { FriendDetailType } from "@src/types/user.types";
+import newsfeedRepository from "@src/repositories/newsfeed.repository";
+import UserModel, { User } from "@src/schema/user.schema";
+import { UserInformationType } from "@src/types/user.types";
 
 import { ProjectionType, Types } from "mongoose";
 
 class UserRepository {
   public async getUserById(
     id: string | Types.ObjectId,
-    projection: ProjectionType<IUser> = {}
+    projection: ProjectionType<User> = {}
   ) {
     return await UserModel.findById(id, projection).lean();
   }
@@ -22,12 +23,12 @@ class UserRepository {
     return await UserModel.findOne({ username }, projection).lean();
   }
 
-  public async createUser(user: Partial<IUser>) {
+  public async createUser(user: Partial<User>) {
     await UserModel.create(user);
   }
 
-  public async updateUserById(id: string, user: Partial<IUser>) {
-    await UserModel.findByIdAndUpdate<IUser>(id, { $set: user });
+  public async updateUserById(id: string, user: Partial<User>) {
+    await UserModel.findByIdAndUpdate<User>(id, { $set: user });
   }
 
   public async addFriend(
@@ -44,10 +45,20 @@ class UserRepository {
   ) {
     await UserModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
     await UserModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+
+    // Remove newsfeed of the user and friend for each other
+    await newsfeedRepository.removeNewsfeedByOwnerIdAndAuthorId(
+      userId,
+      friendId
+    );
+    await newsfeedRepository.removeNewsfeedByOwnerIdAndAuthorId(
+      friendId,
+      userId
+    );
   }
 
   public async getFriends(userId: string, afterId?: string, limit?: number) {
-    const friendDetails = await UserModel.aggregate<FriendDetailType>([
+    const friendDetails = await UserModel.aggregate<UserInformationType>([
       { $match: { _id: new Types.ObjectId(userId) } },
       { $unwind: "$friends" },
       { $sort: { friends: 1 } },
@@ -85,6 +96,57 @@ class UserRepository {
     ]);
 
     return friendDetails;
+  }
+
+  public async searchUsers(q: string, afterId?: string, limit?: number) {
+    const query = q.trim();
+
+    const users = await UserModel.aggregate<UserInformationType>([
+      {
+        $addFields: {
+          fullName: {
+            $concat: ["$firstName", " ", "$lastName"],
+          },
+        },
+      },
+      {
+        $match: {
+          fullName: {
+            // Dynamically create the regex pattern and ensure it's a valid string
+            $regex: query,
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+      {
+        $match: {
+          _id: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
+      {
+        $limit: limit || 10,
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          friends: 1,
+        },
+      },
+    ]);
+
+    return users;
   }
 }
 

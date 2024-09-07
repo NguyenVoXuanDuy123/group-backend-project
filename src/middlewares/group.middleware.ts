@@ -24,7 +24,7 @@ export const createGroupValidator = (
   const { name, description, visibilityLevel } = req.body;
   validateNotNull({ name, description, visibilityLevel });
   if (!Object.values(GroupVisibilityLevel).includes(visibilityLevel)) {
-    throw new ApiError(ApiErrorCodes.INVALID_GROUP_visibilityLevel);
+    throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
   }
   next();
 };
@@ -38,7 +38,7 @@ export const updateGroupValidator = (
 
   if (visibilityLevel) {
     if (!Object.values(GroupVisibilityLevel).includes(visibilityLevel)) {
-      throw new ApiError(ApiErrorCodes.INVALID_GROUP_visibilityLevel);
+      throw new ApiError(ApiErrorCodes.INVALID_GROUP_VISIBILITY_LEVEL);
     }
   }
   next();

@@ -1,12 +1,12 @@
 import { validateDate } from "@src/helpers/validation";
 import NotificationModel, {
-  INotification,
+  Notification,
 } from "@src/schema/notification.schema";
 import { NotificationResponseType } from "@src/types/notification.type";
 import { Types } from "mongoose";
 
 class NotificationRepository {
-  public async pushNotification(notification: Partial<INotification>) {
+  public async pushNotification(notification: Partial<Notification>) {
     await NotificationModel.create(notification);
   }
 
@@ -33,9 +33,10 @@ class NotificationRepository {
   }
 
   public async getUserNotifications(
-    userId: string,
+    receiverId: string,
     beforeDate?: string,
-    limit?: number
+    limit?: number,
+    condition: { [key: string]: unknown } = {}
   ) {
     if (beforeDate) {
       // if beforeDate is invalid, method below will throw an error
@@ -43,7 +44,12 @@ class NotificationRepository {
     }
 
     return await NotificationModel.aggregate<NotificationResponseType>([
-      { $match: { receiver: new Types.ObjectId(userId) } },
+      {
+        $match: {
+          receiver: new Types.ObjectId(receiverId),
+          ...condition,
+        },
+      },
       { $sort: { createdAt: -1 } },
       {
         $match: {
@@ -61,6 +67,7 @@ class NotificationRepository {
           as: "senderDetail",
         },
       },
+      { $unwind: { path: "$senderDetail", preserveNullAndEmptyArrays: true } },
       {
         $project: {
           _id: 1,
@@ -79,6 +86,27 @@ class NotificationRepository {
         },
       },
     ]);
+  }
+
+  public async markNotificationAsRead(receiverId: string) {
+    await NotificationModel.updateMany(
+      { receiver: new Types.ObjectId(receiverId), isRead: false },
+      { isRead: true }
+    );
+  }
+
+  public async getUnreadNotificationCount(receiverId: string) {
+    return await NotificationModel.countDocuments({
+      receiver: new Types.ObjectId(receiverId),
+      isRead: false,
+    });
+  }
+
+  public async getUnreadNotifications(receiverId: string) {
+    return await NotificationModel.find({
+      receiver: new Types.ObjectId(receiverId),
+      isRead: false,
+    });
   }
 }
 export default new NotificationRepository();

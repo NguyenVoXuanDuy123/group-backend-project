@@ -1,17 +1,16 @@
 import { GroupJoinRequestStatus } from "@src/enums/group.enums";
 import { model, Model, Schema, Types } from "mongoose";
 
-// Define the GroupJoinRequest interface
-interface IGroupJoinRequest {
+type GroupJoinRequest = {
   user: Types.ObjectId;
   group: Types.ObjectId;
   status: GroupJoinRequestStatus;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Define the GroupJoinRequest Schema
-const GroupJoinRequestSchema: Schema<IGroupJoinRequest> = new Schema(
+const GroupJoinRequestSchema: Schema<GroupJoinRequest> = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "users" },
     group: { type: Schema.Types.ObjectId, ref: "groups" },
@@ -31,8 +30,9 @@ const GroupJoinRequestSchema: Schema<IGroupJoinRequest> = new Schema(
   }
 );
 
-// Create the GroupJoinRequest model
-const GroupJoinRequestModel: Model<IGroupJoinRequest> =
-  model<IGroupJoinRequest>("group_join_requests", GroupJoinRequestSchema);
+const GroupJoinRequestModel: Model<GroupJoinRequest> = model<GroupJoinRequest>(
+  "group_join_requests",
+  GroupJoinRequestSchema
+);
 
 export default GroupJoinRequestModel;

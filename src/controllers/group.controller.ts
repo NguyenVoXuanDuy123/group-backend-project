@@ -17,8 +17,8 @@ class GroupController {
     req: APIRequest<CreateGroupRequestType>,
     res: APIResponse
   ) => {
-    const { _id } = req.user as UserSessionType;
-    const group = await groupService.createGroup(_id, req.body);
+    const { _id, role } = req.user as UserSessionType;
+    const group = await groupService.createGroup(_id, req.body, role);
     res.status(HttpStatusCodes.CREATED).json({
       message: "Group created successfully, waiting for approval",
       result: group,
@@ -95,7 +95,8 @@ class GroupController {
     const { groupId } = req.params;
     const groupJoinRequests = await groupService.getPendingGroupJoinRequests(
       _id,
-      groupId
+      groupId,
+      req.query as PaginationQueryType
     );
 
     res.status(HttpStatusCodes.OK).json({
@@ -133,8 +134,7 @@ class GroupController {
   ) => {
     const { role } = req.user as UserSessionType;
     const { groupId } = req.params;
-    const { status } = req.body;
-    await groupService.changeGroupStatus(groupId, status, role);
+    await groupService.changeGroupStatus(groupId, role, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Group status changed successfully",
     });
@@ -154,6 +154,18 @@ class GroupController {
     res.status(HttpStatusCodes.OK).json({
       message: "Group posts fetched successfully",
       result: posts,
+    });
+  };
+
+  public getPendingGroups = async (req: APIRequest, res: APIResponse) => {
+    const { role } = req.user as UserSessionType;
+    const groups = await groupService.getPendingGroups(
+      role,
+      req.query as PaginationQueryType
+    );
+    res.status(HttpStatusCodes.OK).json({
+      message: "Pending groups fetched successfully",
+      result: groups,
     });
   };
 }

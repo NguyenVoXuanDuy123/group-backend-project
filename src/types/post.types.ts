@@ -3,6 +3,8 @@ import {
   ReactionTargetType,
   ReactionType,
 } from "@src/enums/post.enum";
+import { PostEditHistory } from "@src/schema/post.schema";
+import { UserInformationType } from "@src/types/user.types";
 
 export type CreatePostRequestType = {
   content: string;
@@ -36,4 +38,23 @@ export type ReactionDetailType = {
     username: string;
     avatar: string;
   };
+};
+
+export type PostDetailType = {
+  author: UserInformationType;
+  commentCount: number;
+  content: string;
+  createdAt: string;
+  editHistory: PostEditHistory[];
+  group: null | Group;
+  _id: string;
+  images: string[];
+  updatedAt: string;
+  visibilityLevel: PostVisibilityLevel;
+};
+
+type Group = {
+  _id: string;
+  name: string;
+  admin: string;
 };

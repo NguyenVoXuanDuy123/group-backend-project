@@ -28,13 +28,13 @@ export type ChangeFriendRequestStatusType = {
  * When users fetch their friends,
  * they will get the friend details defined below
  */
-export type FriendDetailType = {
+export type UserInformationType = {
   _id: string;
   lastName: string;
   firstName: string;
   username: string;
-  avatar?: string;
   friends: Types.ObjectId[];
+  avatar?: string;
 };
 /**
  * When users fetch groups which they are members of,

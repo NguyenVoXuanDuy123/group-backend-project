@@ -19,10 +19,10 @@ const mockData = async () => {
   // await mockGroups(50);
 
   // //loop each user, create 20-40 posts (home post or group post) for each user
-  // await mockPosts(20, 40);
+  await mockPosts(20, 40);
 
   // //loop each user, comment to their (50%) friends' posts, group posts, or public posts
-  // await mockComments();
+  await mockComments();
 
   //loop each user, react to their (80%) friends' posts, group posts, or public posts
   // await mockReactions();
@@ -30,4 +30,4 @@ const mockData = async () => {
   return;
 };
 
-mockData();
+// mockData();

@@ -1,12 +1,5 @@
 type PlainObject = { [key: string]: unknown };
 
-/**
- * Removes properties with null values from an object.
- *
- * @param obj - The object to clean.
- * @returns A new object with null values removed.
- */
-
 export const removeNullValues = (obj: PlainObject): PlainObject => {
   if (obj === null) {
     return {}; // Handle null values

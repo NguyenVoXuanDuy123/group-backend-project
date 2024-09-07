@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 type APIResponseType = {
-  errorCode?: number;
   message: string;
   result?: unknown;
 };
+
+type ErrorAPIResponseType = {
+  message: string;
+  errorCode: number;
+};
+
+export type ErrorAPIResponse = Response<ErrorAPIResponseType>;
 
 export type APIResponse = Response<APIResponseType>;
 

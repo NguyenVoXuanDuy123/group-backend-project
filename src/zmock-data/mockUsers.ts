@@ -126,5 +126,5 @@ export const mockUsers = async (userCount: number) => {
   // }
   // console.log(`finished sending friend requests`);
 
-  console.log(`finished mockin ${userCount} users`);
+  console.log(`finished mocking ${userCount} users`);
 };

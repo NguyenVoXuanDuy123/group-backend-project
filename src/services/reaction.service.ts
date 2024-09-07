@@ -32,19 +32,16 @@ class ReactionService {
       });
     }
 
-    /*
-     * Remove the notification to ensure that the user will not receive multiple notifications
-     * from the same user make multiple reaction actions on the same
-     */
-    await notificationService.removeNotificationByEntityId(reaction._id);
-
-    //notify to the author of the post
-    await notificationService.pushNotification({
-      receiver: target?.author,
-      sender: new Types.ObjectId(userID),
-      type: NotificationType.REACTION,
-      relatedEntity: new Types.ObjectId(reaction._id),
-    });
+    // If the reaction is created for the first time, notify the author of the post
+    if (reaction.createdAt.getTime() === reaction.updatedAt.getTime()) {
+      //notify to the author of the post
+      await notificationService.pushNotification({
+        receiver: target?.author,
+        sender: new Types.ObjectId(userID),
+        type: NotificationType.REACTION,
+        relatedEntity: new Types.ObjectId(reaction._id),
+      });
+    }
 
     return reaction;
   }

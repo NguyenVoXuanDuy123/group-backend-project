@@ -37,15 +37,9 @@ class PostController {
     req: APIRequest<UpdatePostRequestType>,
     res: APIResponse
   ) => {
-    const { _id, role } = req.user as UserSessionType;
+    const { _id } = req.user as UserSessionType;
 
-    await postService.updatePost(_id, role, req.params.postId, req.body);
-    const post = await postService.updatePost(
-      _id,
-      role,
-      req.params.postId,
-      req.body
-    );
+    const post = await postService.updatePost(_id, req.params.postId, req.body);
     res.status(HttpStatusCodes.OK).json({
       message: "Update post successfully",
       result: post,

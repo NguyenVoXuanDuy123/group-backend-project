@@ -21,6 +21,7 @@ import postService from "@src/services/post.service";
 import { Types } from "mongoose";
 import { GroupRole } from "@src/enums/group.enums";
 import notificationService from "@src/services/notification.service";
+import newsfeedRepository from "@src/repositories/newsfeed.repository";
 
 class UserService {
   public async getUserByIdOrUsername(
@@ -49,7 +50,6 @@ class UserService {
         updatedAt: 0,
       });
     }
-    console.log(user);
     if (!user) {
       throw new ApiError(ApiErrorCodes.USER_NOT_FOUND);
     }
@@ -239,7 +239,7 @@ class UserService {
 
     const group = await groupRepository.getUserGroups(
       userId,
-      query.afterId,
+      query.beforeDate,
       Number(query.limit),
       query.groupRole,
       query.status
@@ -351,7 +351,7 @@ class UserService {
     paginationQuery: PaginationQueryType
   ) {
     const { beforeDate, limit } = paginationQuery;
-    const feeds = await postRepository.getNewFeeds(
+    const feeds = await newsfeedRepository.getNewsfeed(
       senderId,
       beforeDate,
       Number(limit)
@@ -403,6 +403,14 @@ class UserService {
     paginationQuery: PaginationQueryType
   ) {
     return notificationService.getUserNotifications(senderId, paginationQuery);
+  }
+
+  public async getUnreadNotificationCount(senderId: string): Promise<number> {
+    return notificationService.getUnreadNotificationCount(senderId);
+  }
+
+  public async getUnreadNotifications(senderId: string) {
+    return await notificationService.getUnreadNotifications(senderId);
   }
 }
 

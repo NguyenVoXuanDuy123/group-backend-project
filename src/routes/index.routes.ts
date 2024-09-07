@@ -10,6 +10,7 @@ import {
 import { wrapRequestHandler } from "@src/helpers/handlers";
 import commentRouter from "@src/routes/comment.routes";
 import uploadRouter from "@src/routes/upload.routes";
+import searchRouter from "@src/routes/search.routes";
 
 const apiRouter = Router();
 
@@ -25,5 +26,6 @@ apiRouter.use("/groups", groupRouter);
 apiRouter.use("/posts", postRouter);
 apiRouter.use("/comments", commentRouter);
 apiRouter.use("/upload", uploadRouter);
+apiRouter.use("/search", searchRouter);
 
 export default apiRouter;

@@ -62,12 +62,16 @@ groupRouter.get(
   wrapRequestHandler(groupController.getGroupPosts)
 );
 
-//Only admin can change group status
-
+//Admin routes related to group
 groupRouter.patch(
   "/:groupId/status",
   wrapRequestHandler(changeGroupStatusValidator),
   wrapRequestHandler(groupController.changeGroupStatus)
+);
+
+groupRouter.get(
+  "/admin/creation-requests",
+  wrapRequestHandler(groupController.getPendingGroups)
 );
 
 export default groupRouter;

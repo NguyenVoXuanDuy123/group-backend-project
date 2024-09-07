@@ -3,13 +3,14 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { validateDate } from "@src/helpers/validation";
 import commentRepository from "@src/repositories/comment.repository";
+import newsfeedRepository from "@src/repositories/newsfeed.repository";
 import reactionRepository from "@src/repositories/reaction.repository";
-import PostModel, { IPostEditHistory, IPost } from "@src/schema/post.schema";
+import PostModel, { PostEditHistory, Post } from "@src/schema/post.schema";
 import UserModel from "@src/schema/user.schema";
 import { ProjectionType, Types } from "mongoose";
 
 class PostRepository {
-  public async createPost(post: Partial<IPost>) {
+  public async createPost(post: Partial<Post>) {
     return await PostModel.create(post);
   }
 
@@ -19,21 +20,21 @@ class PostRepository {
 
   public async findPostById(
     postId: string | Types.ObjectId,
-    projection: ProjectionType<IPost> = {}
+    projection: ProjectionType<Post> = {}
   ) {
     return await PostModel.findById(postId, projection).lean();
   }
 
   public async updatePostById(
     postId: string | Types.ObjectId,
-    post: Partial<IPost>
+    post: Partial<Post>
   ) {
     return await PostModel.findByIdAndUpdate(postId, { $set: post });
   }
 
   public async pushPostHistory(
     postId: string | Types.ObjectId,
-    editHistory: Partial<IPostEditHistory>
+    editHistory: Partial<PostEditHistory>
   ) {
     return await PostModel.findByIdAndUpdate(postId, {
       $push: { editHistory: editHistory },
@@ -41,6 +42,9 @@ class PostRepository {
   }
 
   public async removePostById(postId: string | Types.ObjectId) {
+    // Remove all post in newsfeed collection of friends or group members
+    await newsfeedRepository.removeNewsfeedByPostId(postId);
+
     // Remove all comments on the post
     await commentRepository.removeCommentsByPostId(postId);
 

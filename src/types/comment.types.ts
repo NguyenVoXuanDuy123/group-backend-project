@@ -1,4 +1,4 @@
-import { ICommentEditHistory } from "@src/schema/comment.schema";
+import { CommentEditHistory } from "@src/schema/comment.schema";
 
 export type CreateCommentRequestType = {
   content: string;
@@ -15,7 +15,7 @@ export type UpdateCommentRequestType = {
 export type CommentDetailType = {
   _id: string;
   content: string;
-  editHistory: ICommentEditHistory[];
+  editHistory: CommentEditHistory[];
   author: {
     _id: string;
     firstName: string;

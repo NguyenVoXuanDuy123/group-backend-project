@@ -15,7 +15,7 @@ import databaseConfig from "@src/configs/database.config";
 import cors from "cors";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-import { APIRequest, APIResponse } from "@src/types/api.types";
+import { APIRequest, ErrorAPIResponse } from "@src/types/api.types";
 import trimRequestBody from "@src/helpers/sanitation";
 import "./zmock-data/fake-data";
 import fs from "fs";
@@ -50,6 +50,8 @@ app.use(morgan("dev"));
 
 // **** Security **** //
 app.use(helmet());
+// **** trim request body **** //
+app.use(trimRequestBody);
 
 // **** Passportjs set up **** //
 const MongoDBStore = connectMongoDBSession(session);
@@ -70,9 +72,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// **** trim request body **** //
-app.use(trimRequestBody);
-
 // **** Routes **** //
 app.use("/api", BaseRouter);
 
@@ -83,7 +82,12 @@ app.use((_: Request, res: Response, next: NextFunction) => {
 
 // error handler
 app.use(
-  (err: Error, _: APIRequest, res: APIResponse, next: NextFunction): void => {
+  (
+    err: Error,
+    _: APIRequest,
+    res: ErrorAPIResponse,
+    next: NextFunction
+  ): void => {
     let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
     let errCode = 1001; // error code for unknown error
     if (err instanceof RouteError) {

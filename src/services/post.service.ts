@@ -7,14 +7,14 @@ import {
 import { UserRole } from "@src/enums/user.enums";
 import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
-
+import newsfeedService from "@src/services/newsfeed.service";
 import { removeNullValues } from "@src/helpers/removeNullValue";
 import commentRepository from "@src/repositories/comment.repository";
 import groupRepository from "@src/repositories/group.repository";
 import postRepository from "@src/repositories/post.repository";
 import reactionRepository from "@src/repositories/reaction.repository";
 import userRepository from "@src/repositories/user.repository";
-import { IPostEditHistory, IPost } from "@src/schema/post.schema";
+import { PostEditHistory, Post } from "@src/schema/post.schema";
 import commentService from "@src/services/comment.service";
 import reactionService from "@src/services/reaction.service";
 import { CreateCommentRequestType } from "@src/types/comment.types";
@@ -27,45 +27,67 @@ import { Types } from "mongoose";
 
 class PostService {
   public async createPost(
-    authorID: string,
+    authorId: string,
     createPostRequest: CreatePostRequestType
   ) {
+    let group = null;
     if (createPostRequest.visibilityLevel === PostVisibilityLevel.GROUP) {
-      const group = await groupRepository.findGroupById(
-        createPostRequest.groupId!
-      );
+      group = await groupRepository.findGroupById(createPostRequest.groupId!, {
+        members: 1,
+      });
       if (!group) {
         throw new ApiError(ApiErrorCodes.GROUP_NOT_FOUND);
       }
 
       // only group members can create a post in the group
-      if (!group.members.some((member) => member.equals(authorID))) {
+      if (!group.members.some((member) => member.equals(authorId))) {
         throw new ApiError(ApiErrorCodes.USER_NOT_IN_GROUP);
       }
     }
 
-    const post: Partial<IPost> = {
-      author: new Types.ObjectId(authorID),
-      group: createPostRequest.groupId
-        ? new Types.ObjectId(createPostRequest.groupId)
-        : null,
+    const post: Partial<Post> = {
+      author: new Types.ObjectId(authorId),
+      group:
+        createPostRequest.visibilityLevel === PostVisibilityLevel.GROUP
+          ? new Types.ObjectId(createPostRequest.groupId)
+          : undefined,
       visibilityLevel: createPostRequest.visibilityLevel,
       content: createPostRequest.content,
       images: createPostRequest.images || [],
     };
-    const { _id } = await postRepository.createPost(post);
+    const { _id, author } = await postRepository.createPost(post);
 
-    return this.getPostById(_id, authorID, UserRole.USER, true);
+    // if the post is created in a group, push the post to the newsfeed of all group members
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
+      if (group) {
+        await newsfeedService.pushNewsfeed(
+          group?.members,
+          _id,
+          author,
+          group._id
+        );
+      }
+    } else {
+      const { friends } = (await userRepository.getUserById(authorId, {
+        friends: 1,
+      })) || { friends: [] };
+
+      // push the post to the newsfeed of the author and all friends
+      await newsfeedService.pushNewsfeed(
+        [new Types.ObjectId(authorId), ...friends],
+        _id,
+        author
+      );
+    }
+
+    return this.getPostById(_id, authorId, UserRole.USER, true);
   }
 
-  public async getPostById(
+  public async checkIfPostVisibleToUser(
     postId: string | Types.ObjectId,
     senderId: string,
-    senderRole: UserRole = UserRole.USER,
-    // if internal call = true, we can skip some checks to improve performance
-    isInternalCall = false
-  ) {
-    let group = null;
+    senderRole: UserRole = UserRole.USER
+  ): Promise<boolean> {
     const post = await postRepository.findPostById(postId, {
       __v: 0,
     });
@@ -73,16 +95,12 @@ class PostService {
     if (!post) {
       throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
     }
-    const { author: authorId, group: groupId, ...rest } = post;
+
+    const { author: authorId } = post;
 
     // check when visibility level is group
     if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
-      if (!groupId) {
-        // there is no way when a post has a group visibility level,
-        // but group is null
-        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
-      }
-      group = await groupRepository.findGroupById(groupId, {
+      const group = await groupRepository.findGroupById(post.group, {
         name: 1,
         visibilityLevel: 1,
         members: 1,
@@ -93,44 +111,33 @@ class PostService {
         // but the group cannot be found
         throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
       }
+
       /**
-       *
-       * in case visibilityLevel = 'group'
+       * In case visibilityLevel = 'group'
        * user only can see the post if one of the following conditions is met:
        * 1. user role is site-admin
        * 2. group is public
        * 3. user is a member of the group (group admin is also a member)
-       *
        */
-      if (!isInternalCall) {
-        const canSeePost =
-          senderRole === UserRole.ADMIN ||
-          group.visibilityLevel === GroupVisibilityLevel.PUBLIC ||
-          group.members.some((member) => member.equals(senderId));
 
-        if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
-        }
-      }
+      return (
+        senderRole === UserRole.ADMIN ||
+        group.visibilityLevel === GroupVisibilityLevel.PUBLIC ||
+        group.members.some((member) => member.equals(senderId))
+      );
     }
 
     // check when visibility level is friends
-    const author = await userRepository.getUserById(authorId, {
-      _id: 1,
-      firstName: 1,
-      lastName: 1,
-      friends: 1,
-      username: 1,
-      avatar: 1,
-    });
-
     if (post.visibilityLevel === PostVisibilityLevel.FRIEND) {
+      const author = await userRepository.getUserById(authorId, {
+        _id: 1,
+        friends: 1,
+      });
+
       if (!author) {
         // there is no way the post exists without an author
         throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
       }
-
-      let canSeePost = false;
 
       /**
        * In case visibilityLevel = friend
@@ -140,21 +147,76 @@ class PostService {
        * 3. user is a friend of the author
        */
 
-      if (!isInternalCall) {
-        canSeePost =
-          author._id.equals(senderId) ||
-          senderRole === UserRole.ADMIN ||
-          author.friends.some((friend) => friend.equals(senderId));
-        if (!canSeePost) {
-          throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
-        }
+      return (
+        author._id.equals(senderId) ||
+        senderRole === UserRole.ADMIN ||
+        author.friends.some((friend) => friend.equals(senderId))
+      );
+    }
+
+    // If post is public, it's always visible
+    return true;
+  }
+
+  public async getPostById(
+    postId: string | Types.ObjectId,
+    senderId: string,
+    senderRole: UserRole = UserRole.USER,
+    // if this method is called internally, we don't need to check post visibility to improve performance
+    isInternalCall = false
+  ) {
+    // Check post visibility
+
+    if (isInternalCall) {
+      const canSeePost = await this.checkIfPostVisibleToUser(
+        postId,
+        senderId,
+        senderRole
+      );
+
+      if (!canSeePost) {
+        throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
       }
     }
+
+    const post = await postRepository.findPostById(postId, {
+      __v: 0,
+    });
+
+    if (!post) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
+    }
+
+    const { author: authorId, ...rest } = post;
+
+    let group = null;
+
+    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
+      group = await groupRepository.findGroupById(post.group, {
+        name: 1,
+        visibilityLevel: 1,
+        members: 1,
+      });
+
+      if (!group) {
+        // there is no way when a post has a group visibility level,
+        // but the group cannot be found
+        throw new ApiError(ApiErrorCodes.CRITICAL_DATA_INTEGRITY_ERROR);
+      }
+    }
+
+    const author = await userRepository.getUserById(authorId, {
+      _id: 1,
+      firstName: 1,
+      lastName: 1,
+      friends: 1,
+      username: 1,
+      avatar: 1,
+    });
 
     const { reactionCount, reactionSummary, userReaction, commentCount } =
       await this.getPostOrCommentInfo(rest._id, senderId);
 
-    // if the post is public, no need to check anything
     return {
       ...rest,
       reactionCount,
@@ -177,25 +239,26 @@ class PostService {
 
   public async updatePost(
     senderId: string,
-    senderRole: UserRole,
     postID: string,
     updatePostRequest: UpdatePostRequestType
   ) {
-    // if the post does not exist, or not visible to the sender
-    // the method below will throw an error
-    await this.getPostById(postID, senderId, senderRole);
-
-    // if it comes here, post 100% exists, so we can safely cast it to IPost
-    const post = (await postRepository.findPostById(postID, {
+    const post = await postRepository.findPostById(postID, {
       author: 1,
       content: 1,
       images: 1,
       visibilityLevel: 1,
-    })) as IPost;
+    });
+
+    if (!post) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
+    }
 
     //if the post visibility level is group, the visibility level cannot be changed
-    if (post.visibilityLevel === PostVisibilityLevel.GROUP) {
-      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_visibilityLevel);
+    if (
+      post.visibilityLevel === PostVisibilityLevel.GROUP &&
+      updatePostRequest.visibilityLevel !== PostVisibilityLevel.GROUP
+    ) {
+      throw new ApiError(ApiErrorCodes.INVALID_UPDATE_POST_VISIBILITY_LEVEL);
     }
 
     // only the author of the post can update the post
@@ -208,7 +271,7 @@ class PostService {
       post.content !== updatePostRequest.content ||
       post.images.toString() !== updatePostRequest.images?.toString()
     ) {
-      const postHistory: Partial<IPostEditHistory> = {
+      const postHistory: Partial<PostEditHistory> = {
         content: post.content,
         images: post.images,
         editedAt: new Date(),
@@ -286,12 +349,11 @@ class PostService {
     senderId: string,
     type: ReactionType
   ) {
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await this.getPostById(postID, senderId);
+    const canSeePost = await this.checkIfPostVisibleToUser(postID, senderId);
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
 
     const react = await reactionService.createReaction(
       postID,
@@ -304,8 +366,10 @@ class PostService {
   }
 
   public async removeReactionFromPost(postID: string, userID: string) {
-    if (!(await postRepository.checkPostExistsById(postID))) {
-      throw new ApiError(ApiErrorCodes.POST_NOT_FOUND);
+    const canSeePost = await this.checkIfPostVisibleToUser(postID, userID);
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
     }
     await reactionService.removeReactionFromPost(
       postID,
@@ -320,12 +384,16 @@ class PostService {
     senderRole: UserRole,
     type: ReactionType
   ) {
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await this.getPostById(postID, senderId, senderRole);
+    const canSeePost = await this.checkIfPostVisibleToUser(
+      postID,
+      senderId,
+      senderRole
+    );
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
+
     if (Object.values(ReactionType).indexOf(type) === -1) {
       throw new ApiError(ApiErrorCodes.INVALID_REACTION_TYPE);
     }
@@ -337,12 +405,11 @@ class PostService {
     postID: string,
     createCommentRequest: CreateCommentRequestType
   ) {
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await this.getPostById(postID, senderId);
+    const canSeePost = await this.checkIfPostVisibleToUser(postID, senderId);
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
 
     return await commentService.createComment(
       senderId,
@@ -357,12 +424,15 @@ class PostService {
     senderRole: UserRole,
     paginationQuery: PaginationQueryType
   ) {
-    /**
-     * If the post does not exist, or not visible to the sender
-     * the method below will throw an error
-     * so that we reuse the method to check if the post exists and visible to the sender
-     */
-    await this.getPostById(postID, senderId, senderRole);
+    const canSeePost = await this.checkIfPostVisibleToUser(
+      postID,
+      senderId,
+      senderRole
+    );
+
+    if (!canSeePost) {
+      throw new ApiError(ApiErrorCodes.POST_NOT_VISIBLE_TO_USER);
+    }
     const { beforeDate, limit } = paginationQuery;
     const comments = await commentRepository.getCommentsByPostId(
       postID,

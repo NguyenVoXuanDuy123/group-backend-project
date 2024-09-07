@@ -8,6 +8,7 @@ import UserModel from "@src/schema/user.schema";
 import fs from "fs";
 import { maxDate, randomDate } from "@src/zmock-data/helper";
 import { MOCK_IMAGE_DIR, SEED } from "@src/constant/dir";
+import newsfeedRepository from "@src/repositories/newsfeed.repository";
 
 export const mockPosts = async (minPost: number, maxPost: number) => {
   console.log("start mockPosts");
@@ -56,9 +57,28 @@ export const mockPosts = async (minPost: number, maxPost: number) => {
 
       const images = faker.helpers.arrayElements(mockImages, imageNumber);
 
+      const postId = faker.database.mongodbObjectId();
+
+      if (visibilityLevel === PostVisibilityLevel.GROUP && groupObject) {
+        await newsfeedRepository.pushNewsfeed(
+          groupObject.members,
+          postId,
+          user._id,
+          date,
+          groupObject._id
+        );
+      } else {
+        await newsfeedRepository.pushNewsfeed(
+          user.friends,
+          postId,
+          user._id,
+          date
+        );
+      }
+
       posts.push(
         new PostModel({
-          _id: faker.database.mongodbObjectId(),
+          _id: postId,
           content: faker.lorem.paragraph(),
           author: user._id,
           images: images,

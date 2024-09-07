@@ -62,4 +62,5 @@ export type GroupMemberDetailType = {
 //Only admin can change user status
 export type ChangeGroupStatusRequestType = {
   status: GroupStatus;
+  rejectedReason?: string;
 };

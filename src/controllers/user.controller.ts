@@ -272,6 +272,33 @@ class UserController {
       result: notifications,
     });
   };
+
+  public getMyUnreadNotificationsCount = async (
+    req: APIRequest,
+    res: APIResponse
+  ) => {
+    const { _id } = req.user as UserSessionType;
+    const unreadNotificationCount =
+      await userService.getUnreadNotificationCount(_id);
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get unread notification count successfully",
+      result: unreadNotificationCount,
+    });
+  };
+
+  public getMyUnreadNotifications = async (
+    req: APIRequest,
+    res: APIResponse
+  ) => {
+    const { _id } = req.user as UserSessionType;
+    const unreadNotifications = await userService.getUnreadNotifications(_id);
+
+    res.status(HttpStatusCodes.OK).json({
+      message: "Get unread notifications successfully",
+      result: unreadNotifications,
+    });
+  };
 }
 
 export default new UserController();

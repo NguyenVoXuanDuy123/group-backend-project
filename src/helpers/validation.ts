@@ -3,19 +3,9 @@ import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import NotEmptyError from "@src/error/NotEmptyError";
 import NotNullError from "@src/error/NotNullError";
 
-// export const validateUsername = (username: string): void => {
-//   return username;
-// };
-
 type InputNotNullValidator = {
   [key: string]: unknown;
 };
-
-/**
- * Function to validate not null values
- * @param input - An object containing the field name and value.
- * @throws NotNullError
- */
 
 export const validateNotNull = (input: InputNotNullValidator): void => {
   const nullFields = [];
@@ -32,12 +22,6 @@ export const validateNotNull = (input: InputNotNullValidator): void => {
 type InputNotEmptyValidator = {
   [key: string]: string;
 };
-
-/**
- * Function to validate not empty values
- * @param input - An object containing the field name and value.
- * @throws NotEmptyError
- */
 
 export const validateNotEmpty = (input: InputNotEmptyValidator): void => {
   const emptyFields = [];

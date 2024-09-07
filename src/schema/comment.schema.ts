@@ -1,22 +1,20 @@
 import { Schema, model, Types } from "mongoose";
 
-// Define an interface representing a document in MongoDB.
-export interface ICommentEditHistory {
+export type CommentEditHistory = {
   content: string;
   editedAt: Date;
-}
+};
 
-export interface IComment {
+export type Comment = {
   author: Types.ObjectId;
   post: Types.ObjectId;
   content: string;
-  editHistory: ICommentEditHistory[];
+  editHistory: CommentEditHistory[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-// Create a schema corresponding to the document interface.
-const commentSchema = new Schema<IComment>(
+const commentSchema = new Schema<Comment>(
   {
     author: {
       type: Schema.Types.ObjectId,
@@ -53,6 +51,6 @@ commentSchema.index({ post: 1, createdAt: -1 });
 commentSchema.index({ post: 1 });
 
 // Create a model based on the schema.
-const CommentModel = model<IComment>("comments", commentSchema);
+const CommentModel = model<Comment>("comments", commentSchema);
 
 export default CommentModel;

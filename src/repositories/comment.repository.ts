@@ -1,8 +1,8 @@
 import { validateDate } from "@src/helpers/validation";
 import reactionRepository from "@src/repositories/reaction.repository";
 import CommentModel, {
-  IComment,
-  ICommentEditHistory,
+  Comment,
+  CommentEditHistory,
 } from "@src/schema/comment.schema";
 import ReactionModel from "@src/schema/reaction.schema";
 import notificationService from "@src/services/notification.service";
@@ -10,20 +10,20 @@ import notificationService from "@src/services/notification.service";
 import { ProjectionType, Types } from "mongoose";
 
 class CommentRepository {
-  public async createComment(comment: Partial<IComment>) {
+  public async createComment(comment: Partial<Comment>) {
     return await CommentModel.create(comment);
   }
 
   public async findCommentById(
     commentId: string | Types.ObjectId,
-    projection: ProjectionType<IComment> = {}
+    projection: ProjectionType<Comment> = {}
   ) {
     return await CommentModel.findById(commentId, projection).lean();
   }
 
   public async updateCommentById(
     commentId: string | Types.ObjectId,
-    comment: Partial<IComment>
+    comment: Partial<Comment>
   ) {
     return await CommentModel.findByIdAndUpdate(
       commentId,
@@ -34,7 +34,7 @@ class CommentRepository {
 
   public async pushCommentEditHistory(
     commentId: string | Types.ObjectId,
-    editHistory: Partial<ICommentEditHistory>
+    editHistory: Partial<CommentEditHistory>
   ) {
     return await CommentModel.findByIdAndUpdate(commentId, {
       $push: { editHistory },

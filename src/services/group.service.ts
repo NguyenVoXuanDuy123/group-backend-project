@@ -15,13 +15,14 @@ import groupRepository from "@src/repositories/group.repository";
 import groupJoinRequestRepository from "@src/repositories/groupJoinRequest.repository";
 import postRepository from "@src/repositories/post.repository";
 import userRepository from "@src/repositories/user.repository";
-import { IGroup } from "@src/schema/group.schema";
+import { Group } from "@src/schema/group.schema";
 
 import groupJoinRequestService from "@src/services/groupJoinRequest.service";
 import notificationService from "@src/services/notification.service";
 import postService from "@src/services/post.service";
 import userService from "@src/services/user.service";
 import {
+  ChangeGroupStatusRequestType,
   CreateGroupRequestType,
   UpdateGroupRequestType,
 } from "@src/types/group.types";
@@ -31,12 +32,16 @@ import { Types } from "mongoose";
 class GroupService {
   public async createGroup(
     userId: string,
-    createGroupJoinRequest: CreateGroupRequestType
+    createGroupJoinRequest: CreateGroupRequestType,
+    role: UserRole
   ) {
-    const group: Partial<IGroup> = {
+    const group: Partial<Group> = {
       description: createGroupJoinRequest.description,
       name: createGroupJoinRequest.name,
       visibilityLevel: createGroupJoinRequest.visibilityLevel,
+      // if the user is an site admin, the group is approved by default
+      status:
+        role === UserRole.ADMIN ? GroupStatus.APPROVED : GroupStatus.PENDING,
       admin: new Types.ObjectId(userId),
       members: [new Types.ObjectId(userId)],
     };
@@ -60,7 +65,7 @@ class GroupService {
       throw new ApiError(ApiErrorCodes.UPDATE_GROUP_FORBIDDEN);
     }
 
-    const updatedGroup: Partial<IGroup> = {
+    const updatedGroup: Partial<Group> = {
       description: updateGroupJoinRequest.description,
       name: updateGroupJoinRequest.name,
       visibilityLevel: updateGroupJoinRequest.visibilityLevel,
@@ -213,7 +218,11 @@ class GroupService {
       groupId
     );
   }
-  public async getPendingGroupJoinRequests(senderId: string, groupId: string) {
+  public async getPendingGroupJoinRequests(
+    senderId: string,
+    groupId: string,
+    paginationQuery: PaginationQueryType
+  ) {
     const group = await groupRepository.findGroupById(groupId, {
       status: 1,
       admin: 1,
@@ -230,7 +239,10 @@ class GroupService {
     if (!group.admin.equals(senderId)) {
       throw new ApiError(ApiErrorCodes.GROUP_JOIN_REQUEST_NOT_VISIBLE);
     }
-    return await groupJoinRequestService.getPendingGroupJoinRequests(groupId);
+    return await groupJoinRequestService.getPendingGroupJoinRequests(
+      groupId,
+      paginationQuery
+    );
   }
 
   public async changeGroupJoinRequestStatus(
@@ -282,8 +294,8 @@ class GroupService {
 
   public async changeGroupStatus(
     groupId: string,
-    status: GroupStatus,
-    senderRole: UserRole
+    senderRole: UserRole,
+    changeGroupStatusRequest: ChangeGroupStatusRequestType
   ) {
     const group = await groupRepository.findGroupById(groupId, {
       status: 1,
@@ -301,14 +313,28 @@ class GroupService {
       throw new ApiError(ApiErrorCodes.CANNOT_CHANGE_GROUP_STATUS);
     }
 
-    // notify the admin of the group when the group is approved
-    await notificationService.pushNotification({
-      receiver: group.admin,
-      relatedEntity: new Types.ObjectId(groupId),
-      type: NotificationType.GROUP_JOIN_REQUEST,
-    });
+    if (
+      changeGroupStatusRequest.status === GroupStatus.REJECTED &&
+      !changeGroupStatusRequest.rejectedReason
+    ) {
+      throw new ApiError(ApiErrorCodes.REJECTED_REASON_REQUIRED);
+    }
 
-    await groupRepository.updateGroupById(groupId, { status });
+    if (changeGroupStatusRequest.status === GroupStatus.APPROVED) {
+      // notify the admin of the group when the group is approved
+      await notificationService.pushNotification({
+        receiver: group.admin,
+        relatedEntity: new Types.ObjectId(groupId),
+        type: NotificationType.GROUP_CREATION_APPROVAL,
+      });
+    }
+
+    await groupRepository.updateGroupById(groupId, {
+      status: changeGroupStatusRequest.status,
+      ...(changeGroupStatusRequest.status === GroupStatus.REJECTED && {
+        rejectedReason: changeGroupStatusRequest.rejectedReason || "",
+      }),
+    });
   }
 
   public async getGroupPosts(
@@ -363,6 +389,18 @@ class GroupService {
           userReaction,
         };
       })
+    );
+  }
+  public async getPendingGroups(
+    role: UserRole,
+    paginationQuery: PaginationQueryType
+  ) {
+    if (role !== UserRole.ADMIN) {
+      throw new ApiError(ApiErrorCodes.ADMIN_ROLE_REQUIRED);
+    }
+    return await groupRepository.getPendingGroups(
+      paginationQuery.beforeDate,
+      Number(paginationQuery.limit)
     );
   }
 }
