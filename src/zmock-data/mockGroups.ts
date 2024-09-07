@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { SEED } from "@src/constant/dir";
+import { SEED } from "@src/constant/common";
 import { GroupStatus, GroupVisibilityLevel } from "@src/enums/group.enums";
 import GroupModel from "@src/schema/group.schema";
 import UserModel from "@src/schema/user.schema";

@@ -99,8 +99,6 @@ class UserRepository {
   }
 
   public async searchUsers(q: string, afterId?: string, limit?: number) {
-    const query = q.trim();
-
     const users = await UserModel.aggregate<UserInformationType>([
       {
         $addFields: {
@@ -113,7 +111,7 @@ class UserRepository {
         $match: {
           fullName: {
             // Dynamically create the regex pattern and ensure it's a valid string
-            $regex: query,
+            $regex: q,
           },
         },
       },

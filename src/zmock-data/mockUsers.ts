@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { faker } from "@faker-js/faker";
-import { MOCK_AVATAR_DIR, SEED } from "@src/constant/dir";
+import { MOCK_AVATAR_DIR } from "@src/constant/dir";
+import { SEED } from "@src/constant/common";
 import {
   FriendRequestStatus,
   UserRole,

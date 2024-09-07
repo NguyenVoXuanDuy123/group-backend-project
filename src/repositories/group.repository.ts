@@ -191,6 +191,44 @@ class GroupRepository {
       },
     ]);
   }
+
+  public async searchGroups(q: string, afterId?: string, limit?: number) {
+    return await GroupModel.aggregate<GroupDetailType>([
+      {
+        $match: {
+          name: {
+            $regex: q,
+          },
+          status: GroupStatus.APPROVED,
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+      {
+        $match: {
+          _id: {
+            $gt: afterId
+              ? new Types.ObjectId(afterId)
+              : new Types.ObjectId("000000000000000000000000"),
+          },
+        },
+      },
+      { $limit: limit || 10 },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          visibilityLevel: 1,
+          memberCount: { $size: "$members" },
+          description: 1,
+          createdAt: 1,
+        },
+      },
+    ]);
+  }
 }
 
 export default new GroupRepository();

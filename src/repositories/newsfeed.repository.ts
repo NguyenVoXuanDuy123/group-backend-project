@@ -68,14 +68,14 @@ class NewsfeedRepository {
       },
       {
         $match: {
-          "post.createdAt": {
+          createdAt: {
             $lt: new Date(beforeDate || new Date()),
           },
         },
       },
       {
         $sort: {
-          "post.createdAt": -1,
+          createdAt: -1,
         },
       },
       {

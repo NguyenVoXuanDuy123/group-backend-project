@@ -7,8 +7,9 @@ import PostModel from "@src/schema/post.schema";
 import UserModel from "@src/schema/user.schema";
 import fs from "fs";
 import { maxDate, randomDate } from "@src/zmock-data/helper";
-import { MOCK_IMAGE_DIR, SEED } from "@src/constant/dir";
+import { MOCK_IMAGE_DIR } from "@src/constant/dir";
 import newsfeedRepository from "@src/repositories/newsfeed.repository";
+import { SEED } from "@src/constant/common";
 
 export const mockPosts = async (minPost: number, maxPost: number) => {
   console.log("start mockPosts");

@@ -1,4 +1,5 @@
 import { SearchType } from "@src/enums/search.enums";
+import groupRepository from "@src/repositories/group.repository";
 import userRepository from "@src/repositories/user.repository";
 import userService from "@src/services/user.service";
 import { SearchQueryType } from "@src/types/search.types";
@@ -15,7 +16,7 @@ class searchService {
     if (!searchBy || searchBy === SearchType.User) {
       const sender = await userRepository.getUserById(senderId, { friends: 1 });
       const senderFriends = sender?.friends || [];
-      const users = await userRepository.searchUsers(q, afterId, limit);
+      const users = await userRepository.searchUsers(q, afterId, Number(limit));
       return Promise.all(
         users.map(async (user) => {
           const { friends, ...rest } = user;
@@ -32,7 +33,7 @@ class searchService {
     }
 
     if (searchBy === SearchType.Group) {
-      return [];
+      return groupRepository.searchGroups(q, afterId, Number(limit));
     }
   }
 }

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { SEED } from "@src/constant/dir";
+import { SEED } from "@src/constant/common";
 import { NotificationType } from "@src/enums/notification.enums";
 import { PostVisibilityLevel } from "@src/enums/post.enum";
 import CommentModel, { Comment } from "@src/schema/comment.schema";
