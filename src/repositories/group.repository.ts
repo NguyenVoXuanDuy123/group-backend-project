@@ -198,6 +198,7 @@ class GroupRepository {
         $match: {
           name: {
             $regex: q,
+            $options: "i",
           },
           status: GroupStatus.APPROVED,
         },

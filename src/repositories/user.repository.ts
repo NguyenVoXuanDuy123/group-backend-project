@@ -110,8 +110,8 @@ class UserRepository {
       {
         $match: {
           fullName: {
-            // Dynamically create the regex pattern and ensure it's a valid string
             $regex: q,
+            $options: "i",
           },
         },
       },
