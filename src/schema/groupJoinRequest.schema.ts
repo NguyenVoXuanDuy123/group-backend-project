@@ -30,8 +30,12 @@ const GroupJoinRequestSchema: Schema<GroupJoinRequest> = new Schema(
   }
 );
 
+GroupJoinRequestSchema.index({ group: 1, user: 1 }, { unique: true });
+
+GroupJoinRequestSchema.index({ group: 1, createdAt: -1 });
+
 const GroupJoinRequestModel: Model<GroupJoinRequest> = model<GroupJoinRequest>(
-  "group_join_requests",
+  "groupJoinRequests",
   GroupJoinRequestSchema
 );
 

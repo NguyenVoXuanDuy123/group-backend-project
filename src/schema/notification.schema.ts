@@ -40,7 +40,7 @@ const NotificationSchema = new Schema<Notification>(
 NotificationSchema.index({ recipient: 1, createdAt: -1 });
 
 const NotificationModel = model<Notification>(
-  "Notification",
+  "notifications",
   NotificationSchema
 );
 

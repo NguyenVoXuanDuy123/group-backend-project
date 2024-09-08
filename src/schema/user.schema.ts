@@ -48,7 +48,7 @@ const UserSchema: Schema<User> = new Schema(
   }
 );
 
-UserSchema.index({ username: 1 });
+UserSchema.index({ username: 1 }, { unique: true });
 
 // Create the User model
 const UserModel: Model<User> = model<User>("User", UserSchema);

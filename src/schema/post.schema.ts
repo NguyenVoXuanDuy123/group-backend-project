@@ -64,6 +64,10 @@ const postSchema = new Schema<Post>(
   }
 );
 
+postSchema.index({ author: 1, createdAt: -1 });
+
+postSchema.index({ group: 1, createdAt: -1 });
+
 // Create a model based on the schema.
 const PostModel = model<Post>("posts", postSchema);
 

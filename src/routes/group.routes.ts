@@ -25,12 +25,6 @@ groupRouter.patch(
 
 groupRouter.get("/:groupId", wrapRequestHandler(groupController.getGroupById));
 
-// this api is not required
-// groupRouter.delete(
-//   "/:groupId",
-//   wrapRequestHandler(groupController.removeGroup)
-// );
-
 groupRouter.get(
   "/:groupId/members",
   wrapRequestHandler(groupController.getGroupMembers)

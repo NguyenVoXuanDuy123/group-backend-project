@@ -49,15 +49,6 @@ class GroupController {
     });
   };
 
-  // public removeGroup = async (req: APIRequest, res: APIResponse) => {
-  //   const { _id } = req.user as UserSessionType;
-  //   const { groupId } = req.params;
-  //   await groupService.removeGroup(_id, groupId);
-  //   res.status(HttpStatusCodes.OK).json({
-  //     message: "Group removed successfully",
-  //   });
-  // };
-
   public getGroupMembers = async (req: APIRequest, res: APIResponse) => {
     const { groupId } = req.params;
     const { _id, role } = req.user as UserSessionType;

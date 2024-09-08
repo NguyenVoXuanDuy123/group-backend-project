@@ -38,9 +38,11 @@ FriendRequestSchema.index({ sender: 1, receiver: 1 });
 // Create a compound index that improves the performance of queries getting pending friend requests by receiver id
 FriendRequestSchema.index({ receiver: 1, status: 1 });
 
+FriendRequestSchema.index({ sender: 1, createdAt: -1 });
+
 // Create the Request model
 const FriendRequestModel: Model<FriendRequest> = model<FriendRequest>(
-  "friend_requests",
+  "friendRequests",
   FriendRequestSchema
 );
 

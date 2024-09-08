@@ -17,7 +17,7 @@ import ApiError from "@src/error/ApiError";
 import ApiErrorCodes from "@src/error/ApiErrorCodes";
 import { APIRequest, ErrorAPIResponse } from "@src/types/api.types";
 import trimRequestBody from "@src/helpers/sanitation";
-import "./zmock-data/fake-data";
+// import "./zmock-data/fake-data";
 import fs from "fs";
 
 // **** Variables **** //
@@ -58,7 +58,7 @@ const MongoDBStore = connectMongoDBSession(session);
 
 const store = new MongoDBStore({
   uri: EnvVars.Mongo.Uri,
-  collection: "my_sessions",
+  collection: "mySessions",
 });
 
 app.use(

@@ -44,6 +44,8 @@ const GroupSchema: Schema<Group> = new Schema(
   }
 );
 
+GroupSchema.index({ createdAt: -1, admin: 1 });
+
 // Create the Group model
 const GroupModel: Model<Group> = model<Group>("groups", GroupSchema);
 
