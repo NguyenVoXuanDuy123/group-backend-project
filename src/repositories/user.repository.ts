@@ -1,3 +1,4 @@
+import { UserRole } from "@src/enums/user.enums";
 import newsfeedRepository from "@src/repositories/newsfeed.repository";
 import UserModel, { User } from "@src/schema/user.schema";
 import { UserInformationType } from "@src/types/user.types";
@@ -113,6 +114,7 @@ class UserRepository {
             $regex: q,
             $options: "i",
           },
+          role: UserRole.USER,
         },
       },
       {
@@ -140,6 +142,9 @@ class UserRepository {
           lastName: 1,
           avatar: 1,
           friends: 1,
+          friendCount: { $size: "$friends" },
+          status: 1,
+          createdAt: 1,
         },
       },
     ]);

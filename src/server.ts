@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import EnvVars from "@src/constant/EnvVars";
 import connectMongoDBSession from "connect-mongodb-session";
 import "./configs/passport.config"; // import to run passport config
-import { UPLOAD_DIR } from "@src/constant/dir";
+import { FRONTEND_SERVE_DIR, UPLOAD_DIR } from "@src/constant/dir";
 import databaseConfig from "@src/configs/database.config";
 import cors from "cors";
 import ApiError from "@src/error/ApiError";
@@ -19,6 +19,7 @@ import { APIRequest, ErrorAPIResponse } from "@src/types/api.types";
 import trimRequestBody from "@src/helpers/sanitation";
 // import "./zmock-data/fake-data";
 import fs from "fs";
+import path from "path";
 
 // **** Variables **** //
 
@@ -44,6 +45,7 @@ app.use(express.json());
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 app.use(express.urlencoded({ extended: true }));
 app.use("/images", express.static(UPLOAD_DIR));
+app.use(express.static(FRONTEND_SERVE_DIR));
 // Show routes called in console during development
 
 app.use(morgan("dev"));
@@ -76,8 +78,9 @@ app.use(passport.session());
 app.use("/api", BaseRouter);
 
 // if no route is matched by now, it must be a 404
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((_: Request, res: Response, next: NextFunction) => {
-  next(new ApiError(ApiErrorCodes.ROUTE_NOT_FOUND));
+  res.sendFile(path.join(FRONTEND_SERVE_DIR, "index.html"));
 });
 
 // error handler
